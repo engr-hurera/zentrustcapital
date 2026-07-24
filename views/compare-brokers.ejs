@@ -1,0 +1,330 @@
+<%- include('partials/head') %>
+
+<link rel="stylesheet" href="/css/styles-pages.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+
+<style>
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .compare-table th {
+    background: var(--pages-bg3);
+    border: 1px solid var(--pages-border);
+    padding: 16px;
+    text-align: center;
+    font-family: var(--pages-font-display);
+    font-size: 1rem;
+  }
+
+  .compare-table th:first-child {
+    text-align: left;
+    font-size: 0.8rem;
+    color: var(--pages-text3);
+    background: var(--pages-bg2);
+  }
+
+  .compare-table td {
+    border: 1px solid var(--pages-border);
+    padding: 14px 16px;
+    font-size: 0.9rem;
+    color: var(--pages-text2);
+    text-align: center;
+  }
+
+  .compare-table td:first-child {
+    text-align: left;
+    font-weight: 600;
+    color: var(--pages-text);
+    font-size: 0.85rem;
+    background: var(--pages-bg2);
+  }
+
+  .compare-table tr:hover td {
+    background: var(--pages-bg3);
+
+  }
+
+  .compare-table .best {
+    color:var(--pages-green);
+    font-weight: 700;
+  }
+
+  
+
+  .check {
+    color: var(--pages-green);
+    font-weight: 700;
+  }
+
+  .cross {
+    color: var(--pages-red);
+  }
+
+  .highlight-col {
+    background: var(--footer-bg) !important;
+  }
+
+  .top-badge {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--pages-gold);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+
+  /* New classes - no inline styles */
+  .compare-description {
+    color: var(--pages-text2);
+    margin-top: 12px;
+  }
+
+  .compare-table-container {
+    overflow-x: auto;
+  }
+
+  .btn-compare {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    justify-content: center;
+  }
+</style>
+</head>
+
+<body>
+  <%- include('partials/header') %>
+
+  <div class="page-wrapper">
+    <div class="page-header">
+      <div class="container">
+        <div class="breadcrumb"><a href="/">Home</a><span>/</span><a
+            href="/brokers">Brokers</a><span>/</span><span>Compare</span></div>
+        <span class="section-label">
+          <div class="ld">✦</div>
+          Side-by-Side
+        </span>
+        <h1>Compare <span class="text-gold">Forex Brokers</span></h1>
+        <p class="compare-description">Find the perfect broker by comparing fees, leverage, regulation, and features
+          side-by-side.</p>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="container compare-table-container">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <% editAddBroker.forEach(broker => { %>
+
+              <th><span
+                  class="<%= broker.brokerPick ? 'top-badge' : '' %>"><%= broker.brokerPick ? '⭐ #1 PICK' : '' %></span><%= broker.brokerName %>
+              </th>
+              <% }) %>
+            </tr>
+          </thead>
+
+
+          <tbody>
+
+
+            <tr>
+              <td>Overall Rating</td>
+              <% editAddBroker.forEach(broker => { %>
+              <td hidden class="brokerId">
+                <input hidden="text" value="<%= broker.id %>">
+              </td>
+
+              <td class="<%= broker.brokerPick ? 'highlight-col best' : '' %>">
+
+                <div hidden class="broker-rating" data-rating="<%= broker.brokerRating %>"></div>
+                <div class="stars rating-stars" style="display: inline-block;">
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                </div> <%= broker.brokerRating %>
+              </td>
+              <% }) %>
+
+
+            </tr>
+
+            <tr>
+
+              <td>Min Deposit</td>
+              <% editAddBroker.forEach(broker => { %>
+              <td class="<%= broker.brokerPick ? 'highlight-col best' : '' %>">
+                $<%= broker.brokerMinDeposit %>
+              </td>
+              <% }) %>
+            </tr>
+            <tr>
+              <td>Max Leverage</td>
+              <% editAddBroker.forEach(broker => { %>
+              <td class="<%= broker.brokerPick ? 'highlight-col best' : '' %>">
+                <%= broker.brokerLeverage %></td>
+              <% }) %>
+            </tr>
+            <tr>
+              <td>Min Spread (EUR/USD)</td>
+              <% editAddBroker.forEach(broker => { %>
+              <td class="<%= broker.brokerPick ? 'highlight-col best' : '' %>">
+                <%= broker.brokerMinSpread %>
+                pips</td>
+              <% }) %>
+            </tr>
+            <tr>
+              <td>Commission/Lot</td>
+
+              <% editAddBroker.forEach(broker => { %>
+              <td class="<%= broker.brokerPick ? 'highlight-col' : '' %>">
+                <%= broker.commissionLot ? `$${broker.commissionLot}` : '✗ No' %>
+                <% }) %>
+            </tr>
+
+            <tr>
+              <td>Regulation</td>
+              <!-- <div class="tags"> -->
+              <% editAddBroker.forEach(broker => { %>
+              <td class="<%= broker.brokerPick ? 'highlight-col' : '' %>">
+                <%= broker.brokerTags.join(', ') %>
+                <% }) %>
+              </td>
+
+            </tr>
+
+            <tr>
+              <td>Platforms</td>
+              <% editAddBroker.forEach(broker => { %>
+              <td class="<%= broker.brokerPick ? 'highlight-col' : '' %>">
+                <%= broker.brokerTags.filter(tag => ['MT4/MT5', 'MT4', 'MT5', 'cTrader'].includes(tag)).join(', ') %>
+              </td>
+              <% }) %>
+            </tr>
+            <tr>
+              <td>Instant Withdrawal</td>
+              <% editAddBroker.forEach(broker => { %>
+              <td
+                class="<%= broker.brokerPick ? 'highlight-col' : '' %> <%= broker.brokerDataTags.includes('Instant-withdrawal') ? 'check' : 'cross' %>">
+                <%= broker.brokerDataTags.includes('Instant-withdrawal') ? '✓ Yes' : '✗ No' %></td>
+              <% }) %>
+            </tr>
+            <tr>
+              <td>JazzCash / Easypaisa</td>
+              <% editAddBroker.forEach(broker => { %>
+              <td
+                class="<%= broker.brokerPick ? 'highlight-col' : '' %> <%= broker.brokerDataTags.includes('JazzCash-Easypaisa') ? 'check' : 'cross' %>">
+                <%= broker.brokerDataTags.includes('JazzCash-Easypaisa') ? '✓ Yes' : '✗ No' %></td>
+              <% }) %>
+            </tr>
+            <tr>
+              <td>Islamic Account</td>
+              <% editAddBroker.forEach(broker => { %>
+              <td
+                class="<%= broker.brokerPick ? 'highlight-col' : '' %> <%= broker.brokerDataTags.includes('Islamic-Account') ? 'check' : 'cross' %>">
+                <%= broker.brokerDataTags.includes('Islamic-Account') ? '✓ Yes' : '✗ No' %></td>
+              <% }) %>
+            </tr>
+            <tr>
+              <td>Welcome Bonus</td>
+              <% editAddBroker.forEach(broker => { %>
+              <td class="<%= broker.brokerPick ? 'highlight-col' : '' %> <%= broker.brokerDataTags.includes('welcomeBonus') ? 'check' : 'cross' %>">
+                <%= broker.welcomeBonus ? `$${broker.welcomeBonus}` : '✗ No' %>
+                <% }) %>
+              </td>
+            </tr>
+            <tr>
+              <td>Crypto CFDs</td>
+              <% editAddBroker.forEach(broker => { %>
+              <td
+                class="<%= broker.brokerPick ? 'highlight-col' : '' %> <%= broker.brokerDataTags.includes('Crypto-CFDs') ? 'check' : 'cross' %>">
+                <%= broker.brokerDataTags.includes('Crypto-CFDs') ? '✓ Yes' : '✗ No' %></td>
+              <% }) %>
+            </tr>
+            <tr>
+              <td></td>
+              <% editAddBroker.forEach(broker => { %>
+              <td class="<%= broker.brokerPick ? 'highlight-col' : '' %>"><a href="/open-account"
+                  class="<%= broker.brokerPick ? 'btn-primary' : 'btn-secondary' %> btn-compare">Open Account</a>
+              </td>
+
+              <% }) %>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+  <%- include('partials/footer') %>
+  <script>
+    // MY LOGIC ::::::::::::::::::::::::::::::::::::::::::
+    // :::::::::::::::::::::::: FINAL RESOLVED LOGIC ::::::::::::::::::::::::
+
+    // 1. Find all hidden inputs/elements with the class '.brokerId' on the page and loop through each one
+    document.querySelectorAll('.brokerId').forEach(broker => {
+
+      // Log the adjacent element container (the container right next to our ID input) to verify DOM tracking
+      console.log('Next sibling container:', broker.nextElementSibling);
+
+      // 2. Look INSIDE this specific broker's next sibling container to find ONLY its 5 star elements
+      // This isolates our star search so we never accidentally touch another broker's stars
+      let ratingStars = broker.nextElementSibling.querySelectorAll('.rating-stars span');
+
+      // 3. Find the element holding the rating data attribute INSIDE this broker's specific container
+      // RESOLVED BUG: Changed from '#' (ID) to '.' (Class) to prevent duplicate ID selector bugs on the page
+      let brokerRatingElement = broker.nextElementSibling.querySelector('.broker-rating');
+
+      // Read the rating string value out of the 'data-rating' attribute on that element
+      let rating = brokerRatingElement.dataset.rating;
+
+      // Debug logs to verify we have the right data and strings in the browser console
+      console.log('Current broker data rating string:', rating);
+      console.log('Type of rating variable:', typeof rating);
+      console.log('Target stars for this broker:', ratingStars);
+
+      // 4. Convert the rating string to a number and loop through our star index count (up to max rating)
+      for (let i = 0; i < Number(rating); i++) {
+
+        // Check if the overall rating is a clean whole integer (e.g., 4 or 5)
+        // The '+' shorthand converts the string 'rating' into a number before checking
+        if (Number.isInteger(+rating)) {
+          console.log('The rating number is a whole integer:', rating);
+
+          // Add the full-star styling class to the star at the current loop index 'i'
+          // if(`<%= editAddBroker.brokerPick %>`){
+          // ratingStars[i].classList.add('compare-full-filled-star');
+
+          // }else{
+          ratingStars[i].classList.add('full-filled-star');
+
+          // }
+
+        } else {
+          // If the number contains decimals (e.g., 0.6 or 4.5), execute this fallback branch
+          console.log('The rating number is a decimal/fraction:', rating);
+
+          // First, provisionally light up the star at index 'i' fully
+          ratingStars[i].classList.add('full-filled-star');
+
+          // 5. Evaluate if the remaining fractional value is less than 1 
+          // Example: If rating is 0.6 and i = 0 -> (0.6 - 0) = 0.6. This is < 1, meaning this star is the fraction!
+          if (Number(rating) - i < 1) {
+            // Swap out the full-star style for the half-filled style on this final index
+            ratingStars[i].classList.replace('full-filled-star', 'half-filled-star');
+            console.log('Star index matches the decimal remainder. Styled as half-filled.');
+          }
+        }
+      }
+    });
+  </script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/script.js"></script>
+  <script src="/js/emailWhatsAppRedirect.js"></script>
+</body>
+
+</html>

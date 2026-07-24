@@ -1,0 +1,1250 @@
+<%- include('../partials/head') %>
+
+<link rel="stylesheet" href="/css/styles-pages.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+
+
+<style>
+  /* ============================================
+     Broker Admin Form — layout shell
+     ============================================ */
+  .broker-form-page {
+    margin: 110px auto 80px;
+    max-width: 1040px;
+    padding: 0 20px;
+  }
+
+
+
+  .broker-form-card {
+    position: relative;
+    padding: 38px 40px 32px;
+    background: var(--surface-card);
+    background: var(--pages-card-bg);
+    border: 1px solid var(--border-card);
+    border-radius: var(--r14);
+    box-shadow: var(--shadow-perf);
+    overflow: hidden;
+  }
+
+  /* thin gradient rule along the top edge — adds polish without committing to one hue in either theme */
+  .broker-form-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--darkBlue-to-teal12), var(--gold2), var(--darkBlue-to-teal12));
+    opacity: 0.85;
+  }
+
+  .broker-form-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 30px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border-divider);
+  }
+
+  .broker-form-card h2 {
+    font-family: var(--pages-font-display);
+    font-size: clamp(1.7rem, 2.4vw, 2.15rem);
+    margin-bottom: 6px;
+    color: var(--cream);
+    letter-spacing: -0.01em;
+  }
+
+  .broker-form-card-head p {
+    color: var(--mist2);
+    line-height: 1.7;
+    font-size: 0.93rem;
+    max-width: 460px;
+    margin: 0;
+  }
+
+  .broker-form-status {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--darkBlue-to-teal12);
+    background: var(--hero-label-bg);
+    border: 1px solid var(--hero-label-border);
+    white-space: nowrap;
+  }
+
+  /* ============================================
+     Section blocks — replaces flat single grid
+     ============================================ */
+  .form-section {
+    margin-bottom: 30px;
+  }
+
+  .form-section:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .form-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--mist);
+    margin-bottom: 16px;
+  }
+
+  .form-section-title .step-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--darkBlue-to-teal12);
+    flex-shrink: 0;
+  }
+
+  .form-section-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border-divider);
+  }
+
+  .broker-form-grid {
+    display: grid;
+    gap: 20px;
+  }
+
+  .broker-form-grid .full-width {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 860px) {
+    .broker-form-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* identity row gets its own asymmetric layout: logo preview + name + pick toggle */
+  .identity-row {
+    /* display: grid; */
+    gap: 18px;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 860px) {
+    .identity-row {
+      grid-template-columns: 96px 1fr auto;
+      align-items: end;
+    }
+  }
+
+  .logo-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: var(--r10);
+    border: 1px dashed var(--border-medium);
+    background: var(--surface-inset);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .logo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .logo-preview-fallback {
+    color: var(--mist2);
+    font-size: 1.4rem;
+  }
+
+  .editors-pick-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 18px;
+    border: 1px solid var(--border-gold);
+    background: linear-gradient(135deg, var(--blue-to-teal12), var(--darkBlue-to-sage2));
+    border-radius: var(--r10);
+    color: var(--ink);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    width: 150px;
+    transition: border-color 0.3s ease, background 0.3s ease;
+  }
+
+  .editors-pick-toggle:hover {
+    border-color: var(--border-gold-medium);
+  }
+
+  .editors-pick-toggle input {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--darkBlue-to-teal12);
+    cursor: pointer;
+  }
+
+  /* ============================================
+     Field primitives
+     ============================================ */
+  .form-group,
+  .form-fieldset {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0px;
+  }
+
+  fieldset.form-fieldset {
+    border: 1px solid var(--border-card);
+    padding: 18px 18px 16px;
+    border-radius: var(--r10);
+    background: var(--surface-stripe, transparent);
+  }
+
+  .form-group label,
+  .form-fieldset legend {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--cream);
+  }
+
+  .form-fieldset legend {
+    padding: 0 8px;
+    margin-left: 4px;
+    color: var(--cream);
+  }
+
+  .label-hint {
+    font-weight: 400;
+    color: var(--mist2);
+    font-size: 0.78rem;
+  }
+
+  .form-input,
+  .form-textarea,
+  .form-select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-card);
+    border-radius: var(--r10);
+    background: var(--pages-input-bg);
+    color: var(--cream);
+    font-size: 0.92rem;
+    font-family: inherit;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  }
+
+  .form-input::placeholder,
+  .form-textarea::placeholder {
+    color: var(--mist2);
+    opacity: 0.85;
+  }
+
+  .form-input:focus,
+  .form-textarea:focus,
+  .form-select:focus {
+    outline: none;
+    border-color: var(--darkBlue-to-teal12);
+    background: var(--pages-input-bg-solid);
+  }
+
+  .form-textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  .input-with-prefix {
+    position: relative;
+  }
+
+  .input-with-prefix .form-input {
+    padding-left: 34px;
+  }
+
+  .input-prefix {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--mist2);
+    font-size: 0.88rem;
+    pointer-events: none;
+  }
+
+  /* ============================================
+     Checkbox tag grid (data tags / broker tags)
+     ============================================ */
+  .checkbox-grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 640px) {
+    .checkbox-grid.checkbox-grid--3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .checkbox-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border-card);
+    border-radius: var(--r10);
+    background: var(--surface-card);
+    color: var(--mist);
+    font-size: 0.86rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+  }
+
+  .checkbox-item:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-medium);
+  }
+
+  .checkbox-item:has(input:checked) {
+    border-color: var(--sage2);
+    background: var(--surface-hover-strong);
+    color: var(--cream);
+  }
+
+  .checkbox-item input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--darkBlue-to-teal12);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .inline-inputs {
+    display: grid;
+    gap: 18px;
+  }
+
+  @media (min-width: 860px) {
+    .inline-inputs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .inline-inputs.inline-inputs--3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* ============================================
+     Rating stars
+     ============================================ */
+  .rating-field {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 14px 16px;
+    border: 1px solid var(--border-card);
+    border-radius: var(--r10);
+    background: var(--surface-stripe, var(--surface-inset));
+  }
+
+  .rating-stars {
+    display: inline-flex;
+    gap: 4px;
+    font-size: 1.3rem;
+    line-height: 1;
+  }
+
+  .rating-stars .star {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--surface-hover);
+    color: var(--mist2);
+    transition: background 0.25s ease;
+    cursor: pointer;
+  }
+
+  .full-filled-star {
+    color: var(--gold3) !important;
+    background: var(--wc-ico-g-bg, var(--surface-hover-strong)) !important;
+  }
+
+  .half-filled-star {
+    color: var(--mist2);
+    position: relative;
+    display: inline-block;
+  }
+
+  span.star.half-filled-star::after {
+    content: '★' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    color: rgb(212, 150, 0) !important;
+    -webkit-text-fill-color: rgb(212, 150, 0) !important;
+    background: linear-gradient(to right, rgb(212, 150, 0) 50%, transparent 50%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+
+  .rating-readout {
+    font-size: 0.82rem;
+    color: var(--mist2);
+    font-weight: 600;
+    justify-content: space-between;
+    align-items: center;
+    width: 200px;
+  }
+
+  .rating-readout strong {
+    color: var(--cream);
+    font-size: 0.95rem;
+    margin-left: 10px;
+  }
+
+  /* =======================================
+     Misc
+     ============================================ */
+  .form-hint {
+    color: var(--mist2);
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .form-actions {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-divider);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .form-actions-hint {
+    margin-right: auto;
+    font-size: 0.8rem;
+    color: var(--mist2);
+  }
+
+  .btn-primary {
+    min-width: 170px;
+    box-shadow: var(--shadow-btn-cta);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    box-shadow: var(--shadow-btn-cta-hover);
+    transform: translateY(-1px);
+  }
+
+  #brokerTagsContainer .checkbox-item:nth-child(n+14) {
+    position: relative;
+  }
+
+  #brokerTagsContainer .checkbox-item:nth-child(n+14)>.deleteBtn {
+    display: inline-block;
+    background-color: red;
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: white;
+  }
+
+  #brokerTagsContainer .checkbox-item:nth-child(n+14)>.okayBtn {
+    display: inline-block;
+    background-color: green;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    color: white;
+  }
+
+  #brokerTagsContainer .checkbox-item:nth-child(n+14)>.inputBrokerTag {
+    width: 70%;
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .broker-form-page {
+      margin: 90px auto 50px;
+      padding: 0 14px;
+    }
+
+    .broker-form-card {
+      padding: 26px 22px 24px;
+    }
+
+    .broker-form-card-head {
+      flex-direction: column;
+    }
+
+    .checkbox-grid,
+    .inline-inputs {
+      grid-template-columns: 1fr !important;
+    }
+
+    .form-actions {
+      justify-content: stretch;
+    }
+
+    .form-actions-hint {
+      margin-right: 0;
+      order: 99;
+      text-align: center;
+      width: 100%;
+    }
+
+    .form-actions button,
+    .form-actions a {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
+</head>
+
+<body>
+  <%- include('../partials/header') %>
+
+  <div class="page-wrapper">
+    <div class="container">
+      <div class="broker-form-page">
+
+        <span class="section-label">
+          <div class="ld">✦</div>
+          Admin · Broker Directory
+        </span>
+        <div class="broker-form-card">
+          <div class="broker-form-card-head">
+            <div>
+              <h2><% editing ? 'Edit Broker' : 'Add Broker' %></h2>
+              <p>Fill in the broker details below. Fields are grouped by purpose so listings stay consistent across the
+                directory.</p>
+            </div>
+            <span class="broker-form-status">● Draft</span>
+          </div>
+
+          <form action="/admin/<%= editing ? 'edit-broker' : 'add-broker' %>" method="post">
+            <input type="hidden" name="brokerId" value="<%= editing ? editAddBroker.id : '' %>">
+
+            <!-- Step 1: Identity -->
+            <div class="form-section">
+              <div class="form-section-title"><span class="step-dot">1</span> Broker identity</div>
+
+              <div class="broker-form-grid">
+                <div class="full-width identity-row">
+                  <div class="logo-preview" id="logoPreview">
+                    <span class="logo-preview-fallback">🏷️</span>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="brokerName">Broker name</label>
+                    <input id="brokerName" value="<%= editing ? editAddBroker.brokerName : '' %>" type="text"
+                      name="brokerName" class="form-input" placeholder="e.g. Alpha Trading">
+                  </div>
+                  <label class="editors-pick-toggle">
+                    <input type="radio" name="brokerPick" value="Top Pick"
+                      <%= editing && editAddBroker.brokerPick && editAddBroker.brokerPick == 'Top Pick' ? 'checked' : '' %>>
+                    ⭐ Top Pick
+                  </label>
+                  <label class="editors-pick-toggle">
+                    <input type="radio" name="brokerPick" value="Editor's Pick"
+                      <%= editing && editAddBroker.brokerPick && editAddBroker.brokerPick == "Editor's Pick" ? 'checked' : '' %>>
+                    Editor's Pick
+                  </label>
+                  <label class="editors-pick-toggle">
+                    <input type="radio" name="brokerPick" value=""
+                      <%= !editing || !editAddBroker.brokerPick ? 'checked' : '' %>> None
+                  </label>
+
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="brokerLogo">Broker logo URL</label>
+                  <input id="brokerLogo" value="<%= editing ? editAddBroker.brokerLogo : '' %>" type="text"
+                    name="brokerLogo" class="form-input" placeholder="https://example.com/logo.png">
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Rating & description -->
+            <div class="form-section">
+              <div class="form-section-title"><span class="step-dot">2</span> Rating &amp; summary</div>
+
+              <div class="broker-form-grid">
+                <div class="form-group full-width">
+                  <label for="brokerRating">Rating <span class="label-hint">— 0 to 5, decimals allowed</span></label>
+                  <div class="rating-field">
+                    <input id="brokerRating" type="number" value="<%= editing? editAddBroker.brokerRating : '0' %>"
+                      name="brokerRating" class="form-input" min="0" max="5" step="0.1" placeholder="0.0"
+                      style="max-width: 110px;">
+                    <div class="rating-stars">
+                      <span class="star">★</span>
+                      <span class="star">★</span>
+                      <span class="star">★</span>
+                      <span class="star">★</span>
+                      <span class="star">★</span>
+                    </div>
+                    <span class="rating-readout">Current: <strong id="ratingReadout">0.0</strong> / 5</span>
+                  </div>
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="brokerHeading">Heading Description</label>
+                  <textarea id="brokerHeading" name="brokerHeading" class="form-textarea"
+                    placeholder="Write a short heading for the broker..."><%= editing ? editAddBroker.brokerHeading : '' %></textarea>
+                </div>
+                <div class="form-group full-width">
+                  <label for="DeatiledBrokerDescription">Detailed Description</label>
+                  <textarea id="DeatiledBrokerDescription" name="DeatiledBrokerDescription" class="form-textarea"
+                    placeholder="Write a Detailed description for the broker..."><%= editing ? editAddBroker.DeatiledBrokerDescription : '' %></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: Classification tags -->
+            <div class="form-section">
+              <div class="form-section-title"><span class="step-dot">3</span> Classification</div>
+
+              <div class="broker-form-grid">
+                <fieldset class="full-width form-fieldset">
+                  <legend>Data tags</legend>
+                  <div class="checkbox-grid checkbox-grid--3">
+                    <label class="checkbox-item"><input type="checkbox" name="brokerDataTags" value="ecn"
+                        <%= editing && editAddBroker.brokerDataTags && editAddBroker.brokerDataTags.includes('ecn') ? 'checked' : '' %>>
+                      ECN
+                      Brokers</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerDataTags" value="standard"
+                        <%= editing && editAddBroker.brokerDataTags && editAddBroker.brokerDataTags.includes('standard') ? 'checked' : '' %>>
+                      Standard</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerDataTags" value="crypto"
+                        <%= editing && editAddBroker.brokerDataTags && editAddBroker.brokerDataTags.includes('crypto') ? 'checked' : '' %>>
+                      Crypto
+                      Friendly</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerDataTags" value="low-deposit"
+                        <%= editing && editAddBroker.brokerDataTags && editAddBroker.brokerDataTags.includes('low-deposit') ? 'checked' : '' %>>
+                      Low
+                      Deposit</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerDataTags" value="welcome-bonus"
+                        <%= editing && editAddBroker.brokerDataTags && editAddBroker.brokerDataTags.includes('welcome-bonus') ? 'checked' : '' %>>
+                      Welcome
+                      Bonus</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerDataTags" value="Instant-withdrawal"
+                        <%= editing && editAddBroker.brokerDataTags && editAddBroker.brokerDataTags.includes('Instant-withdrawal') ? 'checked' : '' %>>
+                      Instant Withdrawal</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerDataTags" value="JazzCash-Easypaisa"
+                        <%= editing && editAddBroker.brokerDataTags && editAddBroker.brokerDataTags.includes('JazzCash-Easypaisa') ? 'checked' : '' %>>
+                      JazzCash / Easypaisa
+                    </label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerDataTags" value="Islamic-Account"
+                        <%= editing && editAddBroker.brokerDataTags && editAddBroker.brokerDataTags.includes('Islamic-Account') ? 'checked' : '' %>>
+                      Islamic Account</label>
+                      <label class="checkbox-item"><input type="checkbox" name="brokerDataTags" value="24By7CustomerSupport"
+                        <%= editing && editAddBroker.brokerDataTags && editAddBroker.brokerDataTags.includes('24By7CustomerSupport') ? 'checked' : '' %>>
+                      24/7 Customer Support</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerDataTags" value="Crypto-CFDs"
+                        <%= editing && editAddBroker.brokerDataTags && editAddBroker.brokerDataTags.includes('Crypto-CFDs') ? 'checked' : '' %>>
+                      Crypto CFDs</label>
+                  </div>
+                </fieldset>
+
+                <fieldset class="full-width form-fieldset">
+                  <legend>Broker tags</legend>
+                  <div class="checkbox-grid checkbox-grid--3" id="brokerTagsContainer">
+                    <label class="checkbox-item"><input type="checkbox" name="brokerTags" value="FCA"
+                        <%= editing && editAddBroker.brokerTags && editAddBroker.brokerTags.includes('FCA') ? 'checked' : '' %>>
+                      FCA</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerTags" value="CySEC"
+                        <%= editing && editAddBroker.brokerTags && editAddBroker.brokerTags.includes('CySEC') ? 'checked' : '' %>>
+                      CySEC</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerTags" value="ECN"
+                        <%= editing && editAddBroker.brokerTags && editAddBroker.brokerTags.includes('ECN') ? 'checked' : '' %>>
+                      ECN</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerTags" value="Instant Withdrawal"
+                        <%= editing && editAddBroker.brokerTags && editAddBroker.brokerTags.includes('Instant Withdrawal') ? 'checked' : '' %>>
+                      Instant Withdrawal</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerTags" value="ASIC"
+                        <%= editing && editAddBroker.brokerTags && editAddBroker.brokerTags.includes('ASIC') ? 'checked' : '' %>>
+                      ASIC</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerTags" value="$30 Bonus"
+                        <%= editing && editAddBroker.brokerTags && editAddBroker.brokerTags.includes('$30 Bonus') ? 'checked' : '' %>>
+                      $30 Bonus</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerTags" value="MT4/MT5"
+                        <%= editing && editAddBroker.brokerTags && editAddBroker.brokerTags.includes('MT4/MT5') ? 'checked' : '' %>>
+                      MT4/MT5</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerTags" value="Raw Spreads"
+                        <%= editing && editAddBroker.brokerTags && editAddBroker.brokerTags.includes('Raw Spreads') ? 'checked' : '' %>>
+                      Raw Spreads</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerTags" value="cTrader"
+                        <%= editing && editAddBroker.brokerTags && editAddBroker.brokerTags.includes('cTrader') ? 'checked' : '' %>>
+                      cTrader</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerTags" value="Crypto CFDs"
+                        <%= editing && editAddBroker.brokerTags && editAddBroker.brokerTags.includes('Crypto CFDs') ? 'checked' : '' %>>
+                      Crypto CFDs</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerTags" value="MT5"
+                        <%= editing && editAddBroker.brokerTags && editAddBroker.brokerTags.includes('MT5') ? 'checked' : '' %>>
+                      MT5</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerTags" value="Standard"
+                        <%= editing && editAddBroker.brokerTags && editAddBroker.brokerTags.includes('Standard') ? 'checked' : '' %>>
+                      Standard</label>
+                    <label class="checkbox-item"><input type="checkbox" name="brokerTags" value="MT4"
+                        <%= editing && editAddBroker.brokerTags && editAddBroker.brokerTags.includes('MT4') ? 'checked' : '' %>>
+                      MT4</label>
+                    <button id="addMoreBrokerTagsBtn" onclick="addMoreBrokerTags(event)" type="button"
+                      class="btn-primary" style="margin-top: 10px;">
+                      Add More
+                    </button>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+
+            <!-- Step 4: Trading conditions -->
+            <div class="form-section">
+              <div class="form-section-title"><span class="step-dot">4</span> Trading conditions</div>
+
+              <div class="inline-inputs inline-inputs--3">
+                 <div class="form-group">
+                  <label for="brokerFoundYear">Broker Found in Year</label>
+                  <input id="brokerFoundYear" type="date" value="<%= editing? editAddBroker.brokerFoundYear : '' %>"
+                    name="brokerFoundYear" class="form-input" placeholder="e.g. 2018">
+                </div>
+                <div class="form-group">
+                  <label for="brokerLeverage">Leverage</label>
+                  <input id="brokerLeverage" type="text" value="<%= editing? editAddBroker.brokerLeverage : '' %>"
+                    name="brokerLeverage" class="form-input" placeholder="e.g. 1:500">
+                </div>
+
+                <div class="form-group">
+                  <label for="brokerMinDeposit">Minimum deposit</label>
+                  <div class="input-with-prefix">
+                    <span class="input-prefix">$</span>
+                    <input id="brokerMinDeposit" type="number"
+                      value="<%= editing? editAddBroker.brokerMinDeposit : '' %>" name="brokerMinDeposit"
+                      class="form-input" placeholder="100">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="brokerMinSpread">Minimum spread</label>
+                  <input id="brokerMinSpread" type="text" value="<%= editing? editAddBroker.brokerMinSpread : '' %>"
+                    name="brokerMinSpread" class="form-input" placeholder="0.0" step="0.1">
+                </div>
+                <div class="form-group">
+                  <label for="commissionLot">Commission/Lot</label>
+                  <div class="input-with-prefix">
+                    <span class="input-prefix">$</span>
+                    <input id="brokerMinDeposit" type="number" value="<%= editing? editAddBroker.commissionLot : '' %>"
+                      name="commissionLot" class="form-input" placeholder="100">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="welcomeBonus">Welcome Bonus</label>
+                  <div class="input-with-prefix">
+                    <span class="input-prefix">$</span>
+                    <input id="brokerMinDeposit" type="number" value="<%= editing? editAddBroker.welcomeBonus : '' %>"
+                      name="welcomeBonus" class="form-input" placeholder="100">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-actions">
+              <span class="form-actions-hint">Changes are saved only after you click Save Broker.</span>
+              <a href="/admin" class="btn-secondary">Back to Admin</a>
+              <button type="submit" class="btn-primary">Save Broker</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let ratingInput = document.querySelector('input[name="brokerRating"]');
+    const ratingReadout = document.getElementById('ratingReadout');
+
+    let ratingStars = document.querySelectorAll('.rating-stars span');
+    console.log(ratingInput);
+    console.log(ratingStars);
+
+
+    // MY LOGIC ::::::::::::::::::::::::::::::::::::::::::
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+      let ratingInput = document.querySelector('input[name="brokerRating"]');
+      const ratingReadout = document.getElementById('ratingReadout');
+      let ratingStars = document.querySelectorAll('.rating-stars span');
+
+      console.log("Input:", ratingInput);
+      console.log("Stars:", ratingStars);
+
+      // 1. PURE DRAWING LOGIC: Colors stars based on the value passed to it
+      function updateStars(value) {
+        let val = parseFloat(value) || 0;
+
+        // Reset all stars
+        ratingStars.forEach(star => {
+          star.classList.remove('full-filled-star', 'half-filled-star');
+        });
+
+        // Fill stars up to the value limit
+        for (let i = 0; i < val; i++) {
+          if (!ratingStars[i]) break;
+
+          if (Number.isInteger(val)) {
+            ratingStars[i].classList.add('full-filled-star');
+          } else {
+            ratingStars[i].classList.add('full-filled-star');
+            // If we are looking at the fractional star (e.g., index 3 for a 3.5 rating)
+            if (val - i < 1) {
+              ratingStars[i].classList.replace('full-filled-star', 'half-filled-star');
+            }
+          }
+        }
+
+        // Update text readout (e.g., 4.5)
+        if (ratingReadout) {
+          ratingReadout.textContent = val.toFixed(1);
+        }
+      }
+
+      // 2. INITIALIZE ON PAGE LOAD (For Editing Mode Data)
+      if (ratingInput) {
+        updateStars(ratingInput.value);
+      }
+
+      // 3. STAR CLICK LOGIC: Setup click event listeners ONCE outside updateStars
+      ratingStars.forEach((star, index) => {
+        star.addEventListener('click', function () {
+          let starValue = index + 1; // e.g., click 3rd star = value 3
+          console.log('Star clicked! Setting value to:', starValue);
+
+          if (ratingInput) {
+            ratingInput.value = starValue; // Update input element value
+            ratingInput.dispatchEvent(new Event('input')); // Notify system of change
+            updateStars(starValue); // Redraw stars based on click selection
+          }
+        });
+      });
+
+      // 4. MANUAL TYPING INPUT LISTENERS
+      if (ratingInput) {
+        ratingInput.addEventListener('input', function () {
+          updateStars(this.value);
+        });
+
+        ratingInput.addEventListener('keyup', function () {
+          let numericValue = parseFloat(this.value);
+
+          if (numericValue > 5) {
+            this.value = 5;
+            this.dispatchEvent(new Event('input'));
+            updateStars(5);
+          } else if (numericValue < 0) {
+            this.value = 0;
+            this.dispatchEvent(new Event('input'));
+            updateStars(0);
+          }
+        });
+      }
+    });
+
+
+
+
+
+
+
+
+    // VS Code Logic ::::::::::::::::::::::::::::::::::::::::::
+
+    //  ratingInput.addEventListener('input', function () {
+    //     // 1. Clear all stars
+    //     ratingStars.forEach(star => {
+    //       star.classList.remove('full-filled-star', 'half-filled-star');
+    //     });
+
+    //     // 2. Parse the value to a number (use parseInt or Number)
+    //     let ratingValue = parseFloat(this.value);
+
+    //     // 3. Loop through the stars and fill them based on the rating value
+    //     for (let i = 0; i < ratingStars.length; i++) {
+    //       if (i < Math.floor(ratingValue)) {
+    //         ratingStars[i].classList.add('full-filled-star');
+    //       } else if (i === Math.floor(ratingValue) && ratingValue % 1 !== 0) {
+    //         ratingStars[i].classList.add('half-filled-star');
+    //       }
+    //     }
+    //   });
+
+
+
+    let brokerMinSpread = document.querySelector('input[name="brokerMinSpread"]');
+    if (brokerMinSpread) {
+      brokerMinSpread.addEventListener('input', function (e) {
+        // 1. If deleting, do absolutely nothing (let the user delete naturally)
+        if (e.inputType && e.inputType.startsWith('delete')) return;
+
+        // 2. Strip out everything except numbers and the dot
+        let clean = this.value.replace(/[^0-9.]/g, '');
+
+        // 3. If there is a number but no dot after the first digit, inject it
+        if (clean.length > 0 && !clean.includes('.')) {
+          clean = clean.charAt(0) + '.' + clean.slice(1);
+        }
+
+        this.value = clean;
+      });
+    }
+
+    let brokerLeverage = document.querySelector('input[name="brokerLeverage"]');
+    if (brokerLeverage) {
+      brokerLeverage.addEventListener('input', function (e) {
+        // 1. If deleting, do absolutely nothing
+        if (e.inputType && e.inputType.startsWith('delete')) return;
+
+        // 2. Strip out everything except numbers and the colon
+        let clean = this.value.replace(/[^0-9:]/g, '');
+
+        // 3. If there is a number but no colon after the first digit, inject it
+        if (clean.length > 0 && !clean.includes(':')) {
+          clean = clean.charAt(0) + ':' + clean.slice(1);
+        }
+
+        this.value = clean;
+      });
+    }
+
+
+
+    // ---- Additive UI helpers (do not affect form submission logic) ----
+
+
+
+    // Show a live preview of the logo image if the URL resolves
+    const brokerLogoInput = document.getElementById('brokerLogo');
+    const logoPreview = document.getElementById('logoPreview');
+    if (brokerLogoInput && logoPreview) {
+      brokerLogoInput.addEventListener('input', function () {
+        const url = this.value.trim();
+        if (!url) {
+          logoPreview.innerHTML = '<span class="logo-preview-fallback">🏷️</span>';
+          return;
+        }
+        const img = new Image();
+        img.onload = () => {
+          logoPreview.innerHTML = '';
+          logoPreview.appendChild(img);
+        };
+        img.onerror = () => {
+          logoPreview.innerHTML = '<span class="logo-preview-fallback">⚠️</span>';
+        };
+        img.src = url;
+        img.alt = 'Broker logo preview';
+      });
+    }
+    let container = document.querySelector('#brokerTagsContainer');
+    const originalLabelItem = container.querySelector('.checkbox-item');
+    const originalInputItem = container.querySelector('.checkbox-item').firstChild;
+    let addMoreBrokerTagsBtn = document.querySelector('#addMoreBrokerTagsBtn');
+    let defaultBrokerTags = ['FCA', 'CySEC', 'ECN', 'Instant Withdrawal', 'ASIC', '$30 Bonus', 'MT4/MT5', 'Raw Spreads',
+      'cTrader', 'Crypto CFDs', 'MT5', 'Standard', 'MT4'
+    ];
+    let brokerTagsDatabase = `<%= editing && editAddBroker.brokerTags %>`;
+
+    // FIX: If the backend template prints "false" or is empty, initialize an empty array instead of splitting
+    let arrayOfBrokerTags = [];
+    if (brokerTagsDatabase && brokerTagsDatabase !== "false" && brokerTagsDatabase !== "undefined") {
+      arrayOfBrokerTags = brokerTagsDatabase.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+    }
+
+    console.log('this is brokerTagsDatabase', typeof (brokerTagsDatabase));
+    arrayOfBrokerTags = arrayOfBrokerTags.filter(tag => !defaultBrokerTags.includes(tag));
+
+    // Initialize initial base variables
+    let inputBrokerTag;
+    inputBrokerTag = document.createElement('input');
+
+    let copyOfOriginalLabelItem;
+    let deleteBtn;
+    deleteBtn = document.createElement('button');
+    let okayBtn;
+    okayBtn = document.createElement('button');
+
+    // Create the very first element workspace clone
+    copyOfOriginalLabelItem = originalLabelItem.cloneNode(true);
+    copyOfOriginalLabelItem.innerHTML = originalInputItem.outerHTML + '';
+
+    // Define properties for the first element immediately so references don't get lost
+    inputBrokerTag.type = 'text';
+    inputBrokerTag.placeholder = 'Enter broker tag';
+    inputBrokerTag.classList.add('form-input', 'inputBrokerTag');
+
+    inputBrokerTag.addEventListener('click', function (e) {
+      e.stopPropagation();
+    });
+
+    okayBtn.type = 'button';
+    okayBtn.value = 'OK';
+    okayBtn.textContent = 'OK';
+    okayBtn.classList.add('okayBtn');
+
+    deleteBtn.type = 'button';
+    deleteBtn.value = 'Delete';
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.classList.add('deleteBtn');
+
+    // Append the interactive layout elements to your first clone right away
+    copyOfOriginalLabelItem.appendChild(inputBrokerTag);
+    copyOfOriginalLabelItem.appendChild(deleteBtn);
+    copyOfOriginalLabelItem.appendChild(okayBtn);
+
+    // Hidden initially: Only show this empty creator input wrapper when Add More is clicked
+    copyOfOriginalLabelItem.style.display = 'none';
+    container.insertBefore(copyOfOriginalLabelItem, addMoreBrokerTagsBtn);
+
+    // Updated Handler: safely isolates clean database items from blank text templates
+    function brokerTagInputHandler(targetClone, newTagValue, isOkBtnClicked) {
+      let localDelete = document.createElement('button');
+      localDelete.type = 'button';
+      localDelete.value = 'Delete';
+      localDelete.textContent = 'Delete';
+      localDelete.classList.add('deleteBtn');
+
+      localDelete.addEventListener('click', function (e) {
+        e.stopPropagation();
+        targetClone.remove();
+      });
+
+      // Grab a live structural pointer to the existing checkbox element node
+      let currentCheckbox = targetClone.querySelector('input[type="checkbox"]');
+
+      if (!currentCheckbox) {
+        currentCheckbox = document.createElement('input');
+        currentCheckbox.type = 'checkbox';
+        currentCheckbox.name = 'brokerTags';
+      }
+
+      // IF FROM DATABASE: Keep it normally checked and fully interactive
+      if (newTagValue !== '' && !isOkBtnClicked) {
+        currentCheckbox.value = newTagValue;
+        currentCheckbox.checked = true;
+        currentCheckbox.setAttribute('checked', 'checked');
+
+        targetClone.innerHTML = '';
+        targetClone.appendChild(currentCheckbox);
+        targetClone.appendChild(document.createTextNode(' ' + newTagValue + ' '));
+        targetClone.appendChild(localDelete);
+
+        currentCheckbox.addEventListener('change', function () {
+          if (currentCheckbox.checked) {
+            currentCheckbox.setAttribute('checked', 'checked');
+          } else {
+            currentCheckbox.removeAttribute('checked');
+          }
+        });
+
+        // Re-enable editing when clicking on the existing item block text layout
+        targetClone.addEventListener('click', function editExistingTag(e) {
+          if (e.target === currentCheckbox || e.target === localDelete) return;
+          e.preventDefault();
+
+          let editInput = document.createElement('input');
+          editInput.type = 'text';
+          editInput.value = newTagValue;
+          editInput.classList.add('form-input', 'inputBrokerTag');
+
+          editInput.addEventListener('click', function (evt) {
+            evt.stopPropagation();
+          });
+
+          let editOkay = document.createElement('button');
+          editOkay.type = 'button';
+          editOkay.textContent = 'OK';
+          editOkay.classList.add('okayBtn');
+
+          // Build edit context fields seamlessly
+          targetClone.innerHTML = '';
+          targetClone.appendChild(currentCheckbox);
+          targetClone.appendChild(editInput);
+          targetClone.appendChild(editOkay);
+          targetClone.appendChild(localDelete);
+
+          editInput.focus();
+
+          editOkay.addEventListener('click', function (evt) {
+            evt.stopPropagation();
+            let freshVal = editInput.value.trim();
+
+            if (freshVal === '') {
+              alert('Broker tag value cannot be empty!');
+              editInput.focus();
+              return;
+            }
+
+            brokerTagInputHandler(targetClone, freshVal, true);
+          });
+        });
+      } else {
+        // IF CREATED BY ADD MORE: Disable it during configuration workspace setup
+        currentCheckbox.disabled = false;
+        currentCheckbox.style.pointerEvents = 'auto';
+        currentCheckbox.value = newTagValue;
+        currentCheckbox.checked = true;
+        currentCheckbox.setAttribute('checked', 'checked');
+
+        targetClone.innerHTML = '';
+        targetClone.appendChild(currentCheckbox);
+        targetClone.appendChild(document.createTextNode(' ' + newTagValue + ' '));
+        targetClone.appendChild(localDelete);
+
+        currentCheckbox.addEventListener('change', function () {
+          if (currentCheckbox.checked) {
+            currentCheckbox.setAttribute('checked', 'checked');
+          } else {
+            currentCheckbox.removeAttribute('checked');
+          }
+        });
+      }
+
+      container.insertBefore(targetClone, addMoreBrokerTagsBtn);
+    }
+
+    let newTagValue = inputBrokerTag.value.trim();
+
+    let isChecked;
+
+    function handleLabelClick(event, isChecked) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (copyOfOriginalLabelItem.firstChild.checked && isChecked === 'yes') {
+        copyOfOriginalLabelItem.firstChild.checked = !copyOfOriginalLabelItem.firstChild.checked;
+        copyOfOriginalLabelItem.firstChild.removeAttribute('checked');
+      } else if (!copyOfOriginalLabelItem.firstChild.checked && isChecked === 'yes') {
+        copyOfOriginalLabelItem.firstChild.checked = false;
+        copyOfOriginalLabelItem.firstChild.removeAttribute('checked');
+      }
+    }
+
+    storedLabelListener = (event) => {
+      handleLabelClick(event, 'yes')
+    };
+
+    // Process database tags on configuration startup
+    if (originalLabelItem.firstChild.checked && arrayOfBrokerTags.length === 0) {
+      copyOfOriginalLabelItem.firstChild.checked = !copyOfOriginalLabelItem.firstChild.checked;
+      copyOfOriginalLabelItem.firstChild.removeAttribute('checked');
+      copyOfOriginalLabelItem.addEventListener('click', storedLabelListener);
+
+    } else if (originalLabelItem.firstChild.checked && arrayOfBrokerTags.length > 0) {
+      for (let i = 0; i < arrayOfBrokerTags.length; i++) {
+        let loopClone = originalLabelItem.cloneNode(true);
+        loopClone.innerHTML = originalInputItem.outerHTML + '';
+        brokerTagInputHandler(loopClone, arrayOfBrokerTags[i], false);
+      }
+
+    } else {
+      if (copyOfOriginalLabelItem && copyOfOriginalLabelItem.firstChild) {
+        copyOfOriginalLabelItem.addEventListener('click', storedLabelListener);
+      }
+      for (let i = 0; i < arrayOfBrokerTags.length; i++) {
+        let loopClone = originalLabelItem.cloneNode(true);
+        loopClone.innerHTML = originalInputItem.outerHTML + '';
+        brokerTagInputHandler(loopClone, arrayOfBrokerTags[i], false);
+      }
+    }
+
+    // Attach controls for adding new elements dynamically via buttons
+    okayBtn.addEventListener('click', (event) => {
+      okayBtnClick(event);
+    });
+
+    let isOkBtnClicked = 0;
+
+    function okayBtnClick(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      isOkBtnClicked = 1;
+      const freshValue = inputBrokerTag.value.trim();
+
+      if (freshValue === '') {
+        alert('Please enter a tag name before clicking OK!');
+        inputBrokerTag.focus();
+        return;
+      }
+
+      let submissionClone = originalLabelItem.cloneNode(false);
+      brokerTagInputHandler(submissionClone, freshValue, true);
+
+      inputBrokerTag.value = '';
+      copyOfOriginalLabelItem.style.display = 'none';
+    }
+
+    deleteBtn.addEventListener('click', function () {
+      inputBrokerTag.value = '';
+      copyOfOriginalLabelItem.style.display = 'none';
+    });
+
+    // Define a global scope window function bridge to satisfy your inline HTML click attribute
+    window.addMoreBrokerTags = function (event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      copyOfOriginalLabelItem.style.display = 'inline-flex';
+      inputBrokerTag.focus();
+    };
+
+    if (addMoreBrokerTagsBtn) {
+      addMoreBrokerTagsBtn.addEventListener('click', window.addMoreBrokerTags);
+    }
+    // }
+  </script>
+  <%- include('../partials/footer') %>
+
+  <script src="/js/theme.js"></script>
+
+  <script src="/js/script.js"></script>
+</body>
+
+</html>

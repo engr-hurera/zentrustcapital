@@ -1,0 +1,275 @@
+<%- include('partials/head') %>
+
+  <link rel="stylesheet" href="/css/styles-pages.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/header.css">
+  <style>
+    
+    .market-tabs { display:flex; gap:8px; margin-bottom:28px; flex-wrap:wrap; }
+    .market-tab {
+      padding:8px 22px; border-radius:50px; font-size:0.85rem; font-weight:600;
+      background:var(--pages-bg3); border:1px solid var(--pages-border); color:var(--pages-text2); cursor:pointer;
+      transition:all var(--pages-transition);
+    }
+    .card{
+          margin-bottom:32px;
+    }
+    .card>div{
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          flex-wrap:wrap;
+          gap:16px;
+    }
+    .sessions{
+      display:flex;
+      gap:24px;
+      flex-wrap:wrap;
+    }
+    .market-tab.active { background: linear-gradient(135deg, var(--blue-to-teal12), var(--darkBlue-to-sage2));
+    color: var(--btn-text);
+    box-shadow: var(--shadow-btn-main); 
+    border-color: var(--darkBlue-to-sage2);
+
+  }
+    .market-tab:hover{
+      color: var(--pages-font-display);
+    border-color: var(--darkBlue-to-sage2);
+    }
+    .market-tab.active:hover{
+    color: var(--btn-text);
+  }
+
+    
+    .market-card {
+      background:var(--pages-card-bg); border:1px solid var(--pages-border); border-radius:var(--pages-radius);
+      padding:18px 20px; display:flex; align-items:center; justify-content:space-between;
+      transition:all var(--pages-transition);
+    }
+    @keyframes shadowAnimation {
+   0%,
+  100% {
+    box-shadow:0 0 0px var(--pages-green);
+    /* opacity: 1; */
+    /* transform: scale(1) */
+  }
+
+  50% {
+    box-shadow: 0px 0 10px 2px var(--pages-green);
+
+    /* opacity: .3; */
+    /* transform: scale(.7) */
+ }
+ 
+}
+    .market-card:hover { border-color:rgba(201,168,76,0.3); transform: translateY(-2px);}
+    .pair-name { font-family:var(--pages-font-display); font-weight:700; font-size:1rem; margin-bottom:3px; }
+    .pair-full { font-size:0.76rem; color:var(--pages-text3); }
+    .price-main { font-family:var(--pages-font-display); font-weight:800; font-size:1.2rem; }
+    .price-change { font-size:0.85rem; font-weight:600; margin-left:8px; }
+    .spread-info { font-size:0.78rem; color:var(--pages-text3); margin-top:3px; }
+    .sentiment-bar { height:8px; border-radius:4px; background:var(--pages-bg4); overflow:hidden; margin-top:8px; width:100%; }
+    .sentiment-fill { height:100%; background:linear-gradient(90deg, var(--pages-green), var(--pages-gold)); }
+    .session-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; }
+    .session-open { background:var(--pages-green); box-shadow:0 0 6px var(--pages-green); 
+    animation: shadowAnimation 1.4s ease infinite;
+    }
+    .session-closed { background:var(--pages-text3); }
+ 
+
+    /* New classes for former inline styles */
+    .page-desc {
+      color: var(--pages-text2);
+      margin-top: 12px;
+    }
+    .session-time {
+      font-size: 0.88rem;
+    }
+    .session-closed-text {
+      color: var(--pages-text3);
+    }
+    .price-column {
+      text-align: right;
+    }
+    #market-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .cta-section {
+      text-align: center;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+<%- include('partials/header') %>
+
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="container">
+<div class="breadcrumb"><a href="/">Home</a><span>/</span><span>Markets</span></div>
+<span class="section-label">
+      <div class="ld">✦</div>
+        Real-time Data</span>
+      <h1>Market <span class="text-gold">Overview</span></h1>
+      <p class="page-desc">Live quotes, spreads, and market sentiment at a glance. Data refreshed every 30 seconds.</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <!-- Sessions -->
+      <div class="card mb-48">
+        <div>
+          <h3 style="font-family:var(--pages-font-display);">Trading Sessions</h3>
+          <div class="sessions">
+            <div><span class="session-dot session-open"></span><span class="session-time">Sydney <span class="text-green">Open</span></span></div>
+            <div><span class="session-dot session-open"></span><span class="session-time">Tokyo <span class="text-green">Open</span></span></div>
+            <div><span class="session-dot session-closed"></span><span class="session-time">London <span class="session-closed-text">Closed</span></span></div>
+            <div><span class="session-dot session-closed"></span><span class="session-time">New York <span class="session-closed-text">Closed</span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="market-tabs">
+        <button class="market-tab active" onclick="filterMarket(this,'all')">All</button>
+        <button class="market-tab" onclick="filterMarket(this,'forex')">Forex</button>
+        <button class="market-tab" onclick="filterMarket(this,'metals')">Metals</button>
+        <button class="market-tab" onclick="filterMarket(this,'crypto')">Crypto</button>
+        <button class="market-tab" onclick="filterMarket(this,'indices')">Indices</button>
+      </div>
+
+      <!-- Market grid -->
+      <div id="market-grid">
+
+        <div class="market-card" data-cat="forex">
+          <div><div class="pair-name">EUR/USD</div><div class="pair-full">Euro / US Dollar</div></div>
+          <div class="price-column">
+            <div><span class="price-main">1.08472</span><span class="price-change text-green">▲ +0.38%</span></div>
+            <div class="spread-info">Spread: 0.8 | Bid: 1.08468 | Ask: 1.08476</div>
+          </div>
+        </div>
+
+        <div class="market-card" data-cat="forex">
+          <div><div class="pair-name">GBP/USD</div><div class="pair-full">British Pound / US Dollar</div></div>
+          <div class="price-column">
+            <div><span class="price-main">1.26834</span><span class="price-change text-red">▼ -0.12%</span></div>
+            <div class="spread-info">Spread: 1.0 | Bid: 1.26829 | Ask: 1.26839</div>
+          </div>
+        </div>
+
+        <div class="market-card" data-cat="forex">
+          <div><div class="pair-name">USD/JPY</div><div class="pair-full">US Dollar / Japanese Yen</div></div>
+          <div class="price-column">
+            <div><span class="price-main">149.823</span><span class="price-change text-green">▲ +0.55%</span></div>
+            <div class="spread-info">Spread: 0.6 | Bid: 149.820 | Ask: 149.826</div>
+          </div>
+        </div>
+
+        <div class="market-card" data-cat="forex">
+          <div><div class="pair-name">USD/CHF</div><div class="pair-full">US Dollar / Swiss Franc</div></div>
+          <div class="price-column">
+            <div><span class="price-main">0.88412</span><span class="price-change text-red">▼ -0.09%</span></div>
+            <div class="spread-info">Spread: 0.9 | Bid: 0.88407 | Ask: 0.88417</div>
+          </div>
+        </div>
+
+        <div class="market-card" data-cat="forex">
+          <div><div class="pair-name">AUD/USD</div><div class="pair-full">Australian Dollar / USD</div></div>
+          <div class="price-column">
+            <div><span class="price-main">0.65213</span><span class="price-change text-green">▲ +0.21%</span></div>
+            <div class="spread-info">Spread: 1.1 | Bid: 0.65207 | Ask: 0.65219</div>
+          </div>
+        </div>
+
+        <div class="market-card" data-cat="forex">
+          <div><div class="pair-name">USD/CAD</div><div class="pair-full">US Dollar / Canadian Dollar</div></div>
+          <div class="price-column">
+            <div><span class="price-main">1.35641</span><span class="price-change text-green">▲ +0.14%</span></div>
+            <div class="spread-info">Spread: 1.2 | Bid: 1.35635 | Ask: 1.35647</div>
+          </div>
+        </div>
+
+        <div class="market-card" data-cat="metals">
+          <div><div class="pair-name">XAU/USD</div><div class="pair-full">Gold / US Dollar</div></div>
+          <div class="price-column">
+            <div><span class="price-main">2,034.50</span><span class="price-change text-green">▲ +0.22%</span></div>
+            <div class="spread-info">Spread: 25 | Bid: 2034.25 | Ask: 2034.75</div>
+          </div>
+        </div>
+
+        <div class="market-card" data-cat="metals">
+          <div><div class="pair-name">XAG/USD</div><div class="pair-full">Silver / US Dollar</div></div>
+          <div class="price-column">
+            <div><span class="price-main">22.847</span><span class="price-change text-red">▼ -0.31%</span></div>
+            <div class="spread-info">Spread: 3 | Bid: 22.829 | Ask: 22.865</div>
+          </div>
+        </div>
+
+        <div class="market-card" data-cat="crypto">
+          <div><div class="pair-name">BTC/USD</div><div class="pair-full">Bitcoin / US Dollar</div></div>
+          <div class="price-column">
+            <div><span class="price-main">43,218</span><span class="price-change text-green">▲ +1.84%</span></div>
+            <div class="spread-info">Spread: 45 | Available 24/7</div>
+          </div>
+        </div>
+
+        <div class="market-card" data-cat="crypto">
+          <div><div class="pair-name">ETH/USD</div><div class="pair-full">Ethereum / US Dollar</div></div>
+          <div class="price-column">
+            <div><span class="price-main">2,287.40</span><span class="price-change text-green">▲ +2.11%</span></div>
+            <div class="spread-info">Spread: 8 | Available 24/7</div>
+          </div>
+        </div>
+
+        <div class="market-card" data-cat="indices">
+          <div><div class="pair-name">US500</div><div class="pair-full">S&amp;P 500 Index</div></div>
+          <div class="price-column">
+            <div><span class="price-main">4,892</span><span class="price-change text-green">▲ +0.43%</span></div>
+            <div class="spread-info">Spread: 0.4 | Market Hours Only</div>
+          </div>
+        </div>
+
+        <div class="market-card" data-cat="indices">
+          <div><div class="pair-name">GER40</div><div class="pair-full">DAX 40 Index</div></div>
+          <div class="price-column">
+            <div><span class="price-main">16,784</span><span class="price-change text-red">▼ -0.18%</span></div>
+            <div class="spread-info">Spread: 1.0 | Market Hours Only</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-section">
+        <a href="open-account.html" class="btn-primary">Start Trading These Pairs →</a>
+      </div>
+    </div>
+  </section>
+</div>
+  <%- include('partials/footer') %>
+  <script src="/js/theme.js"></script>
+<script src="/js/script.js"></script>
+
+<script>
+function filterMarket(btn, cat) {
+  document.querySelectorAll('.market-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.market-card').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'flex' : 'none';
+  });
+}
+// Simulate live updates
+setInterval(() => {
+  document.querySelectorAll('.price-main').forEach(el => {
+    const v = parseFloat(el.textContent.replace(',',''));
+    if (!isNaN(v)) {
+      const delta = (Math.random() - 0.5) * 0.0002 * v;
+      const fmt = v > 100 ? v.toFixed(v > 1000 ? 0 : 2) : v.toFixed(5);
+      el.textContent = fmt;
+    }
+  });
+}, 3000);
+</script>
+</body>
+</html>

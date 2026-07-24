@@ -1,0 +1,75 @@
+  <!-- ═══════════ CURSOR -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <header id="hdr">
+    <a href="/" class="logo-wrap">
+      <div class="logo-emblem">Z</div>
+      <div class="logo-copy">
+        <span class="logo-name">ZEN TRUST <em>CAPITAL</em></span>
+        <span class="logo-tagline">Forex &amp; CFD Intelligence</span>
+      </div>
+    </a>
+    <nav class="main">
+      <a href="/admin/add-broker"
+        class="currentPageNavlinks <%= currentPage === 'addEditBroker' ? ' currentPageNavlinksActive' : ' ' %>">Add Broker</a>
+
+      <a href="/"
+        class="currentPageNavlinks <%= currentPage === 'home' ? ' currentPageNavlinksActive' : ' ' %>">Home</a>
+      <a href="/brokers"
+        class="currentPageNavlinks <%= currentPage === 'brokers' ? ' currentPageNavlinksActive' : ' ' %>">Brokers</a>
+      <span>
+        <!-- <div> -->
+        <a href="/ib-program"
+          class="currentPageNavlinks <%= currentPage === 'ib-program' ? ' currentPageNavlinksActive' : ' ' %>">Partnership</a>
+        <ul class="drop-down">
+          <li><a href="/broker-review"
+              class="currentPageNavlinks <%= currentPage === 'broker-review' ? ' currentPageNavlinksActive' : ' ' %> rel="noopener noreferrer" class="currentPageNavlinks">Bluevox</a></li>
+          <li><a href="/broker-review"
+              class="currentPageNavlinks <%= currentPage === 'broker-review' ? ' currentPageNavlinksActive' : ' ' %> rel="noopener noreferrer" class="currentPageNavlinks">Kvb</a></li>
+          <li><a href="/broker-review"
+              class="currentPageNavlinks <%= currentPage === 'broker-review' ? ' currentPageNavlinksActive' : ' ' %> rel="noopener noreferrer" class="currentPageNavlinks">Trade Marsha</a></li>
+        </ul>
+        <!-- </div> -->
+      </span>
+      <a href="/markets"
+        class="currentPageNavlinks <%= currentPage === 'markets' ? ' currentPageNavlinksActive' : ' ' %>">Markets</a>
+      <a href="/education"
+        class="currentPageNavlinks<%= currentPage === 'education' ? ' currentPageNavlinksActive' : ' ' %>">Education</a>
+      <a href="/articles"
+        class="currentPageNavlinks <%= currentPage === 'articles' ? ' currentPageNavlinksActive' : ' ' %>">Insights</a>
+      <a href="/faq"
+        class="currentPageNavlinks <%= currentPage === 'faq' ? ' currentPageNavlinksActive' : ' ' %>">FAQ</a>
+    </nav>
+
+    <div class="hd-actions">
+      <%- include('theme-home-btn') %>
+
+      <a class="btn-ghost" href="/login">Login</a>
+      <a class="btn-cta" href="/open-account">Open Account →</a>
+      <!-- <button class="btn-ghost"><a  href="/login">Login</a></button> -->
+      <!-- The anchor tag acts as the button, removing the illegal nested <button> -->
+      <!-- <a href="/login" class="btn-ghost active" role="button">Login</a> -->
+
+      <!-- <button class="btn-cta"><a href="/open-account">Open Account →</a></button> -->
+      <!-- <button class="btn-ghost">Login</button> -->
+      <!-- <button class="btn-cta">Open Account →</button> -->
+    </div>
+    <button class="hbg" onclick="toggleMob()" id="hbg" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+  <!-- ═══════════ MOBILE NAV -->
+  <div class="mob-nav" id="mobNav">
+    <a href="/admin/add-broker" onclick="closeMob()">Add Broker</a>
+    <a href="/" onclick="closeMob()">Home</a>
+    <a href="/brokers" onclick="closeMob()">Brokers</a>
+    <a href="/markets" onclick="closeMob()">Markets</a>
+    <a href="/education" onclick="closeMob()">Education</a>
+    <a href="/articles" onclick="closeMob()">Insights</a>
+    <a href="/bluevox" onclick="closeMob()">Partnership</a>
+    <a href="/faq" onclick="closeMob()">FAQ</a>
+    <div class="mob-btns">
+      <button class="btn-ghost"><a href="/login">Login</a></button>
+      <button class="btn-cta"><a href="/open-account">Open Account</a></button>
+    </div>
+  </div>
