@@ -12,7 +12,10 @@
     <nav class="main">
       <a href="/admin/add-broker"
         class="currentPageNavlinks <%= currentPage === 'addEditBroker' ? ' currentPageNavlinksActive' : ' ' %>">Add Broker</a>
-
+<a href="/dashboard/admin"
+        class="currentPageNavlinks <%= currentPage === 'admin-dashboard' ? ' currentPageNavlinksActive' : ' ' %>">Admin Dashboard</a>
+        <a href="/dashboard"
+        class="currentPageNavlinks <%= currentPage === 'dashboard' ? ' currentPageNavlinksActive' : ' ' %>">Client Dashboard</a>
       <a href="/"
         class="currentPageNavlinks <%= currentPage === 'home' ? ' currentPageNavlinksActive' : ' ' %>">Home</a>
       <a href="/brokers"
@@ -61,6 +64,8 @@
   <!-- ═══════════ MOBILE NAV -->
   <div class="mob-nav" id="mobNav">
     <a href="/admin/add-broker" onclick="closeMob()">Add Broker</a>
+    <a href="/dashboard/admin" onclick="closeMob()">Admin Dashboard</a>
+        <a href="/dashboard" onclick="closeMob()">Client Dashboard</a>
     <a href="/" onclick="closeMob()">Home</a>
     <a href="/brokers" onclick="closeMob()">Brokers</a>
     <a href="/markets" onclick="closeMob()">Markets</a>

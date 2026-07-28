@@ -253,6 +253,7 @@ function colorChangeToDark() {
   root.style.setProperty('--hero-out-hover-border', '#e6c96a');
   root.style.setProperty('--hero-out-hover-color', '#e6c96a');
   root.style.setProperty('--hero-out-hover-bg', 'rgba(200, 168, 75, .05)');
+  applyProgressBars();
   console.log(window.getComputedStyle(document.getElementsByTagName('header')[0]).backgroundColor);
   // document.getElementsByTagName('header')[0].style.backgroundColor ="rgba(10, 14, 13, .7)";
   console.log(document.getElementsByTagName('header')[0].style.backgroundColor);
@@ -484,6 +485,7 @@ function colorChangeToLight() {
   root.style.setProperty('--hero-out-hover-bg', '');
   console.log(isOn);
   document.getElementsByTagName('header')[0].style.backgroundColor = "rgba(240, 245, 249, 0.82)";
+  applyProgressBars();
   console.log("2", document.getElementsByTagName('header')[0].style.backgroundColor);
 }
 
@@ -570,3 +572,17 @@ console.log(isOn);
 window.addEventListener('mousemove', () => {
   document.querySelectorAll('body,nav,footer,div,a,button,.bk-card,.art-card,.why-card,.edu-card,.tool-card,.test-card').forEach(el => el.style.transition = "");
 })
+
+
+// The helper function
+function applyProgressBars() {
+  document.querySelectorAll('.tier-fill').forEach(el => {
+    const percent = el.getAttribute('data-progress');
+    if (percent !== null) {
+      el.style.width = percent + '%';
+    }
+  });
+}
+
+// Run on page load
+document.addEventListener("DOMContentLoaded", applyProgressBars);

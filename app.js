@@ -20,6 +20,7 @@ const compareBrokersPageRouter = require('./routes/compare-brokers.js');
 const brokerReviewRouter = require('./routes/broker-review.js');
 const aboutReviewRouter = require('./routes/about.js');
 const addEditBroker = require('./routes/admin/addEditBroker.js');
+const dashboardPageRouter = require('./routes/dashboard.js');
 
 
 const { connectMongo } = require('./utils/databaseutil.js');
@@ -50,6 +51,7 @@ app.use(compareBrokersPageRouter);
 app.use(brokerReviewRouter);
 app.use(aboutReviewRouter);
 app.use(addEditBroker);
+app.use(dashboardPageRouter);
 
 // app.get('/',(req, res, next) => {
 //     res.render('index');
