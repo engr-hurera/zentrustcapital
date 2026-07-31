@@ -1,25 +1,21 @@
-const mongo = require('mongodb').MongoClient;
+const mongoose = require("mongoose");
+require("dotenv").config();
 
-const MONGO_URL = "mongodb://atlas-sql-6a3a8334a3aa764bbccd075b-spv4ov.a.query.mongodb.net/sample_mflix?ssl=true&authSource=admin";
+// Use your process.env variable name. (Make sure it matches MONGO_URI from app.js)
+const DB_PATH = process.env.MONGO_URI;
 
-let _db;
+const connectMongo = async () => {
+  try {
+    // Mongoose manages its own internal connection state globally
+    await mongoose.connect(DB_PATH);
+    console.log("✅ Mongoose connected to MongoDB successfully.");
+  } catch (err) {
+    console.error("❌ Mongoose connection failure: ", err);
+    throw err; // Throws error up to app.js to stop the server from starting
+  }
+};
 
-const connectMongo = (callback) => {
-    mongo.connect(MONGO_URL)
-    .then(client => {
-        callback(client);
-        _db = client.db('zentrustcapital');
-    }).catch(err => {
-        console.log('Error while connecting to Mongo: ', err);
-    })
-}
-
-const getDb = () => {
-    if (!_db){
-        throw new Error('Database not connected');
-    }
-    return _db;
-}
+// Since Mongoose tracks connections globally, you don't need a manual getDb() function anymore.
+// You can simply import your models anywhere in your app, and Mongoose handles the queries automatically!
 
 exports.connectMongo = connectMongo;
-exports.getDb = getDb;

@@ -4,7 +4,7 @@ exports.getAddBrokerController = (req, res, next) => {
     res.render('admin/addEditBroker', {
         currentPage: 'addEditBroker',
         title: 'Add Broker',
-        editing: false
+        editing: false, isLoggedIn: req.isLoggedIn
     });
 };
 
@@ -14,7 +14,7 @@ exports.postAddBrokerController = (req, res, next) => {
     res.render('admin/addEditBroker', {
         currentPage: 'addEditBroker',
         title: 'Add Broker',
-        editing: false
+        editing: false, isLoggedIn: req.isLoggedIn
     });
     broker = new editAddBroker(
         req.body.brokerDataTags,
@@ -67,7 +67,7 @@ exports.getEditBrokerController = (req, res, next) => {
                     editAddBroker: fetchedBroker,
                     title: 'Edit Broker',
                     currentPage: 'edit-broker',
-                    editing: true
+                    editing: true, isLoggedIn: req.isLoggedIn
                 });
             }
 

@@ -10,17 +10,30 @@
       </div>
     </a>
     <nav class="main">
+      
+      <a href="/"
+        class="currentPageNavlinks <%= currentPage === 'home' ? ' currentPageNavlinksActive' : ' ' %>">Home</a>
+      <a href="/brokers"
+        class="currentPageNavlinks <%= currentPage === 'brokers' ? ' currentPageNavlinksActive' : ' ' %>">Brokers</a>
+      
+      <a href="/markets"
+        class="currentPageNavlinks <%= currentPage === 'markets' ? ' currentPageNavlinksActive' : ' ' %>">Markets</a>
+      <a href="/education"
+        class="currentPageNavlinks<%= currentPage === 'education' ? ' currentPageNavlinksActive' : ' ' %>">Education</a>
+      <a href="/articles"
+        class="currentPageNavlinks <%= currentPage === 'articles' ? ' currentPageNavlinksActive' : ' ' %>">Insights</a>
+      <a href="/faq"
+        class="currentPageNavlinks <%= currentPage === 'faq' ? ' currentPageNavlinksActive' : ' ' %>">FAQ</a>
+
+        <% if (isLoggedIn){ %>
+
       <a href="/admin/add-broker"
         class="currentPageNavlinks <%= currentPage === 'addEditBroker' ? ' currentPageNavlinksActive' : ' ' %>">Add Broker</a>
 <a href="/dashboard/admin"
         class="currentPageNavlinks <%= currentPage === 'admin-dashboard' ? ' currentPageNavlinksActive' : ' ' %>">Admin Dashboard</a>
         <a href="/dashboard"
         class="currentPageNavlinks <%= currentPage === 'dashboard' ? ' currentPageNavlinksActive' : ' ' %>">Client Dashboard</a>
-      <a href="/"
-        class="currentPageNavlinks <%= currentPage === 'home' ? ' currentPageNavlinksActive' : ' ' %>">Home</a>
-      <a href="/brokers"
-        class="currentPageNavlinks <%= currentPage === 'brokers' ? ' currentPageNavlinksActive' : ' ' %>">Brokers</a>
-      <span>
+        <span>
         <!-- <div> -->
         <a href="/ib-program"
           class="currentPageNavlinks <%= currentPage === 'ib-program' ? ' currentPageNavlinksActive' : ' ' %>">Partnership</a>
@@ -34,21 +47,21 @@
         </ul>
         <!-- </div> -->
       </span>
-      <a href="/markets"
-        class="currentPageNavlinks <%= currentPage === 'markets' ? ' currentPageNavlinksActive' : ' ' %>">Markets</a>
-      <a href="/education"
-        class="currentPageNavlinks<%= currentPage === 'education' ? ' currentPageNavlinksActive' : ' ' %>">Education</a>
-      <a href="/articles"
-        class="currentPageNavlinks <%= currentPage === 'articles' ? ' currentPageNavlinksActive' : ' ' %>">Insights</a>
-      <a href="/faq"
-        class="currentPageNavlinks <%= currentPage === 'faq' ? ' currentPageNavlinksActive' : ' ' %>">FAQ</a>
+      <% } %>
     </nav>
 
     <div class="hd-actions">
       <%- include('theme-home-btn') %>
+<% if (!isLoggedIn) { %>
+  <a class="btn-ghost" href="/login">Login</a>
+      <a class="btn-cta" href="/sign-up">Open Account →</a>
 
-      <a class="btn-ghost" href="/login">Login</a>
-      <a class="btn-cta" href="/open-account">Open Account →</a>
+<% } else { %>
+  <form action="/logout" method="post">
+  <button type="submit" class="btn-ghost" href="/logout">Logout</button>
+  </form>
+<% } %>
+
       <!-- <button class="btn-ghost"><a  href="/login">Login</a></button> -->
       <!-- The anchor tag acts as the button, removing the illegal nested <button> -->
       <!-- <a href="/login" class="btn-ghost active" role="button">Login</a> -->

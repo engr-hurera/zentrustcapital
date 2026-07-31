@@ -1,3 +1,3 @@
 exports.marketsPageController = (req, res,next) => {
-    res.render('markets', {currentPage: 'markets', title: 'Markets' });
+    res.render('markets', {currentPage: 'markets', title: 'Markets', isLoggedIn: req.isLoggedIn });
 };

@@ -1,0 +1,520 @@
+<%- include('../partials/head') %>
+
+<link rel="stylesheet" href="/css/styles-pages.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+
+<style>
+  .open-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: calc(100vh - 68px);
+  }
+
+  .open-left {
+    background: linear-gradient(135deg, var(--pages-bg2), var(--pages-bg));
+    border-right: 1px solid var(--pages-border);
+    padding: 60px 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .open-left::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse 70% 60% at 80% 50%,
+      rgba(201, 168, 76, 0.07) 0%,
+      transparent 60%
+    );
+  }
+
+  .open-right {
+    padding: 60px 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .benefit-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--pages-border);
+  }
+
+  .benefit-row:last-child {
+    border-bottom: none;
+  }
+
+  .benefit-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+        background: var(--pages-card-bg);
+    border: 1px solid var(--bk-border);
+    
+    box-shadow: var(--shadow-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .benefit-text strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .benefit-text span {
+    font-size: 0.82rem;
+    color: var(--pages-text2);
+  }
+
+  .steps-indicator {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .step-dot {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--pages-bg4);
+    transition: background var(--pages-transition);
+  }
+
+  .step-dot.active {
+    background: var(--darkBlue-to-teal12);
+  }
+
+  .step-panel {
+    display: none;
+  }
+
+  .step-panel.active {
+    display: block;
+  }
+
+  .privacy-link {
+    color: var(--darkBlue-to-teal12);
+  }
+
+  nav.main,
+  .btn-cta {
+    display: none;
+  }
+
+  #btt,
+  footer,
+  .risk-note {
+    display: none;
+  }
+
+  .privacy-text {
+    text-align: center;
+    font-size: 0.76rem;
+    color: var(--pages-text3);
+    margin-top: 20px;
+  }
+
+  /* Removed inline styles */
+
+  .page-wrapper-top {
+    padding-top: 68px;
+  }
+
+  .open-left-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .free-join-label {
+    margin-bottom: 20px;
+  }
+
+  .open-left-heading {
+    margin-bottom: 8px;
+  }
+
+  .open-left-description {
+    margin-bottom: 32px;
+  }
+
+  .open-form-container {
+    max-width: 420px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .open-form-heading {
+    margin-bottom: 6px;
+  }
+
+  .open-form-description {
+    margin-bottom: 28px;
+    font-size: 0.9rem;
+  }
+
+  .step-title {
+    font-family: var(--pages-font-display);
+    font-size: 0.82rem;
+    color: var(--pages-text3);
+    margin-bottom: 20px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .btn-center {
+    justify-content: center;
+  }
+
+  .swap-account-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+        background: var(--pages-card-bg);
+    border: 1px solid var(--bk-border);
+    transition: all .32s;
+    box-shadow: var(--shadow-card);
+    border-radius: 10px;
+    padding: 12px;
+  }
+
+  .gold-checkbox {
+    accent-color: var(--darkBlue-to-teal12);
+  }
+
+  .swap-account-label {
+    font-size: 0.88rem;
+    color: var(--pages-text);
+  }
+
+  .step-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .step-btn-back {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .step-btn-next {
+    flex: 2;
+    justify-content: center;
+  }
+
+  .summary-card {
+    /* background: var(--pages-gold-dim);
+    border-color: rgba(201, 168, 76, 0.3); */
+    margin-bottom: 20px;
+  }
+
+  .summary-title {
+    font-family: var(--pages-font-display);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.88rem;
+  }
+
+  .agreement-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .agreement-checkbox {
+    accent-color: var(--darkBlue-to-teal12);
+    margin-top: 3px;
+  }
+
+  .agreement-label {
+    font-size: 0.82rem;
+    color: var(--pages-text2);
+  }
+
+  .ssl-note {
+    text-align: center;
+    font-size: 0.76rem;
+    color: var(--pages-text3);
+    margin-top: 20px;
+  }
+
+  @media (max-width: 900px) {
+    .open-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .open-left {
+      display: none;
+    }
+  }
+</style>
+</head>
+
+<body>
+  <%- include('../partials/header') %>
+
+  <div class="page-wrapper page-wrapper-top">
+    <div class="open-layout">
+
+      <!-- Left -->
+      <div class="open-left">
+        <div class="open-left-inner">
+  <span class="section-label"><div class="ld">✦</div>
+        Free to Join</span>
+          <h2 class="open-left-heading">
+            Start Trading in <span class="text-gold">Minutes</span>
+          </h2>
+
+          <p class="text-muted open-left-description">
+            Join 50,000+ traders who chose ZEN TRUST CAPITAL as their trusted partner.
+          </p>
+
+          <div>
+            <div class="benefit-row">
+              <div class="benefit-icon">⚡</div>
+              <div class="benefit-text">
+                <strong>Up to 1:2000 Leverage</strong>
+                <span>Maximum market exposure with controlled risk</span>
+              </div>
+            </div>
+
+            <div class="benefit-row">
+              <div class="benefit-icon">💸</div>
+              <div class="benefit-text">
+                <strong>Same-Day Withdrawals</strong>
+                <span>JazzCash, Easypaisa, bank transfer, crypto</span>
+              </div>
+            </div>
+
+            <div class="benefit-row">
+              <div class="benefit-icon">🎁</div>
+              <div class="benefit-text">
+                <strong>$500 Welcome Bonus</strong>
+                <span>Available for eligible new accounts</span>
+              </div>
+            </div>
+
+            <div class="benefit-row">
+              <div class="benefit-icon">🛡️</div>
+              <div class="benefit-text">
+                <strong>FCA Regulated Brokers</strong>
+                <span>Your funds are always segregated</span>
+              </div>
+            </div>
+
+            <div class="benefit-row">
+              <div class="benefit-icon">🌐</div>
+              <div class="benefit-text">
+                <strong>24/7 Urdu Support</strong>
+                <span>Real humans, not bots</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right -->
+      <div class="open-right">
+        <div class="open-form-container">
+
+          <h2 class="open-form-heading">Open Free Account</h2>
+
+          <p class="text-muted open-form-description">
+            Takes less than 2 minutes. No documents needed to start.
+          </p>
+
+         
+<form action="/sign-up" method="post"> 
+  <div class="step-panel active" id="step-1"> 
+    <div class="step-title">Personal Info</div> 
+    
+    <!-- 1. Full Name -->
+    <div class="form-group"> 
+      <label class="form-label">Full Name</label> 
+      <input 
+        type="text" 
+        name="fullName" 
+        class="form-input <%= locals.errors && errors.fullName ? 'input-error' : '' %>" 
+        placeholder="As on CNIC / Passport"
+        value="<%= locals.oldInput ? oldInput.fullName : '' %>"
+      > 
+      <% if (locals.errors && errors.fullName) { %>
+        <span class="error-text"><%= errors.fullName.msg %></span>
+      <% } %>
+    </div> 
+    
+    <!-- 2. Email Address -->
+    <div class="form-group"> 
+      <label class="form-label">Email Address</label> 
+      <input 
+        type="email" 
+        name="email" 
+        class="form-input <%= locals.errors && errors.email ? 'input-error' : '' %>" 
+        placeholder="you@example.com"
+        value="<%= locals.oldInput ? oldInput.email : '' %>"
+      > 
+      <% if (locals.errors && errors.email) { %>
+        <span class="error-text"><%= errors.email.msg %></span>
+      <% } %>
+    </div> 
+    
+<!-- 3. Password -->
+<div class="form-group"> 
+  <label class="form-label">Password</label> 
+  
+  <!-- Add a wrapper div to handle relative layout alignment -->
+  <div class="password-wrapper" style="position: relative; display: flex; align-items: center;">
+    <input 
+      type="password" 
+      id="password-field"
+      name="password" 
+      class="form-input <%= locals.errors && errors.password ? 'input-error' : '' %>" 
+      placeholder="Type your Password"
+      style="width: 100%; padding-right: 45px;"
+    > 
+    <!-- Toggle Triger Element -->
+    <span id="toggle-password" style="position: absolute; right: 15px; cursor: pointer; user-select: none; font-size: 1.1rem; filter: grayscale(1);">👁️</span>
+  </div>
+
+  <div class="password-hint">
+    Must be at least 8 characters long, containing uppercase, lowercase, a number, and a symbol (e.g., @, #, $, !). Spaces are not allowed.
+  </div>
+
+  <% if (locals.errors && errors.password) { %>
+    <span class="error-text"><%= errors.password.msg %></span>
+  <% } %>
+</div> 
+
+
+    
+    <!-- 4. Confirm Password -->
+    <div class="form-group"> 
+      <label class="form-label">Confirm Password</label> 
+      <input 
+        type="password" 
+        name="confirm_password" 
+        class="form-input <%= locals.errors && errors.confirm_password ? 'input-error' : '' %>" 
+        placeholder="Retype your Password"
+      > 
+      <% if (locals.errors && errors.confirm_password) { %>
+        <span class="error-text"><%= errors.confirm_password.msg %></span>
+      <% } %>
+    </div> 
+    
+    <!-- 5. Phone / WhatsApp -->
+    <div class="form-group"> 
+      <label class="form-label">Phone / WhatsApp</label> 
+      <input 
+        type="text" 
+        name="phone" 
+        class="form-input <%= locals.errors && errors.phone ? 'input-error' : '' %>" 
+        placeholder="+92 300 0000000"
+        value="<%= locals.oldInput ? oldInput.phone : '' %>"
+      > 
+      <% if (locals.errors && errors.phone) { %>
+        <span class="error-text"><%= errors.phone.msg %></span>
+      <% } %>
+    </div> 
+    
+    <!-- 6. Country (Dynamic Loop) -->
+    <div class="form-group"> 
+      <label class="form-label">Country</label> 
+      <select name="country" class="form-input <%= locals.errors && errors.country ? 'input-error' : '' %>"> 
+        <option value="" disabled <%= !locals.oldInput || !oldInput.country ? 'selected' : '' %>>-- Select Your Country --</option>
+        
+        <% countryList.forEach(function(country) { %>
+          <option 
+            value="<%= country.code %>" 
+            <%= locals.oldInput && oldInput.country === country.code ? 'selected' : (country.code === 'PK' && !locals.oldInput ? 'selected' : '') %>
+          >
+            <%= country.name %>
+          </option>
+        <% }); %>
+      </select> 
+      <% if (locals.errors && errors.country) { %>
+        <span class="error-text"><%= errors.country.msg %></span>
+      <% } %>
+    </div> 
+  </div> 
+  
+  <!-- 7. Terms Agreement Checkbox -->
+  <div class="agreement-box"> 
+    <input 
+      type="checkbox" 
+      id="agree" 
+      name="agree" 
+      value="1" 
+      class="agreement-checkbox"
+      <%= locals.oldInput && oldInput.agree === '1' ? 'checked' : '' %>
+    > 
+    <label for="agree" class="agreement-label"> 
+      I agree to the <a href="/terms" class="text-gold">Terms of Service</a> and <a href="/privacy" class="text-gold">Privacy Policy</a>. I understand trading involves risk. 
+    </label>
+    <% if (locals.errors && errors.agree) { %>
+      <div class="error-text" style="display: block; margin-top: 5px;"><%= errors.agree.msg %></div>
+    <% } %>
+  </div> 
+  
+  <button type="submit" class="btn-primary w-full btn-center step-btn-next"> 🚀 Create Account </button> 
+  
+  <p class="ssl-note"> 🔒 256-bit SSL encryption · No spam · Unsubscribe anytime </p> 
+</form>
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <%- include('../partials/footer') %>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/script.js"></script>
+
+  <script>
+  const passwordField = document.getElementById('password-field');
+  const togglePassword = document.getElementById('toggle-password');
+
+  togglePassword.addEventListener('click', function () {
+    // Toggle the type attribute between text and password
+    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordField.setAttribute('type', type);
+    
+    // Switch the eye icon indicator depending on state
+    this.textContent = type === 'password' ? '👁️' : '🙈';
+  });
+
+    
+    function submitAccount() {
+      alert('🎉 Account created successfully! Check your email for login credentials.');
+    }
+  </script>
+</body>
+</html>

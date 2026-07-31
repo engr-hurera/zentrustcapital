@@ -1,3 +1,3 @@
 exports.privacyPageController = (req, res,next) => {
-    res.render('privacy', {currentPage: 'privacy', title: 'Privacy Policy Zen Capital' });
+    res.render('privacy', {currentPage: 'privacy', title: 'Privacy Policy Zen Capital' , isLoggedIn: req.isLoggedIn});
 };

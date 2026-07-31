@@ -5,7 +5,7 @@ exports.compareBrokersPageController = (req, res, next) => {
         res.render('compare-brokers', {
             editAddBroker: brokers,
             currentPage: 'compare-brokers',
-            title: 'Compare Brokers'
+            title: 'Compare Brokers', isLoggedIn: req.isLoggedIn
         });
         // })
         console.log('Fetched brokers:', brokers);
@@ -24,7 +24,7 @@ exports.dataTagsCompareBrokersPageController = (req, res, next) => {
         res.render('compare-brokers', {
             editAddBroker: fetchedBroker,
             currentPage: req.params.h,
-            title: 'Brokers with '+ title
+            title: 'Brokers with '+ title, isLoggedIn: req.isLoggedIn
         });
     })
     // })
@@ -42,7 +42,7 @@ exports.leverageCompareBrokersPageController = (req, res, next) => {
         res.render('compare-brokers', {
             editAddBroker: fetchedBroker,
             currentPage: req.params.a,
-            title: 'Brokers Max Leverage upto '+ urlLeverage
+            title: 'Brokers Max Leverage upto '+ urlLeverage, isLoggedIn: req.isLoggedIn
         });
     })
     // })
@@ -61,7 +61,7 @@ exports.depositCompareBrokersPageController = (req, res, next) => {
         res.render('compare-brokers', {
             editAddBroker: fetchedBroker,
             currentPage: req.params.a,
-            title: urlDeposit + ' Min Deposit Brokers'
+            title: urlDeposit + ' Min Deposit Brokers', isLoggedIn: req.isLoggedIn
         });
     })
     // })

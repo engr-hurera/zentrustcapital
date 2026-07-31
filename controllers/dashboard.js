@@ -74,7 +74,7 @@ exports.clientDashboardController = (req, res, next) => {
     currentPage: 'dashboard',
     title: 'Dashboard | Zen Trust Capital',
     role: 'client',
-    data: sampleClientData,
+    data: sampleClientData, isLoggedIn: req.isLoggedIn
   });
 };
 
@@ -83,6 +83,6 @@ exports.adminDashboardController = (req, res, next) => {
     currentPage: 'admin-dashboard',
     title: 'Admin Dashboard | Zen Trust Capital',
     role: 'admin',
-    data: sampleAdminData,
+    data: sampleAdminData, isLoggedIn: req.isLoggedIn
   });
 };

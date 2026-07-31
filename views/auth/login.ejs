@@ -1,0 +1,235 @@
+<%- include('../partials/head') %>
+
+<link rel="stylesheet" href="/css/styles-pages.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+<style>
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-container {
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 24px;
+    margin: 75px 0 auto;
+  }
+
+  .auth-card {
+    background: var(--pages-card-bg);
+    border: 1px solid var(--pages-border);
+    border-radius: var(--pages-radius-lg);
+    padding: 40px;
+  }
+
+  .auth-logo {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .auth-title {
+    font-family: var(--pages-font-display);
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .auth-sub {
+    color: var(--pages-text2);
+    font-size: 0.88rem;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .divider-text {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .divider-text span {
+    font-size: 0.8rem;
+    color: var(--pages-text3);
+    white-space: nowrap;
+  }
+
+  .divider-text::before,
+  .divider-text::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--pages-border);
+  }
+
+  .social-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--pages-radius);
+    background: var(--pages-bg3);
+    border: 1px solid var(--pages-border);
+    color: var(--pages-text);
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all var(--pages-transition);
+    margin-bottom: 10px;
+  }
+
+  .checkbox-div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  #remember {
+    accent-color: var(--darkBlue-to-teal12);
+  }
+
+  .social-btn:hover {
+    border-color: var(--pages-gold);
+  }
+
+  .forgot {
+    font-size: 0.82rem;
+    color: var(--darkBlue-to-teal12);
+    float: right;
+  }
+
+  .auth-footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 0.86rem;
+    color: var(--pages-text2);
+  }
+
+  .auth-footer a {
+    color: var(--darkBlue-to-teal12);
+  }
+
+  .theme-corner {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+  }
+
+  .btn-primary {
+    justify-content: center;
+    padding: 14px;
+  }
+
+  .privacy-link {
+    color: var(--darkBlue-to-teal12);
+  }
+
+  nav.main,
+  .btn-ghost {
+    display: none;
+  }
+
+  #btt,
+  footer,
+  .risk-note {
+    display: none;
+  }
+
+  .privacy-text {
+    text-align: center;
+    font-size: 0.76rem;
+    color: var(--pages-text3);
+    margin-top: 20px;
+  }
+</style>
+</head>
+
+<body>
+  
+  <%- include('../partials/header') %>
+<form action="/login" method="post" class="auth-container">
+  <div class="auth-card">
+    <div class="auth-title">Welcome Back</div>
+    <div class="auth-sub">Sign in to your ZTC account</div>
+
+    <!-- 1. Email Address Field -->
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input 
+        type="email" 
+        name="email" 
+        class="form-input <%= locals.errors && errors.email ? 'input-error' : '' %>" 
+        placeholder="you@example.com" 
+        value="<%= locals.oldInput ? oldInput.email : '' %>"
+      />
+      <% if (locals.errors && errors.email) { %>
+        <span class="error-text"><%= errors.email.msg %></span>
+      <% } %>
+    </div>
+
+    <!-- 2. Password Field with Visibility Eye Toggle -->
+    <div class="form-group">
+      <label class="form-label">Password <a href="#" class="forgot">Forgot password?</a></label>
+      <div class="password-wrapper" style="position: relative; display: flex; align-items: center;">
+        <input 
+          type="password" 
+          id="login-password"
+          name="password" 
+          class="form-input <%= locals.errors && errors.email ? 'input-error' : '' %>" 
+          placeholder="Enter your password" 
+          style="width: 100%; padding-right: 45px;"
+        />
+        <span id="toggle-login-password" style="position: absolute; right: 15px; cursor: pointer; user-select: none; font-size: 1.1rem; filter: grayscale(1);">👁️</span>
+      </div>
+      <% if (locals.errors && errors.password) { %>
+        <span class="error-text"><%= errors.password.msg %></span>
+      <% } %>
+    </div>
+
+    <!-- 3. Remember Me -->
+    <div class="checkbox-div">
+      <input type="checkbox" id="remember" name="remember" value="true" />
+      <label for="remember">Remember me for 30 days</label>
+    </div>
+
+    <button type="submit" class="btn-primary w-full">Sign In →</button>
+
+    <div class="divider-text"><span>or continue with</span></div>
+    <button type="button" class="social-btn">🌐 Continue with Google</button>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="/sign-up">Open Free Account →</a>
+    </div>
+  </div>
+
+  <p class="privacy-text">Protected by 256-bit SSL encryption. <a class="privacy-link" href="/privacy">Privacy Policy</a></p>
+</form>
+
+<!-- 4. Client Side Password Visibility Handler Script -->
+<script>
+  const loginPasswordField = document.getElementById('login-password');
+  const toggleLoginPassword = document.getElementById('toggle-login-password');
+
+  toggleLoginPassword.addEventListener('click', function () {
+    const isPassword = loginPasswordField.getAttribute('type') === 'password';
+    loginPasswordField.setAttribute('type', isPassword ? 'text' : 'password');
+    this.textContent = isPassword ? '🙈' : '👁️';
+  });
+</script>
+
+
+  <%- include('../partials/footer') %>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/script.js"></script>
+</body>
+
+</html>

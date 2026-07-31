@@ -1,7 +1,7 @@
 const editAddBroker = require('../models/Admin/broker.js');
 
 exports.brokerReviewPageController = (req, res,next) => {
-    res.render('broker-review', {currentPage: 'broker-review', title: 'Brokers Review' });
+    res.render('broker-review', {currentPage: 'broker-review', title: 'Brokers Review' , isLoggedIn: req.isLoggedIn});
 };
 
 exports.readMoreBrokerReviewPageController = (req, res, next) => {
@@ -19,7 +19,7 @@ exports.readMoreBrokerReviewPageController = (req, res, next) => {
             res.render('broker-review', {
                 editAddBroker: fetchedBroker,
                 title: fetchedBroker.brokerName,
-                currentPage: fetchedBroker.brokerName
+                currentPage: fetchedBroker.brokerName, isLoggedIn: req.isLoggedIn
             })
         }
     })

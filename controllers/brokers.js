@@ -7,7 +7,7 @@ exports.brokerPageController = (req, res, next) => {
         res.render('brokers', {
             editAddBroker: brokers,
             currentPage: 'brokers',
-            title: 'Top Brokers'
+            title: 'Top Brokers', isLoggedIn: req.isLoggedIn
         });
         // })
         console.log('Fetched brokers:', brokers);
@@ -29,7 +29,7 @@ exports.regulatedBrokerPageController = (req, res, next) => {
         res.render('brokers', {
             editAddBroker: fetchedBroker,
             currentPage: 'regulatedBrokers',
-            title: 'Regulated Brokers ' + requiredTags
+            title: 'Regulated Brokers ' + requiredTags, isLoggedIn: req.isLoggedIn
         });
     })
     // })
