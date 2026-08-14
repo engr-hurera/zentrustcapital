@@ -3,642 +3,171 @@
 <link rel="stylesheet" href="/css/styles-pages.css">
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/broker-review.css">
 
-<style>
-  .review-layout {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 32px;
-  }
-
-  @media(max-width:900px) {
-    .review-layout {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .sticky-sidebar {
-    position: sticky;
-    top: 90px;
-    height: fit-content;
-  }
-
-  .score-circle {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    background: conic-gradient(var(--text3) calc(var(--pages-pct) * 3.6deg), var(--pages-bg4) 0);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--pages-font-display);
-    font-size: 1.5rem;
-    font-weight: 800;
-    position: relative;
-    margin: 0 auto 12px;
-  }
-
-  .score-circle::before {
-    content: '';
-    position: absolute;
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background: var(--pages-bg3);
-  }
-
-  .score-circle span {
-    position: relative;
-    z-index: 1;
-  }
-
-  .score-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .score-bar {
-    flex: 1;
-    height: 6px;
-    background: var(--pages-bg4);
-    border-radius: 3px;
-    margin: 0 12px;
-    overflow: hidden;
-  }
-
-  .score-fill {
-    height: 100%;
-    background: var(--text3);
-    border-radius: 3px;
-  }
-
-  .pros-cons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .pros-list li,
-  .cons-list li {
-    font-size: 0.88rem;
-    color: var(--pages-text2);
-    padding: 6px 0;
-    display: flex;
-    gap: 8px;
-  }
-
-  .pros-list li::before {
-    content: '✓';
-    color: var(--pages-green);
-    font-weight: 700;
-  }
-
-  .cons-list li::before {
-    content: '✗';
-    color: var(--pages-red);
-    font-weight: 700;
-  }
-
-  .review-section {
-    margin-bottom: 40px;
-  }
-
-  .review-section h3 {
-    font-family: var(--pages-font-display);
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--pages-border);
-  }
-
-  .spec-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-
-  .spec-item {
-    background: var(--pages-bg3);
-    border: 1px solid var(--pages-border);
-    border-radius: 10px;
-    padding: 16px;
-  }
-
-  .spec-item label {
-    font-size: 0.75rem;
-    color: var(--pages-text3);
-    display: block;
-    margin-bottom: 4px;
-  }
-
-  .spec-item strong {
-    font-family: var(--pages-font-display);
-    font-size: 1.1rem;
-  }
-
-  .broker-header-flex {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-
-  .broker-logo {
-    width: 64px;
-    height: 64px;
-    border-radius: 14px;
-    background: var(--pages-bg4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--pages-font-display);
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: var(--pages-gold);
-  }
-
-  .broker-title-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .broker-subtitle-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 8px;
-  }
-
-  .verdict-card {
-    background: var(--footer-bg);
-    border-color: var(--footer-border);
-    margin-bottom: 32px;
-  }
-
-  .verdict-title {
-    color: var(--text3);
-    font-family: var(--pages-font-display);
-  }
-
-  .verdict-text {
-    color: var(--pages-text);
-    margin-top: 10px;
-    line-height: 1.8;
-  }
-
-  .pros-header {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--pages-green);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-
-  .cons-header {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--pages-red);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-
-  .score-label {
-    font-size: 0.88rem;
-    width: 140px;
-  }
-
-  .score-value {
-    font-size: 0.88rem;
-    color: var(--text3);
-    font-weight: 700;
-  }
-
-  .overall-score-label {
-    font-size: 0.82rem;
-    color: var(--pages-text3);
-  }
-
-  .stars-margin {
-    margin: 8px 0;
-  }
-
-  .cta-button {
-    justify-content: center;
-    margin-top: 16px;
-  }
-
-  .risk-warning {
-    font-size: 0.75rem;
-    color: var(--pages-text3);
-    margin-top: 10px;
-  }
-
-  .quick-facts-title {
-    font-family: var(--pages-font-display);
-    margin-bottom: 14px;
-  }
-
-  .quick-fact-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.86rem;
-  }
-
-  .sticky-sidebar>.card {
-    text-align: center;
-    margin-bottom: 16px;
-  }
-
-  /* NEW: replaced inline styles */
-
-  .review-title {
-    font-size: 2rem;
-  }
-
-  .review-rating-text {
-    color: var(--pages-text2);
-    font-size: 0.9rem;
-  }
-
-  .score-fill-safety {
-    width: 98%;
-  }
-
-  .score-fill-fees {
-    width: 96%;
-  }
-
-  .score-fill-withdrawal {
-    width: 100%;
-  }
-
-  .score-fill-platforms {
-    width: 88%;
-  }
-
-  .score-fill-support {
-    width: 90%;
-  }
-
-  .score-row-last {
-    margin-bottom: 0;
-  }
-
-  .quick-facts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .strong-tag>span {
-    margin-right: 2px;
-  }
-</style>
 </head>
 
 <body>
+
   <%- include('partials/header') %>
 
-
-
   <div class="page-wrapper">
-    <div class="page-header">
-      <div class="container">
-        <div class="breadcrumb">
-          <a href="/">Home</a><span>/</span>
-          <a href="/brokers">Brokers</a><span>/</span>
-          <span><%= editAddBroker.brokerName %> Review</span>
-        </div>
-          <% 
 
-        // 1. Define the tags you care about
-        const requiredTags = ['MT4', 'MT5', 'CySEC', 'MT4/MT5']; 
-        // 2. Filter the individual broker's tags array to find matches
-                     const hasMatchedTags = requiredTags.filter(tag => editAddBroker.brokerTags.includes(tag));
+    <% if (!broker) { %>
 
-      %>
-        <div class="broker-header-flex">
-          <div class="broker-logo"><%= editAddBroker.brokerLogo %></div>
-
-          <div>
-            <div class="broker-title-row">
-              <h1 class="review-title"><%= editAddBroker.brokerName %> <%= editAddBroker.brokerFoundYear ? `${editAddBroker.brokerFoundYear.split('-')[0]}` : '' %>
-</h1>
-              <span class="badge badge-gold"><%= editAddBroker.brokerEditorsPick %></span>
-                    <%- hasMatchedTags && hasMatchedTags.length > 0 ? `<span class="badge badge-green">Regulated</span>` : '' %>
-
-            </div>
-
-            <div class="broker-subtitle-row">
-              <div hidden class="broker-rating" data-rating="<%= editAddBroker.brokerRating %>"></div>
-              <div class="stars rating-stars">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-              </div>
-              <span class="review-rating-text"><%= editAddBroker.brokerRating %>/5.0 — Based on 2,400+ reviews</span>
-            </div>
+      <div class="page-header">
+        <div class="container">
+          <div class="breadcrumb">
+            <a href="/">Home</a>
+            <span>/</span>
+            <a href="/brokers">Brokers</a>
+            <span>/</span>
+            <span>Broker Review</span>
           </div>
-        </div>
-      </div>
-    </div>
 
-    <section class="section">
-      <div class="container">
-        <div class="review-layout">
+          <div class="broker-header-flex">
+            <div>
+              <h1 class="review-title">
+                Brokers Review
+              </h1>
 
-          <!-- Main content -->
-          <div>
-
-            <div class="card verdict-card">
-              <h3 class="verdict-title">⚡ ZEN TRUST CAPITAL Verdict</h3>
-              <p class="verdict-text">
-                <%= editAddBroker.DeatiledBrokerDescription %>
+              <p class="review-rating-text">
+                Explore our broker reviews.
               </p>
             </div>
-
-            <div class="review-section">
-              <h3>📋 Key Specifications</h3>
-              <div class="spec-grid">
-                <div class="spec-item"><label>Min Deposit</label><strong
-                    class="text-gold">$<%= editAddBroker.brokerMinDeposit %></strong></div>
-                <div class="spec-item"><label>Max Leverage</label><strong
-                    class="text-gold"><%= editAddBroker.brokerLeverage %></strong></div>
-                <div class="spec-item"><label>Min Spread</label><strong
-                    class="text-green"><%= editAddBroker.brokerMinSpread %>
-                    pips</strong></div>
-                <div class="spec-item"><label>Commission</label><strong>$<%= editAddBroker.commissionLot ? editAddBroker.commissionLot : '0' %>/lot</strong>
-                </div>
-               
-                <div class="spec-item"><label>Regulation</label>
-                  <strong class="strong-tag">
-                 
-
-                       
-                    <%= hasMatchedTags && hasMatchedTags.length > 0 ? `${hasMatchedTags.join(', ')}` : 'N/A' %>
-      
-
-
-                  </strong>
-              
-
-
-                </div>
-                <div class="spec-item"><label>Platforms</label><strong>
-                  <%= editAddBroker.brokerTags.filter(tag => ['MT4/MT5', 'MT4', 'MT5', 'cTrader'].includes(tag)).join(', ') || 'N/A'%>
-                  </strong></div>
-                    <%- editAddBroker.brokerFoundYear ? `<div class="spec-item"><label>Founded</label><strong>${editAddBroker.brokerFoundYear.split('-')[0]}</strong></div>` : '' %>
-
-                <div class="spec-item"><label>Withdrawals</label><strong class="text-green">
-                <%= editAddBroker.brokerDataTags.includes('Instant-withdrawal') ? 'Instant' : 'No Instant' %></td>
-                  </strong></div>
-                <div class="spec-item"><label>Islamic Account</label><strong class="text-green"><%= editAddBroker.brokerDataTags.includes('Islamic-Account') ? '✓ Yes' : '✗ No' %></strong></div>
-              </div>
-            </div>
-
-            <div class="review-section">
-              <h3>✅ Pros & Cons</h3>
-              <div class="card pros-cons">
-                <div>
-  <div class="pros-header">Pros</div>
-  <ul class="pros-list">
-    <% let hasPros = false; %>
-
-    <!-- 1. Low Deposit Pro (<= $10) -->
-    <% if (editAddBroker.brokerMinDeposit && Number(editAddBroker.brokerMinDeposit) <= 10) { hasPros = true; %>
-      <li>Ultra-low $<%= editAddBroker.brokerMinDeposit %> minimum deposit</li>
-    <% } %>
-
-    <!-- 2. Zero/Low Spread Pro -->
-    <% if (editAddBroker.brokerMinSpread && Number(editAddBroker.brokerMinSpread) === 0) { hasPros = true; %>
-      <li>Raw spreads starting from 0.0 pips</li>
-    <% } else if (editAddBroker.brokerMinSpread && Number(editAddBroker.brokerMinSpread) < 0.5) { hasPros = true; %>
-      <li>Competitive spreads from <%= editAddBroker.brokerMinSpread %> pips</li>
-    <% } %>
-
-    <!-- 3. Low Commission Pro (<= $3) -->
-    <% if (editAddBroker.commissionLot && Number(editAddBroker.commissionLot) <= 3) { hasPros = true; %>
-      <li>Low commission of just $<%= editAddBroker.commissionLot %> per lot</li>
-    <% } %>
-
-    <!-- 4. Features via Data Tags -->
-    <% if (editAddBroker.brokerDataTags.includes('Instant-withdrawal')) { hasPros = true; %>
-      <li>Instant same-day withdrawals</li>
-    <% } %>
-    <% if (editAddBroker.brokerDataTags.includes('JazzCash-Easypaisa')) { hasPros = true; %>
-      <li>Easy local deposits via JazzCash & Easypaisa</li>
-    <% } %>
-    <% if (editAddBroker.brokerDataTags.includes('Islamic-Account')) { hasPros = true; %>
-      <li>100% Shariah-compliant Islamic swap-free accounts</li>
-    <% } %>
-
-    <!-- Fallback if no Pros matched -->
-    <% if (!hasPros) { %>
-      <li class="text-muted">Standard account conditions</li>
-    <% } %>
-  </ul>
-</div>
-
-<div>
-  <div class="cons-header">Cons</div>
-  <ul class="cons-list">
-    <% let hasCons = false; %>
-
-    <!-- 1. High Minimum Deposit Con (> $50) -->
-    <% if (editAddBroker.brokerMinDeposit && Number(editAddBroker.brokerMinDeposit) > 50) { hasCons = true; %>
-      <li>Higher initial entry barrier ($<%= editAddBroker.brokerMinDeposit %> minimum deposit)</li>
-    <% } %>
-
-    <!-- 2. High Spreads Con (>= 1.5 pips) -->
-    <% if (editAddBroker.brokerMinSpread && Number(editAddBroker.brokerMinSpread) >= 1.5) { hasCons = true; %>
-      <li>Wider benchmark spreads (<%= editAddBroker.brokerMinSpread %> pips on standard accounts)</li>
-    <% } %>
-
-    <!-- 3. High Commission Con (>= $7 per lot) -->
-    <% if (editAddBroker.commissionLot && Number(editAddBroker.commissionLot) >= 7) { hasCons = true; %>
-      <li>Expensive commission charges ($<%= editAddBroker.commissionLot %>/lot) on raw accounts</li>
-    <% } %>
-
-    <!-- 4. Missing Core Local Payment Systems -->
-    <% if (!editAddBroker.brokerDataTags.includes('JazzCash-Easypaisa')) { hasCons = true; %>
-      <li>Does not directly support Pakistani mobile wallets (JazzCash/Easypaisa)</li>
-    <% } %>
-
-    <!-- Fallback if no Cons matched -->
-    <% if (!hasCons) { %>
-      <li class="text-green">No major disadvantages reported</li>
-    <% } %>
-  </ul>
-</div>
-
-
-              </div>
-            </div>
-<%
-  // --- 1. REGULATION & SAFETY SCORE ---
-  let safetyScore = 5.0;
-  if (editAddBroker.brokerTags) {
-    const tags = editAddBroker.brokerTags.map(t => t.toUpperCase());
-    if (tags.includes('FCA')) safetyScore += 2.0;
-    if (tags.includes('ASIC')) safetyScore += 2.0;
-    if (tags.includes('CYSEC')) safetyScore += 1.0;
-  }
-  safetyScore = Math.min(Math.max(safetyScore, 1.0), 10.0).toFixed(1);
-
-  // --- 2. SPREADS & FEES SCORE ---
-  let feesScore = 10.0;
-  const spread = editAddBroker.brokerMinSpread ? Number(editAddBroker.brokerMinSpread) : 1.0;
-  const commission = editAddBroker.commissionLot ? Number(editAddBroker.commissionLot) : 7;
-  
-  feesScore -= (spread * 2.0); 
-  feesScore -= (commission * 0.3);
-  feesScore = Math.min(Math.max(feesScore, 1.0), 10.0).toFixed(1);
-
-  // --- 3. DEPOSIT & WITHDRAWAL SCORE ---
-  let fundingScore = 7.0;
-  const dataTags = editAddBroker.brokerDataTags || [];
-  if (dataTags.includes('Instant-withdrawal')) fundingScore += 1.5;
-  if (dataTags.includes('JazzCash-Easypaisa')) fundingScore += 1.5;
-  if (editAddBroker.brokerMinDeposit && Number(editAddBroker.brokerMinDeposit) <= 10) fundingScore += 0.5;
-  fundingScore = Math.min(Math.max(fundingScore, 1.0), 10.0).toFixed(1);
-
-  // --- 4. TRADING PLATFORMS SCORE ---
-  let platformsScore = 6.0;
-  if (editAddBroker.brokerTags) {
-    const tagsLower = editAddBroker.brokerTags.map(t => t.toLowerCase());
-    if (tagsLower.includes('mt4/mt5') || (tagsLower.includes('mt4') && tagsLower.includes('mt5'))) platformsScore += 3.0;
-    else if (tagsLower.includes('mt4') || tagsLower.includes('mt5')) platformsScore += 1.5;
-    if (tagsLower.includes('ctrader')) platformsScore += 1.0;
-  }
-  platformsScore = Math.min(Math.max(platformsScore, 1.0), 10.0).toFixed(1);
-
-  // --- 5. CUSTOMER SUPPORT SCORE ---
-  let supportScore = 7.0;
-  if (dataTags.includes('24By7CustomerSupport')) supportScore += 2.0;
-  if (editAddBroker.brokerDescription && editAddBroker.brokerDescription.toLowerCase().includes('support')) supportScore += 1.0;
-  supportScore = Math.min(Math.max(supportScore, 1.0), 10.0).toFixed(1);
-%>
-
-<div class="review-section">
-  <h3>📊 Category Ratings</h3>
-  <div class="card">
-
-    <!-- Regulation & Safety -->
-    <div class="score-row">
-      <span class="score-label">Regulation & Safety</span>
-      <div class="score-bar">
-        <div class="score-fill score-fill-safety" style="width: <%= safetyScore * 10 %>%;"></div>
+          </div>
+        </div>
       </div>
-      <span class="score-value"><%= safetyScore %></span>
-    </div>
 
-    <!-- Spreads & Fees (TYPO FIXED HERE) -->
-    <div class="score-row">
-      <span class="score-label">Spreads & Fees</span>
-      <div class="score-bar">
-        <div class="score-fill score-fill-fees" style="width: <%= feesScore * 10 %>%;"></div>
-      </div>
-      <span class="score-value"><%= feesScore %></span>
-    </div>
+    <% } else { %>
 
-    <!-- Deposit & Withdrawal -->
-    <div class="score-row">
-      <span class="score-label">Deposit & Withdrawal</span>
-      <div class="score-bar">
-        <div class="score-fill score-fill-withdrawal" style="width: <%= fundingScore * 10 %>%;"></div>
-      </div>
-      <span class="score-value"><%= fundingScore %></span>
-    </div>
+      <!-- =========================================================
+           PAGE HEADER
+      ========================================================== -->
 
-    <!-- Trading Platforms -->
-    <div class="score-row">
-      <span class="score-label">Trading Platforms</span>
-      <div class="score-bar">
-        <div class="score-fill score-fill-platforms" style="width: <%= platformsScore * 10 %>%;"></div>
-      </div>
-      <span class="score-value"><%= platformsScore %></span>
-    </div>
+      <div class="page-header">
 
-    <!-- Customer Support -->
-    <div class="score-row score-row-last">
-      <span class="score-label">Customer Support</span>
-      <div class="score-bar">
-        <div class="score-fill score-fill-support" style="width: <%= supportScore * 10 %>%;"></div>
-      </div>
-      <span class="score-value"><%= supportScore %></span>
-    </div>
+        <div class="container">
 
-  </div>
-</div>
+          <div class="breadcrumb">
 
+            <a href="/">Home</a>
 
+            <span>/</span>
+
+            <a href="/brokers">Brokers</a>
+
+            <span>/</span>
+
+            <span>
+              <%= broker.brokerName %> Review
+            </span>
 
           </div>
 
-          <!-- Sidebar -->
-          <div class="sticky-sidebar">
 
-            <div class="card">
-              <div class="score-circle"><span><%= editAddBroker.brokerRating %></span></div>
-              <div class="overall-score-label">Overall Score</div>
-              <div class="stars rating-stars stars-margin">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-              </div>
-              <a href="/open-account" class="btn-primary w-full cta-button">Open Exness Account</a>
-              <p class="risk-warning">Risk Warning: CFDs are complex instruments.</p>
+          <div class="broker-header-flex">
+
+            <!-- Broker Logo -->
+
+            <div class="broker-logo">
+
+              <% if (
+                broker.brokerLogo &&
+                (
+                  broker.brokerLogo.startsWith("http://") ||
+                  broker.brokerLogo.startsWith("https://")
+                )
+              ) { %>
+
+                <img
+                  src="<%= broker.brokerLogo %>"
+                  alt="<%= broker.brokerName %> logo"
+                  class="broker-logo-image"
+                >
+
+              <% } else if (broker.brokerLogo) { %>
+
+                <%= broker.brokerLogo %>
+
+              <% } else { %>
+
+                <span>
+                  <%= broker.brokerName.charAt(0).toUpperCase() %>
+                </span>
+
+              <% } %>
+
             </div>
 
-            <div class="card">
-              <h4 class="quick-facts-title">Quick Facts</h4>
 
-              <div class="quick-facts-list">
-                    <%- editAddBroker.brokerMinDeposit ? `<div class="quick-fact-row"><span class="text-muted">Min
-                    Deposit</span><strong>$${editAddBroker.brokerMinDeposit}</strong></div>` : '' %>
+            <div>
 
-                <%- editAddBroker.brokerLeverage ? `<div class="quick-fact-row"><span class="text-muted">Max Leverage</span><strong
-                    class="text-gold">${editAddBroker.brokerLeverage}</strong></div>` : '' %>
-                
-<% 
-  // 1. Filter out the specific platform tags first
-  const platforms = editAddBroker.brokerTags ? editAddBroker.brokerTags.filter(t => ['MT4/MT5', 'MT4', 'MT5', 'cTrader'].includes(t)) : []; 
-%>
+              <div class="broker-title-row">
 
-<% // 2. If platform matches exist, display the HTML layout block safely %>
-<% if (platforms.length > 0) { %>
-  <div class="quick-fact-row">
-    <span class="text-muted">Platforms</span>
-    <strong><%= platforms.join(', ') %></strong>
-  </div>
-<% } %>
+                <h1 class="review-title">
 
-                    <%- hasMatchedTags && hasMatchedTags.length > 0 ? `<div class="quick-fact-row">
-                  <span class="text-muted">Regulation</span>
-                  <strong class="strong-tag">
-                      ${hasMatchedTags.join(', ')}
-                  </strong>
-                </div>` : '' %>
+                  <%= broker.brokerName %>
+
+                  <% if (foundedYear) { %>
+                    <%= foundedYear %>
+                  <% } %>
+
+                </h1>
 
 
-                
-                    <div class="quick-fact-row">
-  <span class="text-muted">Local Payments</span>
-  <% if (editAddBroker.brokerDataTags && editAddBroker.brokerDataTags.includes('JazzCash-Easypaisa')) { %>
-    <strong class="text-green">✓ Yes (JazzCash/Easypaisa)</strong>
-  <% } else { %>
-    <strong class="text-green">✗ No</strong>
-  <% } %>
-</div>
+                <% if (broker.brokerPick) { %>
+
+                  <span class="badge badge-gold">
+                    <%= broker.brokerPick %>
+                  </span>
+
+                <% } %>
+
+
+                <% if (isRegulated) { %>
+
+                  <span class="badge badge-green">
+                    Regulated
+                  </span>
+
+                <% } %>
+
+              </div>
+
+
+              <div class="broker-subtitle-row">
+
+                <!-- Rating value is supplied by controller -->
+                <div
+                  class="broker-rating"
+                  data-rating="<%= broker.brokerRating %>"
+                  hidden>
+                </div>
+
+
+                <!-- JavaScript only handles visual stars -->
+
+                <div
+                  class="stars rating-stars"
+                  aria-label="Broker rating <%= broker.brokerRating %> out of 5">
+
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+
+                </div>
+
+
+                <span class="review-rating-text">
+
+                  <%= broker.brokerRating %>/5.0
+
+                  — Based on 2,400+ reviews
+
+                </span>
 
               </div>
 
@@ -647,88 +176,677 @@
           </div>
 
         </div>
+
       </div>
-    </section>
+
+
+      <!-- =========================================================
+           MAIN REVIEW CONTENT
+      ========================================================== -->
+
+      <section class="section">
+
+        <div class="container">
+
+          <div class="review-layout">
+
+
+            <!-- =====================================================
+                 MAIN CONTENT
+            ====================================================== -->
+
+            <div>
+
+
+              <!-- VERDICT -->
+
+              <div class="card verdict-card">
+
+                <h3 class="verdict-title">
+                  ⚡ ZEN TRUST CAPITAL Verdict
+                </h3>
+
+                <p class="verdict-text">
+
+                  <%= broker.DeatiledBrokerDescription ||
+                      broker.brokerHeading ||
+                      "No detailed review is available yet." %>
+
+                </p>
+
+              </div>
+
+
+              <!-- =================================================
+                   KEY SPECIFICATIONS
+              ================================================== -->
+
+              <div class="review-section">
+
+                <h3>
+                  📋 Key Specifications
+                </h3>
+
+
+                <div class="spec-grid">
+
+
+                  <!-- Minimum Deposit -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Min Deposit
+                    </label>
+
+                    <strong class="text-gold">
+
+                      $<%= broker.brokerMinDeposit || 0 %>
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Leverage -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Max Leverage
+                    </label>
+
+                    <strong class="text-gold">
+
+                      <%= broker.brokerLeverage || "N/A" %>
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Spread -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Min Spread
+                    </label>
+
+                    <strong class="text-green">
+
+                      <%= broker.brokerMinSpread || 0 %>
+                      pips
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Commission -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Commission
+                    </label>
+
+                    <strong>
+
+                      $<%= broker.commissionLot || 0 %>/lot
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Regulation -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Regulation
+                    </label>
+
+                    <strong class="strong-tag">
+
+                      <% if (regulationTags.length > 0) { %>
+
+                        <%= regulationTags.join(", ") %>
+
+                      <% } else { %>
+
+                        N/A
+
+                      <% } %>
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Platforms -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Platforms
+                    </label>
+
+                    <strong>
+
+                      <% if (platforms.length > 0) { %>
+
+                        <%= platforms.join(", ") %>
+
+                      <% } else { %>
+
+                        N/A
+
+                      <% } %>
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Founded -->
+
+                  <% if (foundedYear) { %>
+
+                    <div class="spec-item">
+
+                      <label>
+                        Founded
+                      </label>
+
+                      <strong>
+                        <%= foundedYear %>
+                      </strong>
+
+                    </div>
+
+                  <% } %>
+
+
+                  <!-- Withdrawals -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Withdrawals
+                    </label>
+
+                    <strong class="text-green">
+
+                      <% if (
+                        broker.brokerDataTags &&
+                        broker.brokerDataTags.includes(
+                          "Instant-withdrawal"
+                        )
+                      ) { %>
+
+                        Instant
+
+                      <% } else { %>
+
+                        No Instant
+
+                      <% } %>
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Islamic Account -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Islamic Account
+                    </label>
+
+                    <strong class="text-green">
+
+                      <% if (
+                        broker.brokerDataTags &&
+                        broker.brokerDataTags.includes(
+                          "Islamic-Account"
+                        )
+                      ) { %>
+
+                        ✓ Yes
+
+                      <% } else { %>
+
+                        ✗ No
+
+                      <% } %>
+
+                    </strong>
+
+                  </div>
+
+
+                </div>
+
+              </div>
+
+
+              <!-- =================================================
+                   PROS & CONS
+              ================================================== -->
+
+              <div class="review-section">
+
+                <h3>
+                  ✅ Pros & Cons
+                </h3>
+
+
+                <div class="card pros-cons">
+
+
+                  <!-- PROS -->
+
+                  <div>
+
+                    <div class="pros-header">
+                      Pros
+                    </div>
+
+
+                    <ul class="pros-list">
+
+                      <% pros.forEach((pro) => { %>
+
+                        <li>
+                          <%= pro %>
+                        </li>
+
+                      <% }) %>
+
+                    </ul>
+
+                  </div>
+
+
+                  <!-- CONS -->
+
+                  <div>
+
+                    <div class="cons-header">
+                      Cons
+                    </div>
+
+
+                    <ul class="cons-list">
+
+                      <% cons.forEach((con) => { %>
+
+                        <li>
+                          <%= con %>
+                        </li>
+
+                      <% }) %>
+
+                    </ul>
+
+                  </div>
+
+
+                </div>
+
+              </div>
+
+
+              <!-- =================================================
+                   CATEGORY RATINGS
+              ================================================== -->
+
+              <div class="review-section">
+
+                <h3>
+                  📊 Category Ratings
+                </h3>
+
+
+                <div class="card">
+
+
+                  <!-- SAFETY -->
+
+                  <div class="score-row">
+
+                    <span class="score-label">
+                      Regulation & Safety
+                    </span>
+
+                    <div class="score-bar">
+
+                      <div
+                        class="score-fill"
+                        style="width: <%= scores.safety * 10 %>%;">
+                      </div>
+
+                    </div>
+
+                    <span class="score-value">
+                      <%= scores.safety %>
+                    </span>
+
+                  </div>
+
+
+                  <!-- FEES -->
+
+                  <div class="score-row">
+
+                    <span class="score-label">
+                      Spreads & Fees
+                    </span>
+
+                    <div class="score-bar">
+
+                      <div
+                        class="score-fill"
+                        style="width: <%= scores.fees * 10 %>%;">
+                      </div>
+
+                    </div>
+
+                    <span class="score-value">
+                      <%= scores.fees %>
+                    </span>
+
+                  </div>
+
+
+                  <!-- FUNDING -->
+
+                  <div class="score-row">
+
+                    <span class="score-label">
+                      Deposit & Withdrawal
+                    </span>
+
+                    <div class="score-bar">
+
+                      <div
+                        class="score-fill"
+                        style="width: <%= scores.funding * 10 %>%;">
+                      </div>
+
+                    </div>
+
+                    <span class="score-value">
+                      <%= scores.funding %>
+                    </span>
+
+                  </div>
+
+
+                  <!-- PLATFORMS -->
+
+                  <div class="score-row">
+
+                    <span class="score-label">
+                      Trading Platforms
+                    </span>
+
+                    <div class="score-bar">
+
+                      <div
+                        class="score-fill"
+                        style="width: <%= scores.platforms * 10 %>%;">
+                      </div>
+
+                    </div>
+
+                    <span class="score-value">
+                      <%= scores.platforms %>
+                    </span>
+
+                  </div>
+
+
+                  <!-- SUPPORT -->
+
+                  <div class="score-row score-row-last">
+
+                    <span class="score-label">
+                      Customer Support
+                    </span>
+
+                    <div class="score-bar">
+
+                      <div
+                        class="score-fill"
+                        style="width: <%= scores.support * 10 %>%;">
+                      </div>
+
+                    </div>
+
+                    <span class="score-value">
+                      <%= scores.support %>
+                    </span>
+
+                  </div>
+
+
+                </div>
+
+              </div>
+
+
+            </div>
+
+
+            <!-- =====================================================
+                 SIDEBAR
+            ====================================================== -->
+
+            <div class="sticky-sidebar">
+
+
+              <!-- OVERALL SCORE -->
+
+              <div class="card">
+
+                <div
+                  class="score-circle"
+                  style="--pages-pct: <%= Number(broker.brokerRating || 0) * 20 %>;"
+                >
+
+                  <span>
+                    <%= broker.brokerRating || 0 %>
+                  </span>
+
+                </div>
+
+
+                <div class="overall-score-label">
+
+                  Overall Score
+
+                </div>
+
+
+                <div
+                  class="stars rating-stars stars-margin"
+                  aria-label="Broker rating <%= broker.brokerRating %> out of 5">
+
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+
+                </div>
+
+
+                <a
+                  href="/open-account"
+                  class="btn-primary w-full cta-button">
+
+                  Open Account
+
+                </a>
+
+
+                <p class="risk-warning">
+
+                  Risk Warning: CFDs are complex instruments.
+
+                </p>
+
+              </div>
+
+
+              <!-- =================================================
+                   QUICK FACTS
+              ================================================== -->
+
+              <div class="card">
+
+                <h4 class="quick-facts-title">
+                  Quick Facts
+                </h4>
+
+
+                <div class="quick-facts-list">
+
+
+                  <% if (broker.brokerMinDeposit !== undefined) { %>
+
+                    <div class="quick-fact-row">
+
+                      <span class="text-muted">
+                        Min Deposit
+                      </span>
+
+                      <strong>
+                        $<%= broker.brokerMinDeposit || 0 %>
+                      </strong>
+
+                    </div>
+
+                  <% } %>
+
+
+                  <% if (broker.brokerLeverage) { %>
+
+                    <div class="quick-fact-row">
+
+                      <span class="text-muted">
+                        Max Leverage
+                      </span>
+
+                      <strong class="text-gold">
+                        <%= broker.brokerLeverage %>
+                      </strong>
+
+                    </div>
+
+                  <% } %>
+
+
+                  <% if (platforms.length > 0) { %>
+
+                    <div class="quick-fact-row">
+
+                      <span class="text-muted">
+                        Platforms
+                      </span>
+
+                      <strong>
+                        <%= platforms.join(", ") %>
+                      </strong>
+
+                    </div>
+
+                  <% } %>
+
+
+                  <% if (regulationTags.length > 0) { %>
+
+                    <div class="quick-fact-row">
+
+                      <span class="text-muted">
+                        Regulation
+                      </span>
+
+                      <strong class="strong-tag">
+                        <%= regulationTags.join(", ") %>
+                      </strong>
+
+                    </div>
+
+                  <% } %>
+
+
+                  <div class="quick-fact-row">
+
+                    <span class="text-muted">
+                      Local Payments
+                    </span>
+
+
+                    <% if (
+                      broker.brokerDataTags &&
+                      broker.brokerDataTags.includes(
+                        "JazzCash-Easypaisa"
+                      )
+                    ) { %>
+
+                      <strong class="text-green">
+                        ✓ Yes
+                      </strong>
+
+                    <% } else { %>
+
+                      <strong class="text-green">
+                        ✗ No
+                      </strong>
+
+                    <% } %>
+
+                  </div>
+
+
+                </div>
+
+              </div>
+
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </section>
+
+    <% } %>
+
   </div>
 
+
   <%- include('partials/footer') %>
-  <script>
-    // MY LOGIC ::::::::::::::::::::::::::::::::::::::::::
 
-    // 1. Find all hidden inputs/elements with the class '.brokerId' on the page and loop through each one
 
-    let ratingDiv = document.querySelectorAll('.rating-stars');
+  <!-- =============================================================
+       PAGE JAVASCRIPT
+  ============================================================= -->
 
-    ratingDiv.forEach(div => {
-      let ratingStars = div.querySelectorAll('span.star');
-
-      console.log('Current broker data rating string:', `<%= editAddBroker.brokerRating %>`);
-      console.log('Type of rating variable:', typeof `<%= editAddBroker.brokerRating %>`);
-      console.log('Target stars for this broker:', ratingStars);
-
-      for (let i = 0; i < Number(`<%= editAddBroker.brokerRating %>`); i++) {
-
-        // Check if the overall rating is a clean whole integer (e.g., 4 or 5)
-        // The '+' shorthand converts the string 'rating' into a number before checking
-        if (Number.isInteger(+`<%= editAddBroker.brokerRating %>`)) {
-          console.log('The rating number is a whole integer:', `<%= editAddBroker.brokerRating %>`);
-
-          // Add the full-star styling class to the star at the current loop index 'i'
-          ratingStars[i].classList.add('full-filled-star');
-
-        } else {
-          // If the number contains decimals (e.g., 0.6 or 4.5), execute this fallback branch
-          console.log('The rating number is a decimal/fraction:', `<%= editAddBroker.brokerRating %>`);
-
-          // First, provisionally light up the star at index 'i' fully
-          ratingStars[i].classList.add('full-filled-star');
-
-          // 5. Evaluate if the remaining fractional value is less than 1 
-          // Example: If rating is 0.6 and i = 0 -> (0.6 - 0) = 0.6. This is < 1, meaning this star is the fraction!
-          if (Number(`<%= editAddBroker.brokerRating %>`) - i < 1) {
-            // Swap out the full-star style for the half-filled style on this final index
-            ratingStars[i].classList.replace('full-filled-star', 'half-filled-star');
-            console.log('Star index matches the decimal remainder. Styled as half-filled.');
-          }
-        }
-      }
-    });
-    let ratingStars = document.querySelectorAll('.rating-stars span');
-
-    console.log('Current broker data rating string:', `<%= editAddBroker.brokerRating %>`);
-    console.log('Type of rating variable:', typeof `<%= editAddBroker.brokerRating %>`);
-    console.log('Target stars for this broker:', ratingStars);
-
-    for (let i = 0; i < Number(`<%= editAddBroker.brokerRating %>`); i++) {
-
-      // Check if the overall rating is a clean whole integer (e.g., 4 or 5)
-      // The '+' shorthand converts the string 'rating' into a number before checking
-      if (Number.isInteger(+`<%= editAddBroker.brokerRating %>`)) {
-        console.log('The rating number is a whole integer:', `<%= editAddBroker.brokerRating %>`);
-
-        // Add the full-star styling class to the star at the current loop index 'i'
-        ratingStars[i].classList.add('full-filled-star');
-
-      } else {
-        // If the number contains decimals (e.g., 0.6 or 4.5), execute this fallback branch
-        console.log('The rating number is a decimal/fraction:', `<%= editAddBroker.brokerRating %>`);
-
-        // First, provisionally light up the star at index 'i' fully
-        ratingStars[i].classList.add('full-filled-star');
-
-        // 5. Evaluate if the remaining fractional value is less than 1 
-        // Example: If rating is 0.6 and i = 0 -> (0.6 - 0) = 0.6. This is < 1, meaning this star is the fraction!
-        if (Number(`<%= editAddBroker.brokerRating %>`) - i < 1) {
-          // Swap out the full-star style for the half-filled style on this final index
-          ratingStars[i].classList.replace('full-filled-star', 'half-filled-star');
-          console.log('Star index matches the decimal remainder. Styled as half-filled.');
-        }
-      }
-    }
-  </script>
   <script src="/js/theme.js"></script>
   <script src="/js/script.js"></script>
   <script src="/js/emailWhatsAppRedirect.js"></script>
+
+  <script src="/js/broker-review.js"></script>
+
 </body>
 
 </html>

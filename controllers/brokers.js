@@ -1,38 +1,48 @@
-const editAddBroker = require('../models/Admin/broker.js');
-// let brokers = [];
+const Broker = require("../models/Admin/broker.js");
 
-exports.brokerPageController = (req, res, next) => {
-    // editAddBroker.fetchAll(brokers => {
-    editAddBroker.fetchAll((brokers) => {
-        res.render('brokers', {
-            editAddBroker: brokers,
-            currentPage: 'brokers',
-            title: 'Top Brokers', isLoggedIn: req.isLoggedIn
-        });
-        // })
-        console.log('Fetched brokers:', brokers);
+// ============================================================
+// ALL BROKERS
+// ============================================================
 
+exports.brokerPageController = async (req, res, next) => {
+  try {
+    const brokers = await Broker.find().sort({ createdAt: -1 });
 
+    res.render("brokers", {
+      editAddBroker: brokers,
+      currentPage: "brokers",
+      title: "Top Brokers",
+      isLoggedIn: req.isLoggedIn,
     });
+  } catch (error) {
+    next(error);
+  }
 };
 
+// ============================================================
+// REGULATED / TAGGED BROKERS
+// ============================================================
 
-exports.regulatedBrokerPageController = (req, res, next) => {
+exports.regulatedBrokerPageController = async (req, res, next) => {
+  try {
+    const requiredTags = req.params.j
+      .split("-")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
 
-    console.log('Fetched brokers:');
+    const brokers = await Broker.find({
+      brokerTags: {
+        $in: requiredTags,
+      },
+    }).sort({ createdAt: -1 });
 
-    // editAddBroker.fetchAll(brokers => {
-    let requiredTags = req.params.j.split('-');
-    console.log(requiredTags);
-    editAddBroker.findByBrokerTags(requiredTags, fetchedBroker => {
-        console.log('Fetched brokers:', fetchedBroker);
-        res.render('brokers', {
-            editAddBroker: fetchedBroker,
-            currentPage: 'regulatedBrokers',
-            title: 'Regulated Brokers ' + requiredTags, isLoggedIn: req.isLoggedIn
-        });
-    })
-    // })
-
-
+    res.render("brokers", {
+      editAddBroker: brokers,
+      currentPage: "regulatedBrokers",
+      title: "Regulated Brokers " + requiredTags.join(", "),
+      isLoggedIn: req.isLoggedIn,
+    });
+  } catch (error) {
+    next(error);
+  }
 };

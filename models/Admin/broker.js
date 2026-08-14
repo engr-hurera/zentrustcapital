@@ -1,140 +1,86 @@
-const path = require('path');
-const rootdir = require('../../utils/pathutils');
-const fs = require('fs');
-const dataFilePath = path.join(rootdir, 'data', 'brokers.json');
+const mongoose = require("mongoose");
 
-module.exports = class editAddBroker {
-    constructor(brokerDataTags, brokerName,brokerPick, brokerLogo, brokerHeading, DeatiledBrokerDescription, brokerRating, brokerTags,brokerFoundYear, brokerLeverage, brokerMinDeposit, brokerMinSpread, commissionLot, welcomeBonus) {
-        this.brokerDataTags = brokerDataTags;
-        this.brokerName = brokerName;
-        this.brokerPick = brokerPick;
-        this.brokerLogo = brokerLogo;
-        this.brokerHeading = brokerHeading;
-        this.DeatiledBrokerDescription = DeatiledBrokerDescription;
-        this.brokerRating = brokerRating;
-        this.brokerTags = brokerTags;
-        this.brokerFoundYear = brokerFoundYear;
-        this.brokerLeverage = brokerLeverage;
-        this.brokerMinDeposit = brokerMinDeposit;
-        this.brokerMinSpread = brokerMinSpread;
-        this.commissionLot = commissionLot;
-        this.welcomeBonus = welcomeBonus;
+const brokerSchema = new mongoose.Schema(
+  {
+    brokerDataTags: {
+      type: [String],
+      default: [],
+    },
 
+    brokerName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-    }
+    brokerPick: {
+      type: String,
+      trim: true,
+    },
 
-    save() {
+    brokerLogo: {
+      type: String,
+      trim: true,
+    },
 
-        console.log('Save method executed');
-        editAddBroker.fetchAll((brokers) => {
+    brokerHeading: {
+      type: String,
+      trim: true,
+    },
 
-            if (this.id) { // edit broker cases
-                brokers = brokers.map(broker =>
-                    broker.id == this.id ? this : broker);
-                console.log('edit broker cases', this.id)
-            } else { // add broker case
-                console.log('add broker cases', this.id)
+    DeatiledBrokerDescription: {
+      type: String,
+      trim: true,
+    },
 
-                this.id = Math.random().toString();
-                brokers.push(this);
-            }
+    brokerRating: {
+      type: Number,
+      min: 0,
+      max: 5,
+    },
 
-            fs.writeFile(dataFilePath, JSON.stringify(brokers), error => {
-                if (error) {
-                    console.error('Error writing Broker data to file:', error);
-                } else {
-                    console.log('Write File Callback executed');
-                    console.log('Broker data saved successfully.');
-                    // cb();
-                }
-            });
-        })
+    brokerTags: {
+      type: [String],
+      default: [],
+    },
 
-    }
+    brokerFoundYear: {
+      type: String,
+    },
 
-    static fetchAll(callback) {
-        fs.readFile(dataFilePath, (err, fileContent) => {
-            if (err) {
-                console.error('Error reading broker data:', err);
-                callback([]);
-            } else {
-                const brokers = JSON.parse(fileContent);
-                callback(brokers);
-                console.log('File read successfully.');
+    brokerLeverage: {
+      type: String,
+      trim: true,
+    },
 
-            }
-        });
-    }
+    brokerLeverage: {
+      type: String,
+      trim: true,
+    },
 
-    static findByid(brokerId, callback) {
-        editAddBroker.fetchAll(brokerFetch => {
-            const brokerFound = brokerFetch.find(broker => broker.id === brokerId);
-            callback(brokerFound);
-        })
-    }
-    static findByBrokerDataTags(requiredTags, callback) {
-        editAddBroker.fetchAll(brokerFetch => {
-            // Filters brokers that contain AT LEAST ONE tag passed in the array
-            const brokerFound = brokerFetch.filter(broker =>
-                requiredTags.some(tag => broker.brokerDataTags.includes(tag))
-            );
-            callback(brokerFound);
-        });
+    brokerMinDeposit: {
+      type: Number,
+      min: 0,
+    },
 
+    brokerMinSpread: {
+      type: Number,
+      min: 0,
+    },
 
-    }
-    static findByBrokerTags(requiredTags, callback) {
-        editAddBroker.fetchAll(brokerFetch => {
-            // Filters brokers that contain AT LEAST ONE tag passed in the array
-            const brokerFound = brokerFetch.filter(broker =>
-                requiredTags.some(tag => broker.brokerTags.includes(tag))
-            );
-            callback(brokerFound);
-        });
+    commissionLot: {
+      type: Number,
+      min: 0,
+    },
 
+    welcomeBonus: {
+      type: Number,
+      min: 0,
+    },
+  },
+  {
+    timestamps: true,
+  },
+);
 
-    }
-    static findByMaxLeverage(requiredLeverage, callback) {
-        editAddBroker.fetchAll(brokerFetch => {
-            // Filters brokers that contain AT LEAST ONE requiredLeverage passed in the array
-            // wrote by me this below code
-            const brokerFound = brokerFetch.filter(broker => parseInt(broker.brokerLeverage.split(':')[1], 10) <= requiredLeverage);
-            callback(brokerFound);
-        });
-
-
-    }
-    static findByMinDeposit(requiredMinDeposit, callback) {
-        editAddBroker.fetchAll(brokerFetch => {
-            // Filters brokers that contain AT LEAST ONE requiredMinDeposit passed in the array
-            // wrote by me this below code
-            const brokerFound = brokerFetch.filter(broker => parseInt(broker.brokerMinDeposit) <= requiredMinDeposit);
-            callback(brokerFound);
-        });
-
-
-    }
-
-
-
-
-    static deleteById(deleteBrokerId, callback) {
-        // 1. Get the entire list of brokers
-        editAddBroker.fetchAll(brokers => {
-            // 2. Filter out the broker you want to remove
-            const updatedBrokers = brokers.filter(broker => broker.id !== deleteBrokerId);
-
-            // 3. Directly overwrite the file with the clean list
-            fs.writeFile(dataFilePath, JSON.stringify(updatedBrokers), error => {
-                if (error) {
-                    console.error('Error deleting broker data:', error);
-                } else {
-                    console.log('Broker deleted successfully.');
-                    callback(); // Execute the callback to redirect the page
-                }
-            });
-        });
-    }
-
-
-}
+module.exports = mongoose.model("Broker", brokerSchema);

@@ -1,0 +1,302 @@
+.review-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 32px;
+}
+
+@media (max-width: 900px) {
+  .review-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sticky-sidebar {
+  position: sticky;
+  top: 90px;
+  height: fit-content;
+}
+
+.score-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--text3) calc(var(--pages-pct) * 3.6deg),
+    var(--pages-bg4) 0
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pages-font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  position: relative;
+  margin: 0 auto 12px;
+}
+
+.score-circle::before {
+  content: "";
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: var(--pages-bg3);
+}
+
+.score-circle span {
+  position: relative;
+  z-index: 1;
+}
+
+.score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.score-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--pages-bg4);
+  border-radius: 3px;
+  margin: 0 12px;
+  overflow: hidden;
+}
+
+.score-fill {
+  height: 100%;
+  background: var(--text3);
+  border-radius: 3px;
+}
+
+.pros-cons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.pros-list li,
+.cons-list li {
+  font-size: 0.88rem;
+  color: var(--pages-text2);
+  padding: 6px 0;
+  display: flex;
+  gap: 8px;
+}
+
+.pros-list li::before {
+  content: "✓";
+  color: var(--pages-green);
+  font-weight: 700;
+}
+
+.cons-list li::before {
+  content: "✗";
+  color: var(--pages-red);
+  font-weight: 700;
+}
+
+.review-section {
+  margin-bottom: 40px;
+}
+
+.review-section h3 {
+  font-family: var(--pages-font-display);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--pages-border);
+}
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.spec-item {
+  background: var(--pages-bg3);
+  border: 1px solid var(--pages-border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.spec-item label {
+  font-size: 0.75rem;
+  color: var(--pages-text3);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.spec-item strong {
+  font-family: var(--pages-font-display);
+  font-size: 1.1rem;
+}
+
+.broker-header-flex {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.broker-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  background: var(--pages-bg4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pages-font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--pages-gold);
+}
+
+.broker-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.broker-subtitle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.verdict-card {
+  background: var(--footer-bg);
+  border-color: var(--footer-border);
+  margin-bottom: 32px;
+}
+
+.verdict-title {
+  color: var(--text3);
+  font-family: var(--pages-font-display);
+}
+
+.verdict-text {
+  color: var(--pages-text);
+  margin-top: 10px;
+  line-height: 1.8;
+}
+
+.pros-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--pages-green);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.cons-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--pages-red);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.score-label {
+  font-size: 0.88rem;
+  width: 140px;
+}
+
+.score-value {
+  font-size: 0.88rem;
+  color: var(--text3);
+  font-weight: 700;
+}
+
+.overall-score-label {
+  font-size: 0.82rem;
+  color: var(--pages-text3);
+}
+
+.stars-margin {
+  margin: 8px 0;
+}
+
+.cta-button {
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.risk-warning {
+  font-size: 0.75rem;
+  color: var(--pages-text3);
+  margin-top: 10px;
+}
+
+.quick-facts-title {
+  font-family: var(--pages-font-display);
+  margin-bottom: 14px;
+}
+
+.quick-fact-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.86rem;
+}
+
+.sticky-sidebar > .card {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* NEW: replaced inline styles */
+
+.review-title {
+  font-size: 2rem;
+}
+
+.review-rating-text {
+  color: var(--pages-text2);
+  font-size: 0.9rem;
+}
+
+.score-fill-safety {
+  width: 98%;
+}
+
+.score-fill-fees {
+  width: 96%;
+}
+
+.score-fill-withdrawal {
+  width: 100%;
+}
+
+.score-fill-platforms {
+  width: 88%;
+}
+
+.score-fill-support {
+  width: 90%;
+}
+
+.score-row-last {
+  margin-bottom: 0;
+}
+
+.quick-facts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.strong-tag > span {
+  margin-right: 2px;
+}
+.stars {
+  font-size: 1.1rem;
+}
+.badge {
+  font-size: 1rem;
+}

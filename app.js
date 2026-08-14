@@ -1,22 +1,24 @@
 const express = require("express");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const helmet = require("helmet");
+const path = require("path");
 
-// 1. Load the environment variables right at the top
+// Load environment variables
 require("dotenv").config();
-
-// 2. Read the connection string using process.env
-const DB_PATH = process.env.MONGO_URI;
 
 const app = express();
 
-const path = require("path");
 const rootdir = require("./utils/pathutils.js");
+const { connectMongo } = require("./utils/databaseutil.js");
 
-// 1. Router Imports
+// Middleware
+const authMiddleware = require("./middleware/authMiddleware");
+
+// Routers
 const homePageRouter = require("./routes/home.js");
 const brokerPageRouter = require("./routes/brokers.js");
-const ibProramPageRouter = require("./routes/ib-program.js");
+const ibProgramPageRouter = require("./routes/ib-program.js");
 const marketsPageRouter = require("./routes/markets.js");
 const educationPageRouter = require("./routes/education.js");
 const articlesPageRouter = require("./routes/articles.js");
@@ -30,89 +32,138 @@ const contactPageRouter = require("./routes/contact.js");
 const compareBrokersPageRouter = require("./routes/compare-brokers.js");
 const brokerReviewRouter = require("./routes/broker-review.js");
 const aboutReviewRouter = require("./routes/about.js");
-const addEditBroker = require("./routes/admin/addEditBroker.js");
 const dashboardPageRouter = require("./routes/dashboard.js");
 const signalsPageRouter = require("./routes/signals.js");
+const addEditBroker = require("./routes/admin/addEditBroker.js");
 
-const { connectMongo } = require("./utils/databaseutil.js");
+// Error Controller
+const pageNotFoundRouter = require("./controllers/error404.js");
 
-// 2. Global Configurations & Middleware
-app.use(express.static(path.join(rootdir, "Public")));
+const PORT = process.env.PORT || 3000;
+const DB_PATH = process.env.MONGO_URI;
+
+// Trust proxy (recommended for production)
+app.set("trust proxy", 1);
+
+// Security Headers
+app.use(helmet());
+
+// Body Parsers
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-const viewsPath = path.join(rootdir, "views");
+// Static Files
+app.use(express.static(path.join(rootdir, "Public")));
+
+// View Engine
 app.set("view engine", "ejs");
-app.set("views", viewsPath);
+app.set("views", path.join(rootdir, "views"));
 
+// Mongo Session Store
 const store = new MongoDBStore({
   uri: DB_PATH,
   collection: "sessions",
 });
+
+// Session Middleware
 app.use(
   session({
-    secret: "zenTrust Capital",
+    secret: process.env.SESSION_SECRET || "zenTrust Capital",
     resave: false,
-    saveUninitialized: true,
-    // store: store,  // both way works now the sessions will be save on mongodb server instead of device server
+    saveUninitialized: false,
     store,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    },
   }),
 );
+
+// Make session values available everywhere
 app.use((req, res, next) => {
-  // req.isLoggedIn = req.get('Cookie') ? req.get('Cookie').split('=')[1] === 'true' : false;
-  req.isLoggedIn = req.session.isLoggedIn;
+  req.isLoggedIn = !!req.session.isLoggedIn;
+
+  res.locals.isAuthenticated = !!req.session.isLoggedIn;
+  res.locals.currentUser = req.session.user || null;
+
   next();
 });
-// 3. Authentication Guard Middleware
-const checkAuth = (req, res, next) => {
-  if (req.isLoggedIn) {
-    next();
-  } else {
-    res.redirect("/login");
-  }
-};
 
-// 4. Public Routes (Accessible by anyone)
+/* ============================================================
+   PUBLIC ROUTES
+============================================================ */
+
 app.use("/", homePageRouter);
+
 app.use(authRouterPageRouter);
+
 app.use(brokerPageRouter);
-app.use(ibProramPageRouter);
+
+app.use(ibProgramPageRouter);
+
 app.use(marketsPageRouter);
+
 app.use(educationPageRouter);
+
 app.use(articlesPageRouter);
+
 app.use(faqPageRouter);
+
 app.use(openAccountPageRouter);
+
 app.use(privacyPageRouter);
+
 app.use(termsPageRouter);
+
 app.use(cookiesPageRouter);
+
 app.use(contactPageRouter);
+
 app.use(compareBrokersPageRouter);
+
 app.use(brokerReviewRouter);
+
 app.use(aboutReviewRouter);
+
 app.use(signalsPageRouter);
-// 5. Protected Routes (Requires login)
-// Any route defined inside these routers now automatically checks for login first
-app.use(checkAuth);
-app.use(addEditBroker);
+
+/* ============================================================
+   PROTECTED USER ROUTES
+============================================================ */
+
+app.use(authMiddleware.isAuthenticated);
+
 app.use(dashboardPageRouter);
 
-// 6. 404 Error Handling (Must be at the very bottom)
-const pageNotFoundRouter = require("./controllers/error404.js");
+/* ============================================================
+   ADMIN ROUTES
+============================================================ */
+
+app.use(authMiddleware.isRole("admin"));
+
+app.use(addEditBroker);
+
+/* ============================================================
+   404
+============================================================ */
+
 app.use(pageNotFoundRouter.pageNotFoundController);
 
-// 7. Server Initialization
-const port = process.env.PORT || 3000;
+/* ============================================================
+   START SERVER
+============================================================ */
 
-// Execute your connection utility function here
 connectMongo()
   .then(() => {
-    console.log("✅ Database connected successfully");
-    app.listen(port, () => {
-      console.log(`Server is running on port http://localhost:${port}`);
+    console.log("✅ MongoDB Connected");
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running at http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
-    console.error(
-      "❌ Failed to start server because database connection failed:",
-      err,
-    );
+    console.error("❌ Database Connection Failed");
+    console.error(err);
   });

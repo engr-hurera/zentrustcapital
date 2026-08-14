@@ -1,15 +1,39 @@
-const path = require('path');
-const rootdir = require('../utils/pathutils');
-const getDashboard = require(path.join(rootdir, 'controllers', 'dashboard'));
-const express = require('express');
+const express = require("express");
+const path = require("path");
+
+const rootdir = require("../utils/pathutils");
+
+const dashboardController = require(
+  path.join(rootdir, "controllers", "dashboard"),
+);
 
 const dashboardRouter = express.Router();
 
-// TODO: add auth middleware here so only logged-in IB partners can reach
-// this, e.g. dashboardRouter.get('/dashboard', requireAuth, ...)
-dashboardRouter.get('/dashboard', getDashboard.clientDashboardController);
+/*
+|--------------------------------------------------------------------------
+| User Dashboard
+|--------------------------------------------------------------------------
+| Authentication is already handled globally in app.js
+|--------------------------------------------------------------------------
+*/
 
-// TODO: add admin-only auth middleware here before going live.
-dashboardRouter.get('/dashboard/admin', getDashboard.adminDashboardController);
+dashboardRouter.get(
+  "/dashboard",
+  dashboardController.clientDashboardController,
+);
+
+/*
+|--------------------------------------------------------------------------
+| Admin Dashboard
+|--------------------------------------------------------------------------
+| The controller should verify that the user is an admin before rendering.
+| If you later separate admin routes into their own router, move this there.
+|--------------------------------------------------------------------------
+*/
+
+dashboardRouter.get(
+  "/dashboard/admin",
+  dashboardController.adminDashboardController,
+);
 
 module.exports = dashboardRouter;

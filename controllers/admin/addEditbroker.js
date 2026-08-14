@@ -1,105 +1,174 @@
-const editAddBroker = require('../../models/Admin/broker.js');
+const Broker = require("../../models/Admin/broker.js");
+
+// ============================================================
+// ADD BROKER - GET
+// ============================================================
+
 exports.getAddBrokerController = (req, res, next) => {
-    console.log('Rendering Add/Edit Broker page', req.body);
-    res.render('admin/addEditBroker', {
-        currentPage: 'addEditBroker',
-        title: 'Add Broker',
-        editing: false, isLoggedIn: req.isLoggedIn
+  try {
+    res.render("admin/addEditBroker", {
+      currentPage: "addEditBroker",
+      title: "Add Broker",
+      editing: false,
+      isLoggedIn: req.session.isLoggedIn,
     });
+  } catch (error) {
+    next(error);
+  }
 };
 
-exports.postAddBrokerController = (req, res, next) => {
-    console.log('Rendering PostAdd Broker page', req.body);
-    let broker = [];
-    res.render('admin/addEditBroker', {
-        currentPage: 'addEditBroker',
-        title: 'Add Broker',
-        editing: false, isLoggedIn: req.isLoggedIn
-    });
-    broker = new editAddBroker(
-        req.body.brokerDataTags,
-        req.body.brokerName,
-        req.body.brokerPick,
-        req.body.brokerLogo,
-        req.body.brokerHeading,
-        req.body.DeatiledBrokerDescription,
-        req.body.brokerRating,
-        req.body.brokerTags,
-        req.body.brokerFoundYear,
-        req.body.brokerLeverage,
-        req.body.brokerMinDeposit,
-        req.body.brokerMinSpread,
-        req.body.commissionLot,
-        req.body.welcomeBonus,
+// ============================================================
+// ADD BROKER - POST
+// ============================================================
 
-    );
-    broker.save();
+exports.postAddBrokerController = async (req, res, next) => {
+  try {
+    const {
+      brokerDataTags,
+      brokerName,
+      brokerPick,
+      brokerLogo,
+      brokerHeading,
+      DeatiledBrokerDescription,
+      brokerRating,
+      brokerTags,
+      brokerFoundYear,
+      brokerLeverage,
+      brokerMinDeposit,
+      brokerMinSpread,
+      commissionLot,
+      welcomeBonus,
+    } = req.body;
+
+    await Broker.create({
+      brokerDataTags,
+      brokerName,
+      brokerPick,
+      brokerLogo,
+      brokerHeading,
+      DeatiledBrokerDescription,
+      brokerRating,
+      brokerTags,
+      brokerFoundYear,
+      brokerLeverage,
+      brokerMinDeposit,
+      brokerMinSpread,
+      commissionLot,
+      welcomeBonus,
+    });
+
+    res.redirect("/brokers");
+  } catch (error) {
+    next(error);
+  }
 };
 
+// ============================================================
+// DELETE BROKER
+// ============================================================
 
-exports.postDeleteBrokerController = (req, res, next) => {
-    // 1. Extract the broker ID from the URL parameters
-    const deleteBrokerId = req.params.h;
+exports.postDeleteBrokerController = async (req, res, next) => {
+  try {
+    const brokerId = req.params.h;
 
-    // 2. Call the delete method from your Model
-    editAddBroker.deleteById(deleteBrokerId, () => {
-        // 3. Redirect back to the main list page after successful deletion
-        res.redirect('/brokers');
-    });
+    const deletedBroker = await Broker.findByIdAndDelete(brokerId);
+
+    if (!deletedBroker) {
+      return res.status(404).send("Broker not found.");
+    }
+
+    res.redirect("/brokers");
+  } catch (error) {
+    next(error);
+  }
 };
 
+// ============================================================
+// EDIT BROKER - GET
+// ============================================================
 
-exports.getEditBrokerController = (req, res, next) => {
-    const editBrokerId = req.params.h; // Extract the broker ID from the URL parameters
-    const isEditing = req.query.editing === 'true'; // Check if the query parameter indicates editing mode
+exports.getEditBrokerController = async (req, res, next) => {
+  try {
+    const brokerId = req.params.h;
+
+    const isEditing = req.query.editing === "true";
 
     if (!isEditing) {
-        console.log("Not in editing mode, redirecting to /brokers");
-        return res.redirect('/brokers'); // Redirect if not in editing mode
-    } else {
-        editAddBroker.findByid(editBrokerId, fetchedBroker => {
-            if (!fetchedBroker) {
-                return res.redirect('/error404'); // Redirect to 404 page if broker not found
-                console.log('Editing Broker:', fetchedBroker);
-
-            } else {
-                res.render('admin/addEditBroker', {
-                    editAddBroker: fetchedBroker,
-                    title: 'Edit Broker',
-                    currentPage: 'edit-broker',
-                    editing: true, isLoggedIn: req.isLoggedIn
-                });
-            }
-
-            console.log('Editing Broker:', fetchedBroker);
-        });
+      return res.redirect("/brokers");
     }
-}
 
-exports.postEditBrokerController = (req, res, next) => {
-    console.log('Rendering PostEdit Broker page', req.body);
-   
-    broker = new editAddBroker(
-        req.body.brokerDataTags,
-        req.body.brokerName,
-        req.body.brokerPick,
-        req.body.brokerLogo,
-        req.body.brokerHeading,
-        req.body.DeatiledBrokerDescription,
-        req.body.brokerRating,
-        req.body.brokerTags,
-        req.body.brokerFoundYear,
-        req.body.brokerLeverage,
-        req.body.brokerMinDeposit,
-        req.body.brokerMinSpread,
-        req.body.commissionLot,
-        req.body.welcomeBonus,
-        
-        
+    const broker = await Broker.findById(brokerId);
+
+    if (!broker) {
+      return res.redirect("/error404");
+    }
+    console.log("Fetched broker for editing:", broker);
+    res.render("admin/addEditBroker", {
+      editAddBroker: broker,
+      title: "Edit Broker",
+      currentPage: "edit-broker",
+      editing: true,
+      isLoggedIn: req.session.isLoggedIn,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ============================================================
+// EDIT BROKER - POST
+// ============================================================
+
+exports.postEditBrokerController = async (req, res, next) => {
+  try {
+    const {
+      brokerId,
+      brokerDataTags,
+      brokerName,
+      brokerPick,
+      brokerLogo,
+      brokerHeading,
+      DeatiledBrokerDescription,
+      brokerRating,
+      brokerTags,
+      brokerFoundYear,
+      brokerLeverage,
+      brokerMinDeposit,
+      brokerMinSpread,
+      commissionLot,
+      welcomeBonus,
+    } = req.body;
+
+    const updatedBroker = await Broker.findByIdAndUpdate(
+      brokerId,
+      {
+        brokerDataTags,
+        brokerName,
+        brokerPick,
+        brokerLogo,
+        brokerHeading,
+        DeatiledBrokerDescription,
+        brokerRating,
+        brokerTags,
+        brokerFoundYear,
+        brokerLeverage,
+        brokerMinDeposit,
+        brokerMinSpread,
+        commissionLot,
+        welcomeBonus,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
     );
-    broker.id = req.body.brokerId;
-    console.log(req.body.brokerId)
-    broker.save();
 
-     res.redirect('/brokers');
+    if (!updatedBroker) {
+      return res.status(404).send("Broker not found.");
+    }
+
+    res.redirect("/brokers");
+  } catch (error) {
+    next(error);
+  }
 };

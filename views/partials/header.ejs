@@ -1,4 +1,4 @@
-  <!-- ═══════════ CURSOR -->
+<!-- ═══════════ CURSOR -->
   <div id="cursor"></div>
   <div id="cursor-ring"></div>
   <header id="hdr">
@@ -25,69 +25,89 @@
       <a href="/faq"
         class="currentPageNavlinks <%= currentPage === 'faq' ? ' currentPageNavlinksActive' : ' ' %>">FAQ</a>
 
-        <% if (isLoggedIn){ %>
+      <!-- 🔒 SECURE FILTER: Show paths conditionally based on authenticated roles -->
+      <% if (isAuthenticated && currentUser) { %>
 
-      <a href="/admin/add-broker"
-        class="currentPageNavlinks <%= currentPage === 'addEditBroker' ? ' currentPageNavlinksActive' : ' ' %>">Add Broker</a>
-<a href="/dashboard/admin"
-        class="currentPageNavlinks <%= currentPage === 'admin-dashboard' ? ' currentPageNavlinksActive' : ' ' %>">Admin Dashboard</a>
-        <a href="/dashboard"
-        class="currentPageNavlinks <%= currentPage === 'dashboard' ? ' currentPageNavlinksActive' : ' ' %>">Client Dashboard</a>
-        <span>
-        <!-- <div> -->
-        <a href="/ib-program"
-          class="currentPageNavlinks <%= currentPage === 'ib-program' ? ' currentPageNavlinksActive' : ' ' %>">Partnership</a>
-        <ul class="drop-down">
-          <li><a href="/broker-review"
-              class="currentPageNavlinks <%= currentPage === 'broker-review' ? ' currentPageNavlinksActive' : ' ' %> rel="noopener noreferrer" class="currentPageNavlinks">Bluevox</a></li>
-          <li><a href="/broker-review"
-              class="currentPageNavlinks <%= currentPage === 'broker-review' ? ' currentPageNavlinksActive' : ' ' %> rel="noopener noreferrer" class="currentPageNavlinks">Kvb</a></li>
-          <li><a href="/broker-review"
-              class="currentPageNavlinks <%= currentPage === 'broker-review' ? ' currentPageNavlinksActive' : ' ' %> rel="noopener noreferrer" class="currentPageNavlinks">Trade Marsha</a></li>
-        </ul>
-        <!-- </div> -->
-      </span>
+          <!-- ADMIN ONLY LINKS -->
+          <% if (currentUser.role === 'admin') { %>
+            <a href="/admin/add-broker"
+              class="currentPageNavlinks <%= currentPage === 'addEditBroker' ? ' currentPageNavlinksActive' : ' ' %>">Add Broker</a>
+            <a href="/dashboard/admin"
+              class="currentPageNavlinks <%= currentPage === 'admin-dashboard' ? ' currentPageNavlinksActive' : ' ' %>">Admin Dashboard</a>
+          <% } %>
+
+          <!-- CLIENT ONLY OR GLOBAL LOGGED-IN LINKS -->
+          <% if (currentUser.role === 'client') { %>
+            <a href="/dashboard"
+              class="currentPageNavlinks <%= currentPage === 'dashboard' ? ' currentPageNavlinksActive' : ' ' %>">Client Dashboard</a>
+          <% } %>
+
+          <span>
+            <a href="/ib-program"
+              class="currentPageNavlinks <%= currentPage === 'ib-program' ? ' currentPageNavlinksActive' : ' ' %>">Partnership</a>
+            <ul class="drop-down">
+              <li><a href="/broker-review"
+                  class="currentPageNavlinks <%= currentPage === 'broker-review' ? ' currentPageNavlinksActive' : ' ' %>" rel="noopener noreferrer">Bluevox</a></li>
+              <li><a href="/broker-review"
+                  class="currentPageNavlinks <%= currentPage === 'broker-review' ? ' currentPageNavlinksActive' : ' ' %>" rel="noopener noreferrer">Kvb</a></li>
+              <li><a href="/broker-review"
+                  class="currentPageNavlinks <%= currentPage === 'broker-review' ? ' currentPageNavlinksActive' : ' ' %>" rel="noopener noreferrer">Trade Marsha</a></li>
+            </ul>
+          </span>
       <% } %>
     </nav>
 
     <div class="hd-actions">
       <%- include('theme-home-btn') %>
-<% if (!isLoggedIn) { %>
-  <a class="btn-ghost" href="/login">Login</a>
-      <a class="btn-cta" href="/sign-up">Open Account →</a>
-
-<% } else { %>
-  <form action="/logout" method="post">
-  <button type="submit" class="btn-ghost" href="/logout">Logout</button>
-  </form>
-<% } %>
-
-      <!-- <button class="btn-ghost"><a  href="/login">Login</a></button> -->
-      <!-- The anchor tag acts as the button, removing the illegal nested <button> -->
-      <!-- <a href="/login" class="btn-ghost active" role="button">Login</a> -->
-
-      <!-- <button class="btn-cta"><a href="/open-account">Open Account →</a></button> -->
-      <!-- <button class="btn-ghost">Login</button> -->
-      <!-- <button class="btn-cta">Open Account →</button> -->
+      
+      <!-- Toggle profile interactions cleanly based on system verification state -->
+      <% if (!isAuthenticated) { %>
+        <a class="btn-ghost" href="/login">Login</a>
+        <a class="btn-cta" href="/sign-up">Open Account →</a>
+      <% } else { %>
+        <form action="/logout" method="post" style="display: inline;">
+          <button type="submit" class="btn-ghost">Logout</button>
+        </form>
+      <% } %>
     </div>
-    <button class="hbg" onclick="toggleMob()" id="hbg" aria-label="Menu">
+    
+    <button class="hbg" id="hbg" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
   </header>
+
   <!-- ═══════════ MOBILE NAV -->
   <div class="mob-nav" id="mobNav">
-    <a href="/admin/add-broker" onclick="closeMob()">Add Broker</a>
-    <a href="/dashboard/admin" onclick="closeMob()">Admin Dashboard</a>
-        <a href="/dashboard" onclick="closeMob()">Client Dashboard</a>
-    <a href="/" onclick="closeMob()">Home</a>
-    <a href="/brokers" onclick="closeMob()">Brokers</a>
-    <a href="/markets" onclick="closeMob()">Markets</a>
-    <a href="/education" onclick="closeMob()">Education</a>
-    <a href="/articles" onclick="closeMob()">Insights</a>
-    <a href="/bluevox" onclick="closeMob()">Partnership</a>
-    <a href="/faq" onclick="closeMob()">FAQ</a>
+    <!-- Static paths open to everyone -->
+    <a class="mob-link" href="/">Home</a>
+    <a class="mob-link" href="/brokers">Brokers</a>
+    <a class="mob-link" href="/markets">Markets</a>
+    <a class="mob-link" href="/education">Education</a>
+    <a class="mob-link" href="/articles">Insights</a>
+    <a class="mob-link" href="/faq">FAQ</a>
+
+    <!-- Dynamic conditional paths matching desktop parameters -->
+    <% if (isAuthenticated && currentUser) { %>
+        <% if (currentUser.role === 'admin') { %>
+            <a class="mob-link" href="/admin/add-broker">Add Broker</a>
+            <a class="mob-link" href="/dashboard/admin">Admin Dashboard</a>
+        <% } %>
+        
+        <% if (currentUser.role === 'client') { %>
+            <a class="mob-link" href="/dashboard">Client Dashboard</a>
+        <% } %>
+        
+        <a class="mob-link" href="/bluevox">Partnership</a>
+    <% } %>
+
     <div class="mob-btns">
-      <button class="btn-ghost"><a href="/login">Login</a></button>
-      <button class="btn-cta"><a href="/open-account">Open Account</a></button>
+      <% if (!isAuthenticated) { %>
+        <a class="mob-link" href="/login" class="btn-ghost">Login</a>
+        <a class="mob-link" href="/sign-up" class="btn-cta">Open Account</a>
+      <% } else { %>
+        <form action="/logout" method="post" style="width: 100%; text-align: center;">
+          <button type="submit" class="btn-ghost" style="width: 100%;">Logout</button>
+        </form>
+      <% } %>
     </div>
   </div>
