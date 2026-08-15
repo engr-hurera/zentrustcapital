@@ -213,23 +213,14 @@
   <p class="privacy-text">Protected by 256-bit SSL encryption. <a class="privacy-link" href="/privacy">Privacy Policy</a></p>
 </form>
 
-<!-- 4. Client Side Password Visibility Handler Script -->
-<script>
-  const loginPasswordField = document.getElementById('login-password');
-  const toggleLoginPassword = document.getElementById('toggle-login-password');
 
-  toggleLoginPassword.addEventListener('click', function () {
-    const isPassword = loginPasswordField.getAttribute('type') === 'password';
-    loginPasswordField.setAttribute('type', isPassword ? 'text' : 'password');
-    this.textContent = isPassword ? '🙈' : '👁️';
-  });
-</script>
 
 
   <%- include('../partials/footer') %>
 
   <script src="/js/theme.js"></script>
   <script src="/js/script.js"></script>
+  <script src="/js/login.js"></script>
 </body>
 
 </html>

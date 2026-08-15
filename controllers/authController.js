@@ -1,28 +1,86 @@
-const path = require("path");
 const { check, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
+
 const countryList = require("../helpers/countries");
 const User = require("../models/user.js");
+const EmailVerification = require("../models/emailVerification.js");
 
-// ---------- Shared helpers ----------
-const validCountryCodes = countryList.map((c) => c.code);
+const { sendVerificationEmail } = require("../utils/mailer.js");
 
-/**
- * Normalize email the same way on both signup & login
- * (lowercase + remove dots from Gmail/Googlemail)
- */
+
+// ============================================================
+// CONSTANTS
+// ============================================================
+
+const OTP_EXPIRATION_MINUTES = 15;
+const OTP_RESEND_COOLDOWN_SECONDS = 60;
+const MAX_OTP_RESENDS = 3;
+const MAX_OTP_ATTEMPTS = 5;
+
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+const validCountryCodes = countryList.map(
+  (country) => country.code
+);
+
+
+// ------------------------------------------------------------
+// Normalize email
+// ------------------------------------------------------------
+
 function normalizeEmail(email) {
-  if (!email) return email;
-  email = email.trim().toLowerCase();
-  if (email.endsWith("@gmail.com") || email.endsWith("@googlemail.com")) {
-    const [local, domain] = email.split("@");
-    email = local.replace(/\./g, "") + "@" + domain;
+  if (!email) {
+    return email;
   }
+
+  email = email.trim().toLowerCase();
+
+  if (
+    email.endsWith("@gmail.com") ||
+    email.endsWith("@googlemail.com")
+  ) {
+    const [local, domain] = email.split("@");
+
+    email =
+      local.replace(/\./g, "") +
+      "@" +
+      domain;
+  }
+
   return email;
 }
 
-// ---------- LOGIN ----------
+
+// ------------------------------------------------------------
+// Generate secure 6-digit OTP
+// ------------------------------------------------------------
+
+function generateOTP() {
+  return crypto
+    .randomInt(100000, 1000000)
+    .toString();
+}
+
+
+// ------------------------------------------------------------
+// Hash OTP before storing it
+// ------------------------------------------------------------
+
+async function hashOTP(otp) {
+  return bcrypt.hash(otp, 12);
+}
+
+
+// ============================================================
+// LOGIN PAGE
+// ============================================================
+
 exports.getLogInPageController = (req, res) => {
+
   res.render("auth/login", {
     currentPage: "login",
     title: "Login",
@@ -30,78 +88,210 @@ exports.getLogInPageController = (req, res) => {
     errors: null,
     oldInput: null,
   });
+
 };
 
-exports.postLogInPageController = async (req, res, next) => {
+
+// ============================================================
+// LOGIN
+// ============================================================
+
+exports.postLogInPageController = async (
+  req,
+  res,
+  next
+) => {
+
   try {
+
     let { email, password } = req.body;
+
     email = normalizeEmail(email);
 
+
     const invalidCredentialsError = {
-      email: { msg: "Invalid email or password." },
+      email: {
+        msg: "Invalid email or password.",
+      },
     };
 
-    const user = await User.findOne({ email }).select("+password");
-    // Generic response (prevents account enumeration)
+
+    // --------------------------------------------------------
+    // Find user
+    // --------------------------------------------------------
+
+    const user = await User
+      .findOne({ email })
+      .select("+password");
+
+
+    // --------------------------------------------------------
+    // Generic invalid credentials response
+    // --------------------------------------------------------
+
     if (!user) {
-      return res.status(422).render("auth/login", {
-        currentPage: "login",
-        title: "Login",
-        isLoggedIn: false,
-        errors: invalidCredentialsError,
-        oldInput: { email: req.body.email },
-      });
-    }
 
-    // ---------- Account Lockout Check ----------
-    if (user.lockUntil && user.lockUntil > Date.now()) {
-      const minutesLeft = Math.ceil((user.lockUntil - Date.now()) / 60000);
-      return res.status(429).render("auth/login", {
-        currentPage: "login",
-        title: "Login",
-        isLoggedIn: false,
-        errors: {
-          email: {
-            msg: `Account temporarily locked. Try again in ${minutesLeft} minute(s).`,
+      return res.status(422).render(
+        "auth/login",
+        {
+          currentPage: "login",
+          title: "Login",
+          isLoggedIn: false,
+
+          errors: invalidCredentialsError,
+
+          oldInput: {
+            email: req.body.email,
           },
-        },
-        oldInput: { email: req.body.email },
-      });
+        }
+      );
+
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+
+    // ========================================================
+    // ACCOUNT LOCK CHECK
+    // ========================================================
+
+    if (
+      user.lockUntil &&
+      user.lockUntil > Date.now()
+    ) {
+
+      const minutesLeft = Math.ceil(
+        (user.lockUntil - Date.now()) / 60000
+      );
+
+
+      return res.status(429).render(
+        "auth/login",
+        {
+          currentPage: "login",
+          title: "Login",
+          isLoggedIn: false,
+
+          errors: {
+            email: {
+              msg:
+                `Account temporarily locked. ` +
+                `Try again in ${minutesLeft} minute(s).`,
+            },
+          },
+
+          oldInput: {
+            email: req.body.email,
+          },
+        }
+      );
+
+    }
+
+
+    // ========================================================
+    // PASSWORD CHECK
+    // ========================================================
+
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
+
 
     if (!isMatch) {
-      // Increment failed attempts
-      user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
 
-      // Lock after 5 failed attempts for 15 minutes
+      user.failedLoginAttempts =
+        (user.failedLoginAttempts || 0) + 1;
+
+
+      // ------------------------------------------------------
+      // Lock account after 5 failed attempts
+      // ------------------------------------------------------
+
       if (user.failedLoginAttempts >= 5) {
-        user.lockUntil = Date.now() + 15 * 60 * 1000; // 15 min
-        user.failedLoginAttempts = 0; // reset counter after locking
+
+        user.lockUntil =
+          Date.now() +
+          15 * 60 * 1000;
+
+        user.failedLoginAttempts = 0;
+
       }
+
 
       await user.save();
 
-      return res.status(422).render("auth/login", {
-        currentPage: "login",
-        title: "Login",
-        isLoggedIn: false,
-        errors: invalidCredentialsError,
-        oldInput: { email: req.body.email },
-      });
+
+      return res.status(422).render(
+        "auth/login",
+        {
+          currentPage: "login",
+          title: "Login",
+          isLoggedIn: false,
+
+          errors: invalidCredentialsError,
+
+          oldInput: {
+            email: req.body.email,
+          },
+        }
+      );
+
     }
 
-    // Success → reset lockout counters
+
+    // ========================================================
+    // EMAIL VERIFICATION CHECK
+    // ========================================================
+
+    if (!user.emailVerified) {
+
+      return res.status(403).render(
+        "auth/login",
+        {
+          currentPage: "login",
+          title: "Login",
+          isLoggedIn: false,
+
+          errors: {
+            email: {
+              msg:
+                "Please verify your email address before logging in.",
+            },
+          },
+
+          oldInput: {
+            email: req.body.email,
+          },
+        }
+      );
+
+    }
+
+
+    // ========================================================
+    // RESET LOGIN LOCKOUT
+    // ========================================================
+
     user.failedLoginAttempts = 0;
     user.lockUntil = undefined;
+
     await user.save();
 
-    // Prevent session fixation
+
+    // ========================================================
+    // PREVENT SESSION FIXATION
+    // ========================================================
+
     req.session.regenerate((err) => {
-      if (err) return next(err);
+
+      if (err) {
+        return next(err);
+      }
+
 
       req.session.isLoggedIn = true;
+
+
       req.session.user = {
         id: user._id,
         fullName: user.fullName,
@@ -109,149 +299,1173 @@ exports.postLogInPageController = async (req, res, next) => {
         role: user.role,
       };
 
+
       req.session.save((err) => {
-        if (err) return next(err);
-        console.log("Login success:", email);
+
+        if (err) {
+          return next(err);
+        }
+
+
+        console.log(
+          "Login success:",
+          email
+        );
+
+
         res.redirect("/");
+
       });
+
     });
-  } catch (err) {
-    next(err);
+
+  } catch (error) {
+
+    next(error);
+
   }
+
 };
 
-// ---------- LOGOUT ----------
-exports.postLogOutPageController = (req, res, next) => {
+
+// ============================================================
+// LOGOUT
+// ============================================================
+
+exports.postLogOutPageController = (
+  req,
+  res,
+  next
+) => {
+
   req.session.destroy((err) => {
-    if (err) return next(err);
+
+    if (err) {
+      return next(err);
+    }
+
     res.redirect("/");
+
   });
+
 };
 
-// ---------- SIGN UP ----------
-exports.getSignUpPageController = (req, res) => {
+
+// ============================================================
+// SIGN UP PAGE
+// ============================================================
+
+exports.getSignUpPageController = (
+  req,
+  res
+) => {
+
   res.render("auth/sign-up", {
+
     currentPage: "SignUp",
+
     title: "Sign Up",
+
     isLoggedIn: false,
+
     countryList,
+
     errors: null,
+
     oldInput: null,
+
   });
+
 };
+
+
+// ============================================================
+// SIGN UP
+// ============================================================
 
 exports.postSignUpPageController = [
-  // 1. Full Name
+
+  // ----------------------------------------------------------
+  // FULL NAME
+  // ----------------------------------------------------------
+
   check("fullName")
+
     .trim()
+
     .notEmpty()
-    .withMessage("Full name is required.")
-    .isLength({ min: 3, max: 50 })
-    .withMessage("Name must be between 3 and 50 characters.")
+    .withMessage(
+      "Full name is required."
+    )
+
+    .isLength({
+      min: 3,
+      max: 50,
+    })
+
+    .withMessage(
+      "Name must be between 3 and 50 characters."
+    )
+
     .matches(/^[a-zA-Z\s.]+$/)
-    .withMessage("Name can only contain letters, spaces, and periods."),
 
-  // 2. Email
+    .withMessage(
+      "Name can only contain letters, spaces, and periods."
+    ),
+
+
+  // ----------------------------------------------------------
+  // EMAIL
+  // ----------------------------------------------------------
+
   check("email")
+
     .trim()
+
     .notEmpty()
-    .withMessage("Email address is required.")
+    .withMessage(
+      "Email address is required."
+    )
+
     .isEmail()
-    .withMessage("Please enter a valid email address.")
+    .withMessage(
+      "Please enter a valid email address."
+    )
+
     .custom(async (value) => {
-      const normalized = normalizeEmail(value);
-      const existingUser = await User.findOne({ email: normalized });
+
+      const normalized =
+        normalizeEmail(value);
+
+
+      const existingUser =
+        await User.findOne({
+          email: normalized,
+        });
+
+
       if (existingUser) {
-        throw new Error("This email is already registered.");
+
+        throw new Error(
+          "This email is already registered."
+        );
+
       }
+
+
       return true;
+
     }),
 
-  // 3. Password
+
+  // ----------------------------------------------------------
+  // PASSWORD
+  // ----------------------------------------------------------
+
   check("password")
+
     .trim()
+
     .notEmpty()
-    .withMessage("Password is required.")
-    .isLength({ min: 8 })
-    .withMessage("Password must be at least 8 characters long.")
-    .matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
     .withMessage(
-      "Password must contain uppercase, lowercase, number, and special character.",
+      "Password is required."
+    )
+
+    .isLength({
+      min: 8,
+    })
+
+    .withMessage(
+      "Password must be at least 8 characters long."
+    )
+
+    .matches(
+      /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/
+    )
+
+    .withMessage(
+      "Password must contain uppercase, lowercase, number, and special character."
     ),
 
-  // 4. Confirm Password
+
+  // ----------------------------------------------------------
+  // CONFIRM PASSWORD
+  // ----------------------------------------------------------
+
   check("confirm_password")
+
     .trim()
+
     .notEmpty()
-    .withMessage("Please confirm your password.")
+    .withMessage(
+      "Please confirm your password."
+    )
+
     .custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error("Passwords do not match.");
+
+      if (
+        value !== req.body.password
+      ) {
+
+        throw new Error(
+          "Passwords do not match."
+        );
+
       }
+
       return true;
+
     }),
 
-  // 5. Phone
+
+  // ----------------------------------------------------------
+  // PHONE
+  // ----------------------------------------------------------
+
   check("phone")
+
     .trim()
+
     .notEmpty()
-    .withMessage("Phone/WhatsApp number is required.")
-    .matches(/^\+?[1-9]\d{1,14}$/)
     .withMessage(
-      "Enter a valid international phone number (e.g. +923001234567).",
+      "Phone/WhatsApp number is required."
+    )
+
+    .matches(
+      /^\+?[1-9]\d{1,14}$/
+    )
+
+    .withMessage(
+      "Enter a valid international phone number (e.g. +923001234567)."
     ),
 
-  // 6. Country
+
+  // ----------------------------------------------------------
+  // COUNTRY
+  // ----------------------------------------------------------
+
   check("country")
+
     .trim()
+
     .notEmpty()
-    .withMessage("Country selection is required.")
+    .withMessage(
+      "Country selection is required."
+    )
+
     .isIn(validCountryCodes)
-    .withMessage("Invalid country selected."),
 
-  // 7. Terms
+    .withMessage(
+      "Invalid country selected."
+    ),
+
+
+  // ----------------------------------------------------------
+  // TERMS
+  // ----------------------------------------------------------
+
   check("agree")
-    .equals("1")
-    .withMessage("You must accept the Terms of Service and Privacy Policy."),
 
-  // Validation error handler
+    .equals("1")
+
+    .withMessage(
+      "You must accept the Terms of Service and Privacy Policy."
+    ),
+
+
+  // ==========================================================
+  // VALIDATION ERROR HANDLER
+  // ==========================================================
+
   (req, res, next) => {
-    const errors = validationResult(req);
+
+    const errors =
+      validationResult(req);
+
+
     if (!errors.isEmpty()) {
-      return res.status(422).render("auth/sign-up", {
-        currentPage: "SignUp",
-        title: "Sign Up",
-        isLoggedIn: false,
-        errors: errors.mapped(),
-        oldInput: req.body,
-        countryList,
-      });
+
+      return res.status(422).render(
+        "auth/sign-up",
+        {
+          currentPage: "SignUp",
+          title: "Sign Up",
+          isLoggedIn: false,
+
+          errors: errors.mapped(),
+
+          oldInput: req.body,
+
+          countryList,
+        }
+      );
+
     }
+
+
     next();
+
   },
 
-  // Actual registration
+
+  // ==========================================================
+  // CREATE TEMPORARY VERIFICATION
+  // ==========================================================
+
   async (req, res, next) => {
+
     try {
-      const { fullName, password, phone, country } = req.body;
-      const email = normalizeEmail(req.body.email);
 
-      const hashedPassword = await bcrypt.hash(password, 12);
-
-      const user = new User({
+      const {
         fullName,
-        email,
-        password: hashedPassword,
+        password,
         phone,
         country,
-        role: "user",
-        failedLoginAttempts: 0,
+      } = req.body;
+
+
+      const email =
+        normalizeEmail(
+          req.body.email
+        );
+
+
+      // ------------------------------------------------------
+      // Hash password
+      // ------------------------------------------------------
+
+      const hashedPassword =
+        await bcrypt.hash(
+          password,
+          12
+        );
+
+
+      // ------------------------------------------------------
+      // Generate secure OTP
+      // ------------------------------------------------------
+
+      const otp =
+        generateOTP();
+
+
+      // ------------------------------------------------------
+      // Hash OTP
+      // ------------------------------------------------------
+
+      const otpHash =
+        await hashOTP(otp);
+
+
+      // ------------------------------------------------------
+      // Remove previous pending verification
+      // ------------------------------------------------------
+
+      await EmailVerification.deleteOne({
+        email,
       });
 
-      await user.save();
-      res.redirect("/login");
-    } catch (err) {
-      next(err);
+
+      // ------------------------------------------------------
+      // Store temporary signup information
+      // ------------------------------------------------------
+
+      await EmailVerification.create({
+
+        email,
+
+        fullName,
+
+        password: hashedPassword,
+
+        phone,
+
+        country,
+
+        otpHash,
+
+        attempts: 0,
+
+        resendCount: 0,
+
+        lastOtpSentAt: new Date(),
+
+      });
+
+
+      // ------------------------------------------------------
+      // Send OTP
+      // ------------------------------------------------------
+
+      await sendVerificationEmail(
+        email,
+        otp
+      );
+
+
+      console.log(
+        `Verification OTP sent to ${email}`
+      );
+
+
+      // ------------------------------------------------------
+      // Store email in session
+      // ------------------------------------------------------
+
+      req.session.verificationEmail =
+        email;
+
+
+      // ------------------------------------------------------
+      // Redirect to verification page
+      // ------------------------------------------------------
+
+      req.session.save((err) => {
+
+        if (err) {
+          return next(err);
+        }
+
+
+        res.redirect(
+          "/verify-email"
+        );
+
+      });
+
+    } catch (error) {
+
+      next(error);
+
     }
+
   },
+
 ];
+
+
+// ============================================================
+// RESEND VERIFICATION OTP
+// ============================================================
+
+exports.resendVerificationOtpController =
+  async (req, res, next) => {
+
+    try {
+
+      // ------------------------------------------------------
+      // IMPORTANT:
+      // Never trust email sent by the browser.
+      //
+      // The email comes from the server-side session.
+      // ------------------------------------------------------
+
+      const email =
+        normalizeEmail(
+          req.session.verificationEmail
+        );
+
+
+      if (!email) {
+
+        return res.status(400).json({
+
+          success: false,
+
+          message:
+            "Verification session expired. Please sign up again.",
+
+        });
+
+      }
+
+
+      // ------------------------------------------------------
+      // Find pending verification
+      // ------------------------------------------------------
+
+      const verification =
+        await EmailVerification.findOne({
+          email,
+        });
+
+
+      if (!verification) {
+
+        return res.status(404).json({
+
+          success: false,
+
+          message:
+            "No pending email verification was found. Please sign up again.",
+
+        });
+
+      }
+
+
+      // ======================================================
+      // SERVER-SIDE 60 SECOND COOLDOWN
+      // ======================================================
+
+      const now =
+        Date.now();
+
+
+      const lastSent =
+        verification.lastOtpSentAt
+          ? verification.lastOtpSentAt.getTime()
+          : 0;
+
+
+      const secondsSinceLastOtp =
+        Math.floor(
+          (now - lastSent) / 1000
+        );
+
+
+      if (
+        secondsSinceLastOtp <
+        OTP_RESEND_COOLDOWN_SECONDS
+      ) {
+
+        const secondsRemaining =
+          OTP_RESEND_COOLDOWN_SECONDS -
+          secondsSinceLastOtp;
+
+
+        return res.status(429).json({
+
+          success: false,
+
+          message:
+            `Please wait ${secondsRemaining} seconds before requesting another OTP.`,
+
+          retryAfter:
+            secondsRemaining,
+
+          remainingResends:
+            Math.max(
+              0,
+              MAX_OTP_RESENDS -
+              verification.resendCount
+            ),
+
+        });
+
+      }
+
+
+      // ======================================================
+      // MAXIMUM RESEND CHECK
+      // ======================================================
+
+      if (
+        verification.resendCount >=
+        MAX_OTP_RESENDS
+      ) {
+
+        return res.status(429).json({
+
+          success: false,
+
+          message:
+            "You have requested too many verification codes. Please start the signup process again.",
+
+          retryAfter: 0,
+
+          remainingResends: 0,
+
+        });
+
+      }
+
+
+      // ======================================================
+      // GENERATE NEW OTP
+      // ======================================================
+
+      const newOtp =
+        generateOTP();
+
+
+      // ======================================================
+      // HASH NEW OTP
+      // ======================================================
+
+      const newOtpHash =
+        await hashOTP(newOtp);
+
+
+      // ======================================================
+      // REPLACE OLD OTP
+      // ======================================================
+
+      verification.otpHash =
+        newOtpHash;
+
+
+      // ------------------------------------------------------
+      // Reset incorrect OTP attempts
+      // ------------------------------------------------------
+
+      verification.attempts = 0;
+
+
+      // ------------------------------------------------------
+      // Increase resend counter
+      // ------------------------------------------------------
+
+      verification.resendCount += 1;
+
+
+      // ------------------------------------------------------
+      // Record exact resend time
+      // ------------------------------------------------------
+
+      verification.lastOtpSentAt =
+        new Date();
+
+
+      // ------------------------------------------------------
+      // Restart 15-minute expiration
+      // ------------------------------------------------------
+
+      verification.createdAt =
+        new Date();
+
+
+      // ======================================================
+      // SAVE DATABASE CHANGES
+      // ======================================================
+
+      await verification.save();
+
+
+      // ======================================================
+      // SEND NEW OTP
+      // ======================================================
+
+      await sendVerificationEmail(
+        verification.email,
+        newOtp
+      );
+
+
+      // ======================================================
+      // SUCCESS RESPONSE
+      // ======================================================
+
+      return res.status(200).json({
+
+        success: true,
+
+        message:
+          "A new verification code has been sent to your email.",
+
+        retryAfter:
+          OTP_RESEND_COOLDOWN_SECONDS,
+
+        remainingResends:
+          MAX_OTP_RESENDS -
+          verification.resendCount,
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Resend OTP error:",
+        error
+      );
+
+      next(error);
+
+    }
+
+  };
+
+
+// ============================================================
+// VERIFY EMAIL PAGE
+// ============================================================
+
+exports.getVerifyEmailController =
+  async (req, res, next) => {
+
+    try {
+
+      // ------------------------------------------------------
+      // Get email from server-side session
+      // ------------------------------------------------------
+
+      const email =
+        req.session.verificationEmail;
+
+
+      if (!email) {
+
+        return res.redirect(
+          "/sign-up"
+        );
+
+      }
+
+
+      // ------------------------------------------------------
+      // Find pending verification
+      // ------------------------------------------------------
+
+      const verification =
+        await EmailVerification.findOne({
+          email,
+        });
+
+
+      if (!verification) {
+
+        return res.redirect(
+          "/sign-up"
+        );
+
+      }
+
+
+      // ======================================================
+      // CALCULATE SERVER-SIDE REMAINING COOLDOWN
+      // ======================================================
+
+      const now =
+        Date.now();
+
+
+      const lastSent =
+        verification.lastOtpSentAt
+          ? verification.lastOtpSentAt.getTime()
+          : 0;
+
+
+      const secondsSinceLastOtp =
+        Math.floor(
+          (now - lastSent) / 1000
+        );
+
+
+      const resendRemainingSeconds =
+        Math.max(
+          0,
+          OTP_RESEND_COOLDOWN_SECONDS -
+          secondsSinceLastOtp
+        );
+
+
+      // ======================================================
+      // CALCULATE REMAINING RESENDS
+      // ======================================================
+
+      const remainingResends =
+        Math.max(
+          0,
+          MAX_OTP_RESENDS -
+          verification.resendCount
+        );
+
+
+      // ======================================================
+      // RENDER VERIFY PAGE
+      // ======================================================
+
+      res.render(
+        "auth/verify-email",
+        {
+
+          currentPage:
+            "verify-email",
+
+          title:
+            "Verify Email",
+
+          isLoggedIn:
+            false,
+
+          email,
+
+          error:
+            null,
+
+          success:
+            null,
+
+          // IMPORTANT:
+          // These values come directly from server/database.
+
+          resendRemainingSeconds,
+
+          remainingResends,
+
+        }
+      );
+
+    } catch (error) {
+
+      next(error);
+
+    }
+
+  };
+
+
+// ============================================================
+// VERIFY EMAIL OTP
+// ============================================================
+
+exports.postVerifyEmailController =
+  async (req, res, next) => {
+
+    try {
+
+      // ------------------------------------------------------
+      // Get email from session
+      // ------------------------------------------------------
+
+      const email =
+        req.session.verificationEmail;
+
+
+      if (!email) {
+
+        return res.redirect(
+          "/sign-up"
+        );
+
+      }
+
+
+      // ------------------------------------------------------
+      // Get OTP from form
+      // ------------------------------------------------------
+
+      const otp =
+        String(
+          req.body.otp || ""
+        ).trim();
+
+
+      // ------------------------------------------------------
+      // Validate OTP format
+      // ------------------------------------------------------
+
+      if (!/^\d{6}$/.test(otp)) {
+
+        return res.status(422).render(
+          "auth/verify-email",
+          {
+
+            currentPage:
+              "verify-email",
+
+            title:
+              "Verify Email",
+
+            isLoggedIn:
+              false,
+
+            email,
+
+            error:
+              "Please enter the 6-digit verification code.",
+
+            success:
+              null,
+
+            resendRemainingSeconds: 0,
+
+            remainingResends:
+              MAX_OTP_RESENDS,
+
+          }
+        );
+
+      }
+
+
+      // ------------------------------------------------------
+      // Find verification record
+      // ------------------------------------------------------
+
+      const verification =
+        await EmailVerification.findOne({
+          email,
+        });
+
+
+      if (!verification) {
+
+        return res.status(410).render(
+          "auth/verify-email",
+          {
+
+            currentPage:
+              "verify-email",
+
+            title:
+              "Verify Email",
+
+            isLoggedIn:
+              false,
+
+            email,
+
+            error:
+              "This verification code has expired. Please sign up again.",
+
+            success:
+              null,
+
+            resendRemainingSeconds: 0,
+
+            remainingResends: 0,
+
+          }
+        );
+
+      }
+
+
+      // ======================================================
+      // CALCULATE CURRENT SERVER COOLDOWN
+      // ======================================================
+
+      const now =
+        Date.now();
+
+
+      const lastSent =
+        verification.lastOtpSentAt
+          ? verification.lastOtpSentAt.getTime()
+          : 0;
+
+
+      const secondsSinceLastOtp =
+        Math.floor(
+          (now - lastSent) / 1000
+        );
+
+
+      const resendRemainingSeconds =
+        Math.max(
+          0,
+          OTP_RESEND_COOLDOWN_SECONDS -
+          secondsSinceLastOtp
+        );
+
+
+      const remainingResends =
+        Math.max(
+          0,
+          MAX_OTP_RESENDS -
+          verification.resendCount
+        );
+
+
+      // ======================================================
+      // LIMIT OTP ATTEMPTS
+      // ======================================================
+
+      if (
+        verification.attempts >=
+        MAX_OTP_ATTEMPTS
+      ) {
+
+        await EmailVerification.deleteOne({
+          _id: verification._id,
+        });
+
+
+        delete req.session.verificationEmail;
+
+
+        return res.status(429).render(
+          "auth/verify-email",
+          {
+
+            currentPage:
+              "verify-email",
+
+            title:
+              "Verify Email",
+
+            isLoggedIn:
+              false,
+
+            email,
+
+            error:
+              "Too many incorrect attempts. Please start the verification process again.",
+
+            success:
+              null,
+
+            resendRemainingSeconds: 0,
+
+            remainingResends: 0,
+
+          }
+        );
+
+      }
+
+
+      // ======================================================
+      // COMPARE OTP WITH HASH
+      // ======================================================
+
+      const validOTP =
+        await bcrypt.compare(
+          otp,
+          verification.otpHash
+        );
+
+
+      if (!validOTP) {
+
+        verification.attempts += 1;
+
+        await verification.save();
+
+
+        return res.status(422).render(
+          "auth/verify-email",
+          {
+
+            currentPage:
+              "verify-email",
+
+            title:
+              "Verify Email",
+
+            isLoggedIn:
+              false,
+
+            email,
+
+            error:
+              "Incorrect verification code.",
+
+            success:
+              null,
+
+            resendRemainingSeconds,
+
+            remainingResends,
+
+          }
+        );
+
+      }
+
+
+      // ======================================================
+      // CHECK IF USER ALREADY EXISTS
+      // ======================================================
+
+      const existingUser =
+        await User.findOne({
+          email,
+        });
+
+
+      if (existingUser) {
+
+        await EmailVerification.deleteOne({
+          _id: verification._id,
+        });
+
+
+        delete req.session.verificationEmail;
+
+
+        return res.redirect(
+          "/login"
+        );
+
+      }
+
+
+      // ======================================================
+      // CREATE REAL USER
+      // ======================================================
+
+      const user =
+        new User({
+
+          fullName:
+            verification.fullName,
+
+          email:
+            verification.email,
+
+          password:
+            verification.password,
+
+          phone:
+            verification.phone,
+
+          country:
+            verification.country,
+
+          emailVerified:
+            true,
+
+          authProvider:
+            "local",
+
+          role:
+            "user",
+
+          failedLoginAttempts:
+            0,
+
+        });
+
+
+      await user.save();
+
+
+      // ======================================================
+      // DELETE TEMPORARY VERIFICATION DATA
+      // ======================================================
+
+      await EmailVerification.deleteOne({
+        _id: verification._id,
+      });
+
+
+      // ------------------------------------------------------
+      // Remove verification email from session
+      // ------------------------------------------------------
+
+      delete req.session.verificationEmail;
+
+
+      // ======================================================
+      // ACCOUNT CREATED
+      // ======================================================
+
+      console.log(
+        "Email verified and account created:",
+        email
+      );
+
+
+      res.redirect(
+        "/login?verified=true"
+      );
+
+    } catch (error) {
+
+      next(error);
+
+    }
+
+  };
