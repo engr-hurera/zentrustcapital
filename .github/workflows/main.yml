@@ -1,0 +1,27 @@
+name: Unzip Project Files
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Unzip archive
+        run: |
+          if [ -f project.zip ]; then
+            unzip -o project.zip -d .
+            rm project.zip
+          fi
+
+      - name: Commit unzipped files
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@://github.com"
+          git add -A
+          git diff-index --quiet HEAD || git commit -m "Unzipped project files"
+          git push
