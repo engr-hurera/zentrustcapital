@@ -1,0 +1,852 @@
+<%- include('partials/head') %>
+
+<link rel="stylesheet" href="/css/styles-pages.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/broker-review.css">
+
+</head>
+
+<body>
+
+  <%- include('partials/header') %>
+
+  <div class="page-wrapper">
+
+    <% if (!broker) { %>
+
+      <div class="page-header">
+        <div class="container">
+          <div class="breadcrumb">
+            <a href="/">Home</a>
+            <span>/</span>
+            <a href="/brokers">Brokers</a>
+            <span>/</span>
+            <span>Broker Review</span>
+          </div>
+
+          <div class="broker-header-flex">
+            <div>
+              <h1 class="review-title">
+                Brokers Review
+              </h1>
+
+              <p class="review-rating-text">
+                Explore our broker reviews.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <% } else { %>
+
+      <!-- =========================================================
+           PAGE HEADER
+      ========================================================== -->
+
+      <div class="page-header">
+
+        <div class="container">
+
+          <div class="breadcrumb">
+
+            <a href="/">Home</a>
+
+            <span>/</span>
+
+            <a href="/brokers">Brokers</a>
+
+            <span>/</span>
+
+            <span>
+              <%= broker.brokerName %> Review
+            </span>
+
+          </div>
+
+
+          <div class="broker-header-flex">
+
+            <!-- Broker Logo -->
+
+            <div class="broker-logo">
+
+              <% if (
+                broker.brokerLogo &&
+                (
+                  broker.brokerLogo.startsWith("http://") ||
+                  broker.brokerLogo.startsWith("https://")
+                )
+              ) { %>
+
+                <img
+                  src="<%= broker.brokerLogo %>"
+                  alt="<%= broker.brokerName %> logo"
+                  class="broker-logo-image"
+                >
+
+              <% } else if (broker.brokerLogo) { %>
+
+                <%= broker.brokerLogo %>
+
+              <% } else { %>
+
+                <span>
+                  <%= broker.brokerName.charAt(0).toUpperCase() %>
+                </span>
+
+              <% } %>
+
+            </div>
+
+
+            <div>
+
+              <div class="broker-title-row">
+
+                <h1 class="review-title">
+
+                  <%= broker.brokerName %>
+
+                  <% if (foundedYear) { %>
+                    <%= foundedYear %>
+                  <% } %>
+
+                </h1>
+
+
+                <% if (broker.brokerPick) { %>
+
+                  <span class="badge badge-gold">
+                    <%= broker.brokerPick %>
+                  </span>
+
+                <% } %>
+
+
+                <% if (isRegulated) { %>
+
+                  <span class="badge badge-green">
+                    Regulated
+                  </span>
+
+                <% } %>
+
+              </div>
+
+
+              <div class="broker-subtitle-row">
+
+                <!-- Rating value is supplied by controller -->
+                <div
+                  class="broker-rating"
+                  data-rating="<%= broker.brokerRating %>"
+                  hidden>
+                </div>
+
+
+                <!-- JavaScript only handles visual stars -->
+
+                <div
+                  class="stars rating-stars"
+                  aria-label="Broker rating <%= broker.brokerRating %> out of 5">
+
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+
+                </div>
+
+
+                <span class="review-rating-text">
+
+                  <%= broker.brokerRating %>/5.0
+
+                  — Based on 2,400+ reviews
+
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================================================
+           MAIN REVIEW CONTENT
+      ========================================================== -->
+
+      <section class="section">
+
+        <div class="container">
+
+          <div class="review-layout">
+
+
+            <!-- =====================================================
+                 MAIN CONTENT
+            ====================================================== -->
+
+            <div>
+
+
+              <!-- VERDICT -->
+
+              <div class="card verdict-card">
+
+                <h3 class="verdict-title">
+                  ⚡ ZEN TRUST CAPITAL Verdict
+                </h3>
+
+                <p class="verdict-text">
+
+                  <%= broker.DeatiledBrokerDescription ||
+                      broker.brokerHeading ||
+                      "No detailed review is available yet." %>
+
+                </p>
+
+              </div>
+
+
+              <!-- =================================================
+                   KEY SPECIFICATIONS
+              ================================================== -->
+
+              <div class="review-section">
+
+                <h3>
+                  📋 Key Specifications
+                </h3>
+
+
+                <div class="spec-grid">
+
+
+                  <!-- Minimum Deposit -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Min Deposit
+                    </label>
+
+                    <strong class="text-gold">
+
+                      $<%= broker.brokerMinDeposit || 0 %>
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Leverage -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Max Leverage
+                    </label>
+
+                    <strong class="text-gold">
+
+                      <%= broker.brokerLeverage || "N/A" %>
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Spread -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Min Spread
+                    </label>
+
+                    <strong class="text-green">
+
+                      <%= broker.brokerMinSpread || 0 %>
+                      pips
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Commission -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Commission
+                    </label>
+
+                    <strong>
+
+                      $<%= broker.commissionLot || 0 %>/lot
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Regulation -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Regulation
+                    </label>
+
+                    <strong class="strong-tag">
+
+                      <% if (regulationTags.length > 0) { %>
+
+                        <%= regulationTags.join(", ") %>
+
+                      <% } else { %>
+
+                        N/A
+
+                      <% } %>
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Platforms -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Platforms
+                    </label>
+
+                    <strong>
+
+                      <% if (platforms.length > 0) { %>
+
+                        <%= platforms.join(", ") %>
+
+                      <% } else { %>
+
+                        N/A
+
+                      <% } %>
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Founded -->
+
+                  <% if (foundedYear) { %>
+
+                    <div class="spec-item">
+
+                      <label>
+                        Founded
+                      </label>
+
+                      <strong>
+                        <%= foundedYear %>
+                      </strong>
+
+                    </div>
+
+                  <% } %>
+
+
+                  <!-- Withdrawals -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Withdrawals
+                    </label>
+
+                    <strong class="text-green">
+
+                      <% if (
+                        broker.brokerDataTags &&
+                        broker.brokerDataTags.includes(
+                          "Instant-withdrawal"
+                        )
+                      ) { %>
+
+                        Instant
+
+                      <% } else { %>
+
+                        No Instant
+
+                      <% } %>
+
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Islamic Account -->
+
+                  <div class="spec-item">
+
+                    <label>
+                      Islamic Account
+                    </label>
+
+                    <strong class="text-green">
+
+                      <% if (
+                        broker.brokerDataTags &&
+                        broker.brokerDataTags.includes(
+                          "Islamic-Account"
+                        )
+                      ) { %>
+
+                        ✓ Yes
+
+                      <% } else { %>
+
+                        ✗ No
+
+                      <% } %>
+
+                    </strong>
+
+                  </div>
+
+
+                </div>
+
+              </div>
+
+
+              <!-- =================================================
+                   PROS & CONS
+              ================================================== -->
+
+              <div class="review-section">
+
+                <h3>
+                  ✅ Pros & Cons
+                </h3>
+
+
+                <div class="card pros-cons">
+
+
+                  <!-- PROS -->
+
+                  <div>
+
+                    <div class="pros-header">
+                      Pros
+                    </div>
+
+
+                    <ul class="pros-list">
+
+                      <% pros.forEach((pro) => { %>
+
+                        <li>
+                          <%= pro %>
+                        </li>
+
+                      <% }) %>
+
+                    </ul>
+
+                  </div>
+
+
+                  <!-- CONS -->
+
+                  <div>
+
+                    <div class="cons-header">
+                      Cons
+                    </div>
+
+
+                    <ul class="cons-list">
+
+                      <% cons.forEach((con) => { %>
+
+                        <li>
+                          <%= con %>
+                        </li>
+
+                      <% }) %>
+
+                    </ul>
+
+                  </div>
+
+
+                </div>
+
+              </div>
+
+
+              <!-- =================================================
+                   CATEGORY RATINGS
+              ================================================== -->
+
+              <div class="review-section">
+
+                <h3>
+                  📊 Category Ratings
+                </h3>
+
+
+                <div class="card">
+
+
+                  <!-- SAFETY -->
+
+                  <div class="score-row">
+
+                    <span class="score-label">
+                      Regulation & Safety
+                    </span>
+
+                    <div class="score-bar">
+
+                      <div
+                        class="score-fill"
+                        style="width: <%= scores.safety * 10 %>%;">
+                      </div>
+
+                    </div>
+
+                    <span class="score-value">
+                      <%= scores.safety %>
+                    </span>
+
+                  </div>
+
+
+                  <!-- FEES -->
+
+                  <div class="score-row">
+
+                    <span class="score-label">
+                      Spreads & Fees
+                    </span>
+
+                    <div class="score-bar">
+
+                      <div
+                        class="score-fill"
+                        style="width: <%= scores.fees * 10 %>%;">
+                      </div>
+
+                    </div>
+
+                    <span class="score-value">
+                      <%= scores.fees %>
+                    </span>
+
+                  </div>
+
+
+                  <!-- FUNDING -->
+
+                  <div class="score-row">
+
+                    <span class="score-label">
+                      Deposit & Withdrawal
+                    </span>
+
+                    <div class="score-bar">
+
+                      <div
+                        class="score-fill"
+                        style="width: <%= scores.funding * 10 %>%;">
+                      </div>
+
+                    </div>
+
+                    <span class="score-value">
+                      <%= scores.funding %>
+                    </span>
+
+                  </div>
+
+
+                  <!-- PLATFORMS -->
+
+                  <div class="score-row">
+
+                    <span class="score-label">
+                      Trading Platforms
+                    </span>
+
+                    <div class="score-bar">
+
+                      <div
+                        class="score-fill"
+                        style="width: <%= scores.platforms * 10 %>%;">
+                      </div>
+
+                    </div>
+
+                    <span class="score-value">
+                      <%= scores.platforms %>
+                    </span>
+
+                  </div>
+
+
+                  <!-- SUPPORT -->
+
+                  <div class="score-row score-row-last">
+
+                    <span class="score-label">
+                      Customer Support
+                    </span>
+
+                    <div class="score-bar">
+
+                      <div
+                        class="score-fill"
+                        style="width: <%= scores.support * 10 %>%;">
+                      </div>
+
+                    </div>
+
+                    <span class="score-value">
+                      <%= scores.support %>
+                    </span>
+
+                  </div>
+
+
+                </div>
+
+              </div>
+
+
+            </div>
+
+
+            <!-- =====================================================
+                 SIDEBAR
+            ====================================================== -->
+
+            <div class="sticky-sidebar">
+
+
+              <!-- OVERALL SCORE -->
+
+              <div class="card">
+
+                <div
+                  class="score-circle"
+                  style="--pages-pct: <%= Number(broker.brokerRating || 0) * 20 %>;"
+                >
+
+                  <span>
+                    <%= broker.brokerRating || 0 %>
+                  </span>
+
+                </div>
+
+
+                <div class="overall-score-label">
+
+                  Overall Score
+
+                </div>
+
+
+                <div
+                  class="stars rating-stars stars-margin"
+                  aria-label="Broker rating <%= broker.brokerRating %> out of 5">
+
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+                  <span class="star">★</span>
+
+                </div>
+
+
+                <a
+                  href="/open-account"
+                  class="btn-primary w-full cta-button">
+
+                  Open Account
+
+                </a>
+
+
+                <p class="risk-warning">
+
+                  Risk Warning: CFDs are complex instruments.
+
+                </p>
+
+              </div>
+
+
+              <!-- =================================================
+                   QUICK FACTS
+              ================================================== -->
+
+              <div class="card">
+
+                <h4 class="quick-facts-title">
+                  Quick Facts
+                </h4>
+
+
+                <div class="quick-facts-list">
+
+
+                  <% if (broker.brokerMinDeposit !== undefined) { %>
+
+                    <div class="quick-fact-row">
+
+                      <span class="text-muted">
+                        Min Deposit
+                      </span>
+
+                      <strong>
+                        $<%= broker.brokerMinDeposit || 0 %>
+                      </strong>
+
+                    </div>
+
+                  <% } %>
+
+
+                  <% if (broker.brokerLeverage) { %>
+
+                    <div class="quick-fact-row">
+
+                      <span class="text-muted">
+                        Max Leverage
+                      </span>
+
+                      <strong class="text-gold">
+                        <%= broker.brokerLeverage %>
+                      </strong>
+
+                    </div>
+
+                  <% } %>
+
+
+                  <% if (platforms.length > 0) { %>
+
+                    <div class="quick-fact-row">
+
+                      <span class="text-muted">
+                        Platforms
+                      </span>
+
+                      <strong>
+                        <%= platforms.join(", ") %>
+                      </strong>
+
+                    </div>
+
+                  <% } %>
+
+
+                  <% if (regulationTags.length > 0) { %>
+
+                    <div class="quick-fact-row">
+
+                      <span class="text-muted">
+                        Regulation
+                      </span>
+
+                      <strong class="strong-tag">
+                        <%= regulationTags.join(", ") %>
+                      </strong>
+
+                    </div>
+
+                  <% } %>
+
+
+                  <div class="quick-fact-row">
+
+                    <span class="text-muted">
+                      Local Payments
+                    </span>
+
+
+                    <% if (
+                      broker.brokerDataTags &&
+                      broker.brokerDataTags.includes(
+                        "JazzCash-Easypaisa"
+                      )
+                    ) { %>
+
+                      <strong class="text-green">
+                        ✓ Yes
+                      </strong>
+
+                    <% } else { %>
+
+                      <strong class="text-green">
+                        ✗ No
+                      </strong>
+
+                    <% } %>
+
+                  </div>
+
+
+                </div>
+
+              </div>
+
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </section>
+
+    <% } %>
+
+  </div>
+
+
+  <%- include('partials/footer') %>
+
+
+  <!-- =============================================================
+       PAGE JAVASCRIPT
+  ============================================================= -->
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/script.js"></script>
+  <script src="/js/emailWhatsAppRedirect.js"></script>
+
+  <script src="/js/broker-review.js"></script>
+
+</body>
+
+</html>

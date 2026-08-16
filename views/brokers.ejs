@@ -1,0 +1,280 @@
+<%- include('partials/head') %>
+
+<link rel="stylesheet" href="/css/styles-pages.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+
+
+<style>
+  /* nav{
+      margin-top: 90px;
+    } */
+
+
+  .container>p {
+    color: var(--pages-text2);
+    margin-top: 12px;
+    max-width: 560px;
+  }
+
+  .badge-gold {
+    margin-left: 8px;
+        color: var(--darkBlue-to-teal12);
+    background: var(--hero-label-bg);
+    border: 1px solid var(--hero-label-border);
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+
+  .filter-btn {
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    background: var(--pages-bg3);
+    border: 1px solid var(--pages-border);
+    color: var(--pages-text2);
+    transition: all var(--pages-transition);
+    cursor: pointer;
+  }
+
+  .filter-btn.active,
+  .filter-btn:hover {
+    background: linear-gradient(135deg, var(--blue-to-teal12), var(--darkBlue-to-sage2));
+    color: var(--btn-text);
+    box-shadow: var(--shadow-btn-main);
+  }
+
+  .broker-row {
+    background: var(--pages-card-bg);
+    border: 1px solid var(--pages-border);
+    border-radius: var(--pages-radius-lg);
+    padding: 28px;
+    margin-bottom: 16px;
+    display: grid;
+    grid-template-columns: 60px 1fr auto auto auto auto;
+    align-items: center;
+    gap: 20px;
+    transition: all var(--pages-transition);
+  }
+
+  .broker-row:hover {
+    border-color: var(--bk-border-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-bk-hover);
+  }
+
+  .broker-logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: var(--pages-bg4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--pages-font-display);
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--pages-gold);
+  }
+
+  .broker-info h3 {
+    font-family: var(--pages-font-display);
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+
+  .broker-info p {
+    font-size: 0.84rem;
+    color: var(--pages-text2);
+  }
+
+  .broker-stat {
+    text-align: center;
+  }
+
+  .broker-stat strong {
+    display: block;
+    font-family: var(--pages-font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .broker-stat span {
+    font-size: 0.76rem;
+    color: var(--pages-text3);
+  }
+
+  .btn-secondary {
+    padding: 9px 18px;
+    font-size: 0.84rem;
+    white-space: nowrap;
+    justify-content: center;
+  }
+
+  .btn-primary {
+    padding: 9px 18px;
+    font-size: 0.84rem;
+    white-space: nowrap;
+  }
+
+  .stars {
+    display: flex;
+    justify-items: flex-start;
+    color: var(--pages-text2);
+
+  }
+
+  .btn-primary-edit {
+    background: blue;
+  }
+  .btn-primary-delete {
+    background: red;
+    cursor: pointer;
+    padding: 11.4px 18px 11.4px 18px;
+  }
+  .btn-primary-delete>button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 0.84rem;
+    font-weight: 700;
+    box-sizing: content-box;
+  }
+
+  @media(max-width:900px) {
+    .broker-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .compare-brokers {
+    text-align: center;
+    margin-top: 40px;
+  }
+</style>
+</head>
+
+<body>
+  <%- include('partials/header') %>
+
+
+
+  <div class="page-wrapper">
+    <div class="page-header">
+      <div class="container">
+        <div class="breadcrumb"><a href="/">Home</a><span>/</span><span>Brokers</span></div>
+
+        <span class="section-label">
+          <div class="ld">✦</div>
+          Broker Reviews
+        </span>
+        <h1>Top Rated <span class="text-gold">Forex Brokers</span></h1>
+        <p>Hand-picked, independently reviewed, and ranked for your trading success. Updated monthly by our expert team.
+        </p>
+      </div>
+    </div>
+
+    <section class="section"> 
+  <div class="container"> 
+    <div class="filter-bar"> 
+      <button class="filter-btn active" data-tag="all">All Brokers</button> 
+      <button class="filter-btn" data-tag="ecn">ECN Brokers</button> 
+      <button class="filter-btn" data-tag="standard">Standard</button> 
+      <button class="filter-btn" data-tag="crypto">Crypto Friendly</button> 
+      <button class="filter-btn" data-tag="low-deposit">Low Deposit</button> 
+      <button class="filter-btn" data-tag="welcome-bonus">Welcome Bonus</button> 
+    </div> 
+
+    <% 
+      // 1. Create a safe copy and sort it (Top Pick > Editor's Pick > Rest)
+      const sortedBrokers = typeof editAddBroker !== 'undefined' && Array.isArray(editAddBroker) 
+        ? [...editAddBroker].sort((a, b) => {
+            const pickA = (a.brokerPick || '').trim().toUpperCase();
+            const pickB = (b.brokerPick || '').trim().toUpperCase();
+
+            const getWeight = (pickString) => {
+              if (pickString === 'TOP PICK') return 3;
+              if (pickString === "EDITOR'S PICK" || pickString === "EDITOR’S PICK") return 2;
+              return 1; 
+            };
+
+            return getWeight(pickB) - getWeight(pickA);
+          })
+        : [];
+    %>
+
+    <!-- 2. Changed loop target from editAddBroker to sortedBrokers -->
+    <% sortedBrokers.forEach(broker => { %> 
+      <div id="broker-list"> 
+        <!-- Broker 1 --> 
+        <input hidden class="brokerId" type="text" value="<%= broker.id %>"> 
+        <div class="broker-row" data-tags="<%= Array.isArray(broker.brokerDataTags) ? broker.brokerDataTags.join(' ') : '' %>"> 
+          <div class="broker-logo"><%= broker.brokerLogo %></div> 
+          <div class="broker-info"> 
+            <h3>
+              <%= broker.brokerName %> 
+              <!-- Only show badge if the broker has one -->
+              <% if (broker.brokerPick && broker.brokerPick.trim() !== '') { %>
+                <span class="badge badge-gold"><%= broker.brokerPick %></span>
+              <% } %>
+            </h3> 
+            <div hidden class="broker-rating" data-rating="<%= broker.brokerRating %>"></div> 
+            <div class="stars rating-stars"> 
+              <span class="star">★</span> 
+              <span class="star">★</span> 
+              <span class="star">★</span> 
+              <span class="star">★</span> 
+              <span class="star">★</span> 
+              </div> 
+              <p><%= broker.brokerHeading %></p> 
+              <div class="tags"> 
+                <% if (Array.isArray(broker.brokerTags)) { %>
+                  <% broker.brokerTags.forEach(tag => { %> 
+                    <span class="tag"><%= tag %></span> 
+                  <% }) %> 
+                <% } %>
+              </div> 
+            </div> 
+            <div class="broker-stat"><strong class="text-gold"><%= broker.brokerLeverage %></strong><span>Max Leverage</span></div> 
+            <div class="broker-stat"><strong>$<%= broker.brokerMinDeposit %></strong><span>Min Deposit</span> </div> 
+            <div class="broker-stat"><strong class="text-green"><%= broker.brokerMinSpread %></strong><span>Min Spread</span></div> 
+            <div class="pages-openAccount"> 
+              <a href="/broker-review/<%= broker.id %>" class="btn-secondary">Read Review</a> 
+              <a href="/open-account" class="btn-primary">Open Account</a> 
+              <% if (isAuthenticated && currentUser) { %>
+        <% if (currentUser.role === 'admin') { %>
+              <form class="btn-primary-delete btn-primary" action="/admin/delete-broker/<%= broker.id %>" method="POST"> 
+                <button type="submit" onclick="return confirm('Are you sure you want to delete this broker?')"> Delete Broker </button> 
+              </form> 
+              <a href="/admin/edit-broker/<%= broker.id %>?editing=true" class="btn-primary-edit btn-primary">Edit Broker</a> 
+              <% } %>
+              <% } %>
+            </div> 
+          </div> 
+        <% }) %> 
+
+        <div class="compare-brokers"> 
+          <a href="/compare-brokers" class="btn-primary">📊 Compare All Brokers Side-by-Side</a> 
+        </div> 
+      </div> 
+  </div>
+</section>
+
+  </div>
+
+
+  <%- include('partials/footer') %>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/brokers.js"></script>
+
+  <script src="/js/script.js"></script>
+</body>
+
+</html>

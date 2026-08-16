@@ -1,0 +1,113 @@
+<!-- ═══════════ CURSOR -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <header id="hdr">
+    <a href="/" class="logo-wrap">
+      <div class="logo-emblem">Z</div>
+      <div class="logo-copy">
+        <span class="logo-name">ZEN TRUST <em>CAPITAL</em></span>
+        <span class="logo-tagline">Forex &amp; CFD Intelligence</span>
+      </div>
+    </a>
+    <nav class="main">
+      
+      <a href="/"
+        class="currentPageNavlinks <%= currentPage === 'home' ? ' currentPageNavlinksActive' : ' ' %>">Home</a>
+      <a href="/brokers"
+        class="currentPageNavlinks <%= currentPage === 'brokers' ? ' currentPageNavlinksActive' : ' ' %>">Brokers</a>
+      
+      <a href="/markets"
+        class="currentPageNavlinks <%= currentPage === 'markets' ? ' currentPageNavlinksActive' : ' ' %>">Markets</a>
+      <a href="/education"
+        class="currentPageNavlinks<%= currentPage === 'education' ? ' currentPageNavlinksActive' : ' ' %>">Education</a>
+      <a href="/articles"
+        class="currentPageNavlinks <%= currentPage === 'articles' ? ' currentPageNavlinksActive' : ' ' %>">Insights</a>
+      <a href="/faq"
+        class="currentPageNavlinks <%= currentPage === 'faq' ? ' currentPageNavlinksActive' : ' ' %>">FAQ</a>
+
+      <!-- 🔒 SECURE FILTER: Show paths conditionally based on authenticated roles -->
+      <% if (isAuthenticated && currentUser) { %>
+
+          <!-- ADMIN ONLY LINKS -->
+          <% if (currentUser.role === 'admin') { %>
+            <a href="/admin/add-broker"
+              class="currentPageNavlinks <%= currentPage === 'addEditBroker' ? ' currentPageNavlinksActive' : ' ' %>">Add Broker</a>
+            <a href="/dashboard/admin"
+              class="currentPageNavlinks <%= currentPage === 'admin-dashboard' ? ' currentPageNavlinksActive' : ' ' %>">Admin Dashboard</a>
+          <% } %>
+
+          <!-- CLIENT ONLY OR GLOBAL LOGGED-IN LINKS -->
+          <% if (currentUser.role === 'client') { %>
+            <a href="/dashboard"
+              class="currentPageNavlinks <%= currentPage === 'dashboard' ? ' currentPageNavlinksActive' : ' ' %>">Client Dashboard</a>
+          <% } %>
+
+          <span>
+            <a href="/ib-program"
+              class="currentPageNavlinks <%= currentPage === 'ib-program' ? ' currentPageNavlinksActive' : ' ' %>">Partnership</a>
+            <ul class="drop-down">
+              <li><a href="/broker-review"
+                  class="currentPageNavlinks <%= currentPage === 'broker-review' ? ' currentPageNavlinksActive' : ' ' %>" rel="noopener noreferrer">Bluevox</a></li>
+              <li><a href="/broker-review"
+                  class="currentPageNavlinks <%= currentPage === 'broker-review' ? ' currentPageNavlinksActive' : ' ' %>" rel="noopener noreferrer">Kvb</a></li>
+              <li><a href="/broker-review"
+                  class="currentPageNavlinks <%= currentPage === 'broker-review' ? ' currentPageNavlinksActive' : ' ' %>" rel="noopener noreferrer">Trade Marsha</a></li>
+            </ul>
+          </span>
+      <% } %>
+    </nav>
+
+    <div class="hd-actions">
+      <%- include('theme-home-btn') %>
+      
+      <!-- Toggle profile interactions cleanly based on system verification state -->
+      <% if (!isAuthenticated) { %>
+        <a class="btn-ghost" href="/login">Login</a>
+        <a class="btn-cta" href="/sign-up">Open Account →</a>
+      <% } else { %>
+        <form action="/logout" method="post" style="display: inline;">
+          <button type="submit" class="btn-ghost">Logout</button>
+        </form>
+      <% } %>
+    </div>
+    
+    <button class="hbg" id="hbg" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- ═══════════ MOBILE NAV -->
+  <div class="mob-nav" id="mobNav">
+    <!-- Static paths open to everyone -->
+    <a class="mob-link" href="/">Home</a>
+    <a class="mob-link" href="/brokers">Brokers</a>
+    <a class="mob-link" href="/markets">Markets</a>
+    <a class="mob-link" href="/education">Education</a>
+    <a class="mob-link" href="/articles">Insights</a>
+    <a class="mob-link" href="/faq">FAQ</a>
+
+    <!-- Dynamic conditional paths matching desktop parameters -->
+    <% if (isAuthenticated && currentUser) { %>
+        <% if (currentUser.role === 'admin') { %>
+            <a class="mob-link" href="/admin/add-broker">Add Broker</a>
+            <a class="mob-link" href="/dashboard/admin">Admin Dashboard</a>
+        <% } %>
+        
+        <% if (currentUser.role === 'client') { %>
+            <a class="mob-link" href="/dashboard">Client Dashboard</a>
+        <% } %>
+        
+        <a class="mob-link" href="/bluevox">Partnership</a>
+    <% } %>
+
+    <div class="mob-btns">
+      <% if (!isAuthenticated) { %>
+        <a class="mob-link" href="/login" class="btn-ghost">Login</a>
+        <a class="mob-link" href="/sign-up" class="btn-cta">Open Account</a>
+      <% } else { %>
+        <form action="/logout" method="post" style="width: 100%; text-align: center;">
+          <button type="submit" class="btn-ghost" style="width: 100%;">Logout</button>
+        </form>
+      <% } %>
+    </div>
+  </div>

@@ -1,0 +1,350 @@
+
+<%- include('partials/head') %>
+
+<link rel="stylesheet" href="/css/styles-pages.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+
+<style>
+  .contact-method {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px;
+    background: var(--pages-card-bg);
+    margin-bottom: 12px;
+    border: 1px solid var(--bk-border);
+    border-radius: var(--r20);
+    transition: all .32s;
+    cursor: default;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .contact-method:hover {
+    border-color: var(--bk-border-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-bk-hover);
+  cursor: pointer;
+  }
+
+  .contact-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+   background: var(--pages-card-bg);
+    border: 1px solid var(--bk-border);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .contact-label {
+    font-size: 0.76rem;
+    color: var(--pages-text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .contact-value {
+    font-family: var(--pages-font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+
+  .contact-desc {
+    font-size: 0.82rem;
+    color: var(--pages-text2);
+    margin-top: 3px;
+  }
+  .btn-secondary{
+color: var(--darkBlue-to-teal12);
+  border: 1px solid var(--darkBlue-to-teal12);
+  }
+.btn-secondary:hover{
+color: var(--darkBlue-to-teal12);
+  border: 1px solid var(--darkBlue-to-teal12);
+  background: transparent;
+}
+  .form-input {
+    transition: all 0.2s ease;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--darkBlue-to-teal12);
+    box-shadow: 0 0 0 3px var(--shadow-card);
+  }
+
+  /* moved from inline styles */
+
+  .page-header-desc {
+    color: var(--pages-text2);
+    margin-top: 12px;
+  }
+
+  .contact-grid {
+    gap: 48px;
+    align-items: start;
+  }
+
+  .follow-section {
+    margin-top: 32px;
+  }
+
+  .follow-title {
+    margin-bottom: 16px;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .social-btn {
+    padding: 9px 18px;
+    font-size: 0.84rem;
+  }
+
+  .contact-card {
+    padding: 36px;
+  }
+
+  .contact-card-title {
+    font-family: var(--pages-font-display);
+    margin-bottom: 24px;
+  }
+
+  .form-grid {
+    gap: 16px;
+  }
+
+  .required {
+    color: #e74c3c;
+  }
+
+  .submit-btn {
+    justify-content: center;
+  }
+
+  .whatsapp-note {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--pages-text3);
+    margin-top: 16px;
+  }
+
+  .btn-loading {
+    transition: all 0.3s ease;
+  }
+
+  .btn-success {
+    background: #27ae60;
+  }
+</style>
+</head>
+
+<body>
+  <%- include('partials/header') %>
+
+  <div class="page-wrapper">
+    <div class="page-header">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="/">Home</a><span>/</span><span>Contact</span>
+        </div>
+
+        <span class="section-label">
+          <div class="ld">✦</div> Get in Touch
+        </span>
+
+        <h1>Contact <span class="text-gold">Our Team</span></h1>
+
+        <p class="page-header-desc">
+          We respond within 1 hour during business hours. Available 24/7 on WhatsApp.
+        </p>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="container">
+        <div class="grid-2 contact-grid">
+
+          <!-- Contact Methods -->
+          <div>
+            <span class="section-label">
+              <div class="ld">✦</div> Reach Us
+            </span>
+
+            <div class="contact-method whatsAppRedirect">
+              <div class="contact-icon">💬</div>
+              <div>
+                <div class="contact-label">WhatsApp</div>
+                <div id="whatsAppNum" class="contact-value">+<%- include('partials/number') %></div>
+                <div class="contact-desc">Fastest response · Available 24/7</div>
+              </div>
+            </div>
+
+            <div class="contact-method emailRedirect">
+              <div class="contact-icon">📧</div>
+              <div>
+                <div class="contact-label">Email</div>
+                <div id="email-id" class="contact-value"><%- include('partials/email') %></div>
+                <div class="contact-desc">Response within 2-4 hours</div>
+              </div>
+            </div>
+
+            <div class="contact-method" id="locationRedirect">
+              <div class="contact-icon">📍</div>
+              <div>
+                <div class="contact-label">Office</div>
+                <div class="contact-value">Lahore, Pakistan</div>
+                <div class="contact-desc">DHA Phase 5 · By appointment only</div>
+              </div>
+            </div>
+
+            <div class="contact-method">
+              <div class="contact-icon">🕐</div>
+              <div>
+                <div class="contact-label">Business Hours</div>
+                <div class="contact-value">9 AM – 9 PM PKT</div>
+                <div class="contact-desc">Mon – Sat · WhatsApp support 24/7</div>
+              </div>
+            </div>
+
+            <div class="follow-section">
+<span class="section-label">
+              <div class="ld">✦</div>Follow Us
+            </span>
+              <div class="social-links">
+                <a href="https://facebook.com/zencapitalpk" target="_blank" class="btn-secondary social-btn">📘 Facebook</a>
+                <a href="https://instagram.com/zencapitalpk" target="_blank" class="btn-secondary social-btn">📸 Instagram</a>
+                <a href="https://youtube.com/@zencapitalpk" target="_blank" class="btn-secondary social-btn">▶️ YouTube</a>
+                <a href="https://t.me/zencapitalpk" target="_blank" class="btn-secondary social-btn">✈️ Telegram</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Form -->
+          <div class="card contact-card">
+            <h3 class="contact-card-title">Send us a Message</h3>
+
+            <form id="contactForm" onsubmit="handleSubmit(event)">
+              <div class="grid-2 form-grid">
+                <div class="form-group">
+                  <label class="form-label">
+                    Full Name <span class="required">*</span>
+                  </label>
+                  <input type="text" id="name" class="form-input" placeholder="Your name" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">
+                    Email <span class="required">*</span>
+                  </label>
+                  <input type="email" id="email" class="form-input" placeholder="you@example.com" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Subject</label>
+                <select id="subject" class="form-input">
+                  <option value="">Select a topic...</option>
+                  <option>General Inquiry</option>
+                  <option>Broker Recommendation</option>
+                  <option>IB Partnership</option>
+                  <option>Account Issue</option>
+                  <option>Withdraw Help</option>
+                  <option>Advertise with Us</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Message <span class="required">*</span>
+                </label>
+                <textarea id="message" class="form-input" rows="6" placeholder="Describe your question or issue in detail..." required></textarea>
+              </div>
+
+              <button type="submit" id="submitBtn" class="btn-primary w-full submit-btn">
+                Send Message →
+              </button>
+            </form>
+
+            <p class="whatsapp-note">
+              Or message us instantly on
+              <a href="https://wa.me/<%- include('partials/number') %>" target="_blank" class="text-gold">
+                WhatsApp →
+              </a>
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/script.js"></script>
+  <script src="/js/emailWhatsAppRedirect.js"></script>
+
+  <script>
+    console.log("page is redirecting to whatsapp",
+        document.getElementById('whatsAppRedirect'), `<%- include('partials/number') %>`
+      );
+    function handleSubmit(e) {
+      e.preventDefault();
+ console.log("page is redirecting to whatsapp"
+      );
+      const btn = document.getElementById('submitBtn');
+      const originalText = btn.textContent;
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      if (!name || !email || !message) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      btn.classList.add('btn-loading');
+      btn.textContent = '✓ Sending...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.textContent = '✓ Message Sent!';
+        btn.classList.add('btn-success');
+
+        document.getElementById('contactForm').reset();
+
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.classList.remove('btn-success');
+          btn.disabled = false;
+        }, 3000);
+      }, 1500);
+    }
+
+
+
+    
+      
+
+        
+
+   
+    
+
+  </script>
+</body>
+</html>
+

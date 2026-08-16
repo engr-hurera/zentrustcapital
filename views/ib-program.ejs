@@ -1,0 +1,265 @@
+<%- include('partials/head') %>
+
+  <link rel="stylesheet" href="/css/styles-pages.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/header.css">
+
+<style>
+    .tier-card { text-align:center; position:relative; }
+    .tier-card.featured { border-color:var(--pages-gold); background:linear-gradient(135deg,rgba(201,168,76,0.08),var(--pages-card-bg)); }
+    .tier-icon { font-size:2.5rem; margin-bottom:12px; }
+    .tier-name { font-family:var(--pages-font-display); font-size:1.1rem; font-weight:800; margin-bottom:4px; }
+    .tier-clients { font-size:0.8rem; color:var(--pages-text3); margin-bottom:16px; }
+    .tier-rate { font-family:var(--pages-font-display); font-size:2.4rem; font-weight:900; color:var(--pages-gold); }
+    .tier-rate span { font-size:1rem; font-weight:500; color:var(--pages-text3); }
+    .tier-perks { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
+    .tier-perk { font-size:0.83rem; color:var(--pages-text2); display:flex; align-items:center; gap:8px; }
+    .tier-perk::before { content:'✓'; color:var(--pages-green); font-weight:700; }
+
+    .step-card { display:flex; gap:20px; align-items:flex-start; padding:24px; background:var(--pages-card-bg); border:1px solid var(--pages-border); border-radius:var(--pages-radius-lg); }
+    .step-num { width:48px; height:48px; border-radius:12px; flex-shrink:0; background:var(--pages-gold); color:#000; display:flex; align-items:center; justify-content:center; font-family:var(--pages-font-display); font-weight:900; font-size:1.2rem; }
+
+    .calc-card { background:var(--pages-card-bg); border:1px solid var(--pages-border); border-radius:var(--pages-radius-lg); padding:36px; }
+    .calc-result { font-family:var(--pages-font-display); font-size:2.8rem; font-weight:900; color:var(--pages-gold); text-align:center; margin:20px 0 8px; }
+
+    input[type=range] { width:100%; accent-color:var(--pages-gold); margin:10px 0; cursor:pointer; }
+
+    /* Removed inline styles → now using classes */
+    .hero { min-height: 60vh; }
+    .hero-container { position: relative; z-index: 1; }
+    .hero-desc { color: var(--pages-text2); font-size: 1.1rem; margin: 16px 0 32px; max-width: 520px; }
+    .stats-bar-custom { max-width: 640px; margin-top: 40px; }
+
+    .section-bg-alt { background: var(--pages-bg2); }
+
+    .steps-container { display:flex; flex-direction:column; gap:12px; max-width:720px; margin:0 auto; }
+    .step-title { font-family: var(--pages-font-display); margin-bottom: 4px; }
+    .step-desc { font-size: 0.9rem; }
+
+    .popular-badge {
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--pages-gold);
+        color: #000;
+        padding: 3px 14px;
+        border-radius: 50px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .btn-primary{
+          justify-content: center;
+    }
+
+    .platinum-card { border-color: rgba(100,100,255,0.3); }
+
+    .calc-grid { align-items: center; }
+    .apply-container { max-width: 600px; margin: 0 auto; }
+    .apply-header { margin-bottom: 36px; }
+    .calc-footer { border-top:1px solid var(--pages-border); padding-top:20px; }
+    .calc-estimate { font-size:0.82rem; color:var(--pages-text3); text-align:center; }
+    .calc-tier { font-size:0.78rem; color:var(--pages-text3); text-align:center; }
+    .calc-btn { justify-content: center; margin-top: 20px; }
+    .form-small-text { font-size:0.78rem; color:var(--pages-text3); text-align:center; margin-top:10px; }
+</style>
+</head>
+<body>
+<%- include('partials/header') %>
+
+<div class="page-wrapper">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="container hero-container">
+      <div class="hero-badge">IB PARTNER PROGRAM</div>
+      <h1>Join Our IB Program &amp; <em class="text-gold">Earn Commissions</em></h1>
+      <p class="hero-desc">Become an Introducing Broker and build meaningful passive income. Industry-leading commissions, real-time reporting, and dedicated 24/7 support.</p>
+      <div class="btn-group">
+        <a href="#apply" class="btn-primary">🤝 Become an IB Partner</a>
+        <a href="#calculator" class="btn-secondary">Calculate Earnings →</a>
+      </div>
+      <div class="stats-bar stats-bar-custom">
+        <div class="stat-item"><div class="stat-value">$15</div><div class="stat-label">Max per Lot</div></div>
+        <div class="stat-item"><div class="stat-value">1,200+</div><div class="stat-label">Active IBs</div></div>
+        <div class="stat-item"><div class="stat-value">$0</div><div class="stat-label">Setup Cost</div></div>
+        <div class="stat-item"><div class="stat-value">Same Day</div><div class="stat-label">Withdrawals</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section section-bg-alt">
+    <div class="container">
+      <div class="text-center mb-48">
+        <span class="section-label"><div class="ld">✦</div> Simple Process</span>
+        <h2>How It <span class="text-gold">Works</span></h2>
+      </div>
+      <div class="steps-container">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div>
+            <h4 class="step-title">Register as IB Partner</h4>
+            <p class="text-muted step-desc">Complete a quick online form — receive your unique referral link within minutes. No documents required to start.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div>
+            <h4 class="step-title">Refer Your Network</h4>
+            <p class="text-muted step-desc">Share via social media, WhatsApp, YouTube, or in-person. Every trader who signs up through your link is your client.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div>
+            <h4 class="step-title">Earn Per Lot Traded</h4>
+            <p class="text-muted step-desc">Commissions are credited instantly to your IB wallet on every trade your referred clients make. No delays.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div>
+            <h4 class="step-title">Withdraw Anytime</h4>
+            <p class="text-muted step-desc">Same-day withdrawals to bank, JazzCash, Easypaisa, or crypto. Minimum withdrawal just $10.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tiers -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center mb-48">
+        <span class="section-label"><div class="ld">✦</div> Commission Tiers</span>
+        <h2>The More You Refer, <span class="text-gold">The More You Earn</span></h2>
+      </div>
+      <div class="grid-4">
+        <div class="card tier-card">
+          <div class="tier-icon">🥉</div>
+          <div class="tier-name">Bronze</div>
+          <div class="tier-clients">1–10 Active Clients</div>
+          <div class="tier-rate">$5<span>/lot</span></div>
+          <div class="tier-perks">
+            <div class="tier-perk">Real-time dashboard</div>
+            <div class="tier-perk">Unique referral link</div>
+            <div class="tier-perk">Email support</div>
+          </div>
+        </div>
+        <div class="card tier-card">
+          <div class="tier-icon">🥈</div>
+          <div class="tier-name">Silver</div>
+          <div class="tier-clients">11–50 Active Clients</div>
+          <div class="tier-rate">$8<span>/lot</span></div>
+          <div class="tier-perks">
+            <div class="tier-perk">All Bronze perks</div>
+            <div class="tier-perk">Sub-IB program</div>
+            <div class="tier-perk">Priority support</div>
+          </div>
+        </div>
+        <div class="card tier-card featured">
+          <div class="popular-badge">MOST POPULAR</div>
+          <div class="tier-icon">🥇</div>
+          <div class="tier-name">Gold</div>
+          <div class="tier-clients">51–200 Active Clients</div>
+          <div class="tier-rate">$12<span>/lot</span></div>
+          <div class="tier-perks">
+            <div class="tier-perk">All Silver perks</div>
+            <div class="tier-perk">Dedicated manager</div>
+            <div class="tier-perk">Custom materials</div>
+            <div class="tier-perk">Marketing budget</div>
+          </div>
+        </div>
+        <div class="card tier-card platinum-card">
+          <div class="tier-icon">💎</div>
+          <div class="tier-name">Platinum</div>
+          <div class="tier-clients">200+ Active Clients</div>
+          <div class="tier-rate">$15<span>/lot</span></div>
+          <div class="tier-perks">
+            <div class="tier-perk">All Gold perks</div>
+            <div class="tier-perk">Revenue share option</div>
+            <div class="tier-perk">VIP events access</div>
+            <div class="tier-perk">White-label options</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <section class="section section-bg-alt" id="calculator">
+    <div class="container">
+      <div class="grid-2 calc-grid">
+        <div>
+          <span class="section-label"><div class="ld">✦</div> Earnings Calculator</span>
+          <h2>Calculate Your <span class="text-gold">Monthly Income</span></h2>
+          <p class="text-muted" style="margin-top:12px;">Adjust the sliders to estimate your potential monthly commission based on your network size.</p>
+        </div>
+        <div class="calc-card">
+          <div class="form-group">
+            <label class="form-label">Number of Active Clients: <strong id="client-count">25</strong></label>
+            <input type="range" min="1" max="300" value="25" id="clients-slider" oninput="calcEarnings()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Avg Lots per Client per Month: <strong id="lot-count">20</strong></label>
+            <input type="range" min="5" max="100" value="20" id="lots-slider" oninput="calcEarnings()">
+          </div>
+          <div class="calc-footer">
+            <div class="calc-estimate">Estimated Monthly Commission</div>
+            <div class="calc-result" id="calc-result">$2,400</div>
+            <div class="calc-tier" id="calc-tier">at Silver tier ($8/lot)</div>
+            <a href="#apply" class="btn-primary w-full calc-btn">Start Earning This →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Apply Form -->
+  <section class="section" id="apply">
+    <div class="container">
+      <div class="apply-container">
+        <div class="text-center apply-header">
+          <span class="section-label"><div class="ld">✦</div> Apply Now</span>
+          <h2>Become an IB <span class="text-gold">Partner</span></h2>
+          <p class="text-muted">No upfront cost · Free to join · Start earning immediately</p>
+        </div>
+        <div class="card">
+          <div class="grid-2" style="gap:16px;">
+            <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" placeholder="Your full name"></div>
+            <div class="form-group"><label class="form-label">Phone / WhatsApp</label><input type="text" class="form-input" placeholder="+92 300 0000000"></div>
+            <div class="form-group"><label class="form-label">Email Address</label><input type="email" class="form-input" placeholder="you@example.com"></div>
+            <div class="form-group"><label class="form-label">City / Country</label><input type="text" class="form-input" placeholder="Lahore, Pakistan"></div>
+          </div>
+          <div class="form-group"><label class="form-label">How will you refer traders?</label><select class="form-input"><option>Social Media (Facebook, Instagram)</option><option>YouTube Channel</option><option>WhatsApp Group</option><option>In-Person Network</option><option>Website / Blog</option><option>Other</option></select></div>
+          <div class="form-group"><label class="form-label">Estimated Monthly Referrals</label><select class="form-input"><option>1–5 traders</option><option>5–20 traders</option><option>20–50 traders</option><option>50+ traders</option></select></div>
+          <button class="btn-primary w-full">🤝 Submit IB Application</button>
+          <p class="form-small-text">We'll contact you within 24 hours with your referral link.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<%- include('partials/footer') %>
+<script src="/js/theme.js"></script>
+<script src="/js/script.js"></script>
+<script>
+function calcEarnings() {
+  const clients = parseInt(document.getElementById('clients-slider').value);
+  const lots = parseInt(document.getElementById('lots-slider').value);
+  document.getElementById('client-count').textContent = clients;
+  document.getElementById('lot-count').textContent = lots;
+  let rate = clients <= 10 ? 5 : clients <= 50 ? 8 : clients <= 200 ? 12 : 15;
+  let tier = clients <= 10 ? 'Bronze ($5/lot)' : clients <= 50 ? 'Silver ($8/lot)' : clients <= 200 ? 'Gold ($12/lot)' : 'Platinum ($15/lot)';
+  const monthly = clients * lots * rate;
+  document.getElementById('calc-result').textContent = '$' + monthly.toLocaleString();
+  document.getElementById('calc-tier').textContent = 'at ' + tier;
+}
+</script>
+
+</body></html>

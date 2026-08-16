@@ -1,0 +1,730 @@
+<%- include('partials/head') %>
+
+<link rel="stylesheet" href="/css/styles-pages.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+
+<style>
+  /* ============================================
+     Dashboard shell — uses ONLY existing theme
+     CSS variables (--pages-*, --ink/--sage/--gold
+     family, --border-*, --surface-*, --shadow-*,
+     --up/--dn) so it inherits dark/light switching
+     for free via theme.js.
+     ============================================ */
+
+  nav.main,
+  .btn-ghost,
+  .btn-cta {
+    /* display: none; */
+  }
+
+  body {
+    background: var(--pages-bg);
+  }
+
+  .dash-shell {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+    padding-top: 68px;
+    /* clears fixed header */
+  }
+
+  @media (max-width: 900px) {
+    .dash-shell {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ── Sidebar ── */
+  .dash-sidebar {
+    background: var(--pages-bg3);
+    border-right: 1px solid var(--pages-border);
+    padding: 28px 18px;
+    position: sticky;
+    top: 68px;
+    height: calc(100vh - 68px);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  @media (max-width: 900px) {
+    .dash-sidebar {
+      position: relative;
+      top: 0;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--pages-border);
+      flex-direction: row;
+      overflow-x: auto;
+      padding: 14px 16px;
+    }
+  }
+
+  .dash-role-tag {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--darkBlue-to-teal12);
+    background: var(--hero-label-bg);
+    border: 1px solid var(--hero-label-border);
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 900px) {
+    .dash-role-tag {
+      margin-bottom: 0;
+      margin-right: 10px;
+    }
+  }
+
+  .dash-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: var(--r10);
+    color: var(--pages-text2);
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+
+  .dash-nav-link:hover {
+    background: var(--surface-hover);
+    color: var(--pages-text);
+  }
+
+  .dash-nav-link.active {
+    background: linear-gradient(135deg, var(--blue-to-teal12), var(--darkBlue-to-sage2));
+    color: var(--btn-text);
+  }
+
+  .dash-nav-spacer {
+    flex: 1;
+  }
+
+  @media (max-width: 900px) {
+    .dash-nav-spacer {
+      display: none;
+    }
+  }
+
+  .dash-switch-role {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--pages-border);
+    font-size: 0.78rem;
+    color: var(--pages-text3);
+  }
+
+  .dash-switch-role a {
+    color: var(--darkBlue-to-teal12);
+    font-weight: 600;
+  }
+
+  @media (max-width: 900px) {
+    .dash-switch-role {
+      display: none;
+    }
+  }
+
+  /* ── Main content ── */
+  .dash-main {
+    padding: 32px 5% 80px;
+    max-width: 1200px;
+  }
+
+  .dash-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .dash-head h1 {
+    font-family: var(--pages-font-display);
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    margin-bottom: 4px;
+  }
+
+  .dash-head p {
+    color: var(--pages-text2);
+    font-size: 0.92rem;
+  }
+
+  /* ── Stat cards ── */
+  .dash-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+
+  @media (max-width: 1024px) {
+    .dash-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .dash-stats {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .dash-stat-card {
+    background: var(--pages-card-bg);
+    border: 1px solid var(--border-card);
+    border-radius: var(--r14);
+    padding: 20px 22px;
+  }
+
+  .dash-stat-label {
+    font-size: 0.78rem;
+    color: var(--pages-text3);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+
+  .dash-stat-value {
+    font-family: var(--pages-font-display);
+    font-size: 1.6rem;
+    font-weight: 800;
+  }
+
+  .dash-stat-value.up {
+    color: var(--up);
+  }
+
+  .dash-stat-value.gold {
+    color: var(--pages-gold);
+  }
+
+  /* ── Generic panel ── */
+  .dash-panel {
+    background: var(--pages-card-bg);
+    border: 1px solid var(--border-card);
+    border-radius: var(--r14);
+    padding: 24px 26px;
+    margin-bottom: 24px;
+  }
+
+  .dash-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .dash-panel-head h3 {
+    font-family: var(--pages-font-display);
+    font-size: 1.15rem;
+  }
+
+  /* ── Referral link box ── */
+  .ref-link-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--pages-input-bg);
+    border: 1px dashed var(--border-medium);
+    border-radius: var(--r10);
+    padding: 12px 14px;
+    flex-wrap: wrap;
+  }
+
+  .ref-link-box code {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--darkBlue-to-teal12);
+    word-break: break-all;
+  }
+
+  .copy-btn {
+    padding: 9px 16px;
+    border-radius: var(--r6);
+    background: linear-gradient(135deg, var(--blue-to-teal12), var(--darkBlue-to-sage2));
+    color: var(--btn-text);
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* ── Tier progress ── */
+  .tier-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--pages-text2);
+    margin-bottom: 10px;
+  }
+
+  .tier-row strong {
+    color: var(--pages-text);
+  }
+
+  .tier-track {
+    width: 100%;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--pages-bg2);
+    overflow: hidden;
+    border: 1px solid var(--pages-border);
+  }
+
+  .tier-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--pages-gold), var(--pages-gold-light));
+  }
+
+  /* ── Tables ── */
+  .dash-table-wrap {
+    overflow-x: auto;
+  }
+
+  table.dash-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  .dash-table th {
+    text-align: left;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--pages-text3);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--pages-border);
+    white-space: nowrap;
+  }
+
+  .dash-table td {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--pages-border);
+    color: var(--pages-text2);
+    white-space: nowrap;
+  }
+
+  .dash-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .dash-table tr:hover td {
+    background: var(--surface-row-hover);
+  }
+
+  .dash-table td.pos {
+    color: var(--pages-text);
+    font-weight: 600;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 700;
+  }
+
+  .badge-active {
+    color: var(--pages-green);
+    background: rgba(34, 197, 94, 0.12);
+  }
+
+  .badge-pending {
+    color: var(--pages-gold);
+    background: var(--pages-gold-dim);
+  }
+
+  .badge-inactive,
+  .badge-review {
+    color: var(--pages-red);
+    background: rgba(239, 68, 68, 0.12);
+  }
+
+  .amt-up {
+    color: var(--up);
+    font-weight: 700;
+  }
+
+  .amt-dn {
+    color: var(--dn);
+    font-weight: 700;
+  }
+
+  .row-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .row-actions button {
+    padding: 6px 12px;
+    border-radius: var(--r6);
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+
+  .btn-approve {
+    background: rgba(34, 197, 94, 0.14);
+    color: var(--pages-green);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+
+  .btn-reject {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--pages-red);
+    border: 1px solid rgba(239, 68, 68, 0.28);
+  }
+
+  /* two-column panel layout */
+  .dash-cols {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 24px;
+  }
+ .btn-primary{
+   width:100%;
+ }
+
+
+  @media (max-width: 960px) {
+    .dash-cols {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<%- include('partials/header') %>
+
+<div class="dash-shell">
+
+  <!-- ═══════ SIDEBAR ═══════ -->
+  <aside class="dash-sidebar">
+    <span class="dash-role-tag"><%= role === 'admin' ? '🛡 Admin Panel' : '🤝 IB Partner' %></span>
+
+    <a href="#overview" class="dash-nav-link active">📊 Overview</a>
+    <% if (role === 'client') { %>
+      <a href="#referrals" class="dash-nav-link">👥 My Referrals</a>
+      <a href="#commissions" class="dash-nav-link">💰 Commissions</a>
+      <a href="#withdraw" class="dash-nav-link">🏦 Withdrawals</a>
+    <% } else { %>
+      <a href="#ibs" class="dash-nav-link">👥 IB Partners</a>
+      <a href="#withdrawals" class="dash-nav-link">🏦 Payout Requests</a>
+      <a href="/admin/add-broker" class="dash-nav-link">🏢 Manage Brokers</a>
+    <% } %>
+    <a href="#settings" class="dash-nav-link">⚙️ Settings</a>
+
+    <div class="dash-nav-spacer"></div>
+
+    <div class="dash-switch-role">
+      <% if (role === 'client') { %>
+        Viewing as IB partner · <a href="/dashboard/admin">Switch to admin view</a>
+      <% } else { %>
+        Viewing as admin · <a href="/dashboard">Switch to partner view</a>
+      <% } %>
+    </div>
+  </aside>
+
+  <!-- ═══════ MAIN ═══════ -->
+  <main class="dash-main" id="overview">
+
+    <% if (role === 'client') { %>
+      <!-- ============ CLIENT / IB PARTNER DASHBOARD ============ -->
+      <div class="dash-head">
+        <div>
+          <h1>Welcome back, <%= data.ibName.split(' ')[0] %> 👋</h1>
+          <p>Partner ID <%= data.ibId %> · <%= data.tier.current %> Tier</p>
+        </div>
+      </div>
+
+      <div class="dash-stats">
+        <div class="dash-stat-card">
+          <div class="dash-stat-label">Total Referrals</div>
+          <div class="dash-stat-value"><%= data.stats.totalReferrals %></div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="dash-stat-label">Active Clients</div>
+          <div class="dash-stat-value up"><%= data.stats.activeClients %></div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="dash-stat-label">Total Commission Earned</div>
+          <div class="dash-stat-value gold">$<%= data.stats.totalCommission.toLocaleString('en-US', {minimumFractionDigits: 2}) %></div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="dash-stat-label">Available Balance</div>
+          <div class="dash-stat-value">$<%= data.stats.availableBalance.toLocaleString('en-US', {minimumFractionDigits: 2}) %></div>
+        </div>
+      </div>
+
+      <div class="dash-cols">
+        <div>
+          <!-- Referral link -->
+          <div class="dash-panel" id="referrals">
+            <div class="dash-panel-head">
+              <h3>Your Referral Link</h3>
+            </div>
+            <div class="ref-link-box">
+              <code id="refLink"><%= data.referralLink %></code>
+              <button class="copy-btn" onclick="copyRefLink()">Copy Link</button>
+            </div>
+          </div>
+
+          <!-- Referred clients table -->
+          <div class="dash-panel">
+            <div class="dash-panel-head">
+              <h3>Referred Clients</h3>
+            </div>
+            <div class="dash-table-wrap">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Client</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th>Lots</th>
+                    <th>Commission</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% data.referredClients.forEach(c => { %>
+                    <tr>
+                      <td class="pos"><%= c.name %></td>
+                      <td><%= c.joined %></td>
+                      <td>
+                        <span class="badge <%= c.status === 'Active' ? 'badge-active' : c.status === 'Pending KYC' ? 'badge-pending' : 'badge-inactive' %>">
+                          <%= c.status %>
+                        </span>
+                      </td>
+                      <td><%= c.lots %></td>
+                      <td class="pos">$<%= c.commission.toFixed(2) %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <!-- Tier progress -->
+          <div class="dash-panel">
+            <div class="dash-panel-head">
+              <h3>Commission Tier</h3>
+            </div>
+            <div class="tier-row">
+              <span><%= data.tier.current %> — $<%= data.tier.ratePerLot %>/lot</span>
+              <strong><%= data.tier.clientsInTier %>/<%= data.tier.clientsNeededForNext %></strong>
+            </div>
+            <div class="tier-track"> 
+  <div class="tier-fill" data-progress="<%= Math.round((data.tier.clientsInTier / data.tier.clientsNeededForNext) * 100) %>"></div> 
+</div>
+
+
+            <p style="margin-top:10px; font-size:0.8rem; color:var(--pages-text3);">
+              <%= data.tier.clientsNeededForNext - data.tier.clientsInTier %> more active clients to unlock
+              <strong style="color:var(--pages-text2)"><%= data.tier.next %></strong> ($<%= data.tier.nextRatePerLot %>/lot)
+            </p>
+          </div>
+
+          <!-- Withdrawals -->
+          <div class="dash-panel" id="withdraw">
+            <div class="dash-panel-head">
+              <h3>Request Withdrawal</h3>
+            </div>
+            <div class="form-group" style="margin-bottom:14px;">
+              <label class="form-label" style="font-size:0.85rem; font-weight:600; margin-bottom:6px; display:block;">Amount (USD)</label>
+              <input type="number" class="form-input" placeholder="e.g. 100" />
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+              <label class="form-label" style="font-size:0.85rem; font-weight:600; margin-bottom:6px; display:block;">Payout Method</label>
+              <select class="form-select">
+                <option>Bank Transfer</option>
+                <option>Crypto (USDT)</option>
+                <option>Easypaisa</option>
+                <option>JazzCash</option>
+              </select>
+            </div>
+            <button class="btn-primary">Submit Request</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions -->
+      <div class="dash-panel" id="commissions">
+        <div class="dash-panel-head">
+          <h3>Recent Transactions</h3>
+        </div>
+        <div class="dash-table-wrap">
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% data.transactions.forEach(t => { %>
+                <tr>
+                  <td><%= t.date %></td>
+                  <td><%= t.type %></td>
+                  <td><%= t.desc %></td>
+                  <td class="<%= t.amount >= 0 ? 'amt-up' : 'amt-dn' %>">
+                    <%= t.amount >= 0 ? '+' : '−' %>$<%= Math.abs(t.amount).toFixed(2) %>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    <% } else { %>
+      <!-- ============ ADMIN DASHBOARD ============ -->
+      <div class="dash-head">
+        <div>
+          <h1>Admin Overview 🛡</h1>
+          <p>Platform-wide IB partner &amp; broker management</p>
+        </div>
+      </div>
+
+      <div class="dash-stats">
+        <div class="dash-stat-card">
+          <div class="dash-stat-label">Total IB Partners</div>
+          <div class="dash-stat-value"><%= data.platformStats.totalIBs %></div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="dash-stat-label">Total Referred Clients</div>
+          <div class="dash-stat-value up"><%= data.platformStats.totalReferredClients.toLocaleString() %></div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="dash-stat-label">Total Commission Paid</div>
+          <div class="dash-stat-value gold">$<%= data.platformStats.totalCommissionPaid.toLocaleString('en-US', {minimumFractionDigits: 2}) %></div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="dash-stat-label">Pending Withdrawals</div>
+          <div class="dash-stat-value"><%= data.platformStats.pendingWithdrawals %></div>
+        </div>
+      </div>
+
+      <!-- IB partners table -->
+      <div class="dash-panel" id="ibs">
+        <div class="dash-panel-head">
+          <h3>IB Partners</h3>
+          <a href="/admin/add-broker" class="btn-secondary" style="padding:9px 18px; font-size:0.82rem;">🏢 Manage Brokers</a>
+        </div>
+        <div class="dash-table-wrap">
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Partner</th>
+                <th>ID</th>
+                <th>Tier</th>
+                <th>Referrals</th>
+                <th>Commission Paid</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% data.ibPartners.forEach(p => { %>
+                <tr>
+                  <td class="pos"><%= p.name %></td>
+                  <td><%= p.id %></td>
+                  <td><%= p.tier %></td>
+                  <td><%= p.referrals %></td>
+                  <td class="pos">$<%= p.commission.toLocaleString('en-US', {minimumFractionDigits: 2}) %></td>
+                  <td>
+                    <span class="badge <%= p.status === 'Active' ? 'badge-active' : 'badge-review' %>">
+                      <%= p.status %>
+                    </span>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Withdrawal requests -->
+      <div class="dash-panel" id="withdrawals">
+        <div class="dash-panel-head">
+          <h3>Pending Payout Requests</h3>
+        </div>
+        <div class="dash-table-wrap">
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Partner</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Requested</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% data.withdrawalRequests.forEach(w => { %>
+                <tr>
+                  <td class="pos"><%= w.ib %> <span style="color:var(--pages-text3); font-weight:400;">(<%= w.id %>)</span></td>
+                  <td class="pos">$<%= w.amount.toFixed(2) %></td>
+                  <td><%= w.method %></td>
+                  <td><%= w.requested %></td>
+                  <td>
+                    <div class="row-actions">
+                      <button class="btn-approve">Approve</button>
+                      <button class="btn-reject">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% } %>
+
+  </main>
+</div>
+
+<%- include('partials/footer') %>
+
+<script src="/js/theme.js"></script>
+<script src="/js/script.js"></script>
+<script>
+  function copyRefLink() {
+    const text = document.getElementById('refLink').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      const original = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      setTimeout(() => { btn.textContent = original; }, 1800);
+    });
+  }
+
+</script>
+</body>
+
+</html>

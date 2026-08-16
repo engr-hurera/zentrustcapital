@@ -1,0 +1,329 @@
+<%- include('../partials/head') %>
+
+<link rel="stylesheet" href="/css/styles-pages.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+
+<style>
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+
+  .auth-container {
+    width: 100%;
+    max-width: 440px;
+    margin: 75px auto 0;
+    padding: 24px;
+  }
+
+
+  .auth-card {
+    background: var(--pages-card-bg);
+    border: 1px solid var(--pages-border);
+    border-radius: var(--pages-radius-lg);
+    padding: 40px;
+  }
+
+
+  .auth-title {
+    font-family: var(--pages-font-display);
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+
+  .auth-sub {
+    color: var(--pages-text2);
+    font-size: 0.88rem;
+    text-align: center;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+
+  .otp-input {
+    width: 100%;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 8px;
+    padding: 14px;
+  }
+
+
+  .error-message {
+    margin-bottom: 18px;
+    padding: 12px;
+    border-radius: 8px;
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+
+  .success-message {
+    margin-bottom: 18px;
+    padding: 12px;
+    border-radius: 8px;
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+
+  .resend-form {
+    text-align: center;
+    margin-top: 18px;
+  }
+
+
+  .resend-btn {
+    border: none;
+    background: transparent;
+    color: var(--darkBlue-to-teal12);
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+
+
+  .resend-btn:hover {
+    text-decoration: underline;
+  }
+
+
+  .resend-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    text-decoration: none;
+  }
+
+
+  .resend-countdown {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.82rem;
+    color: var(--pages-text3);
+  }
+
+
+  .resend-countdown strong {
+    color: var(--darkBlue-to-teal12);
+  }
+
+
+  .resend-limit {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.82rem;
+    color: var(--pages-text3);
+  }
+
+
+  .privacy-text {
+    text-align: center;
+    font-size: 0.76rem;
+    color: var(--pages-text3);
+    margin-top: 20px;
+  }
+
+
+  .privacy-link {
+    color: var(--darkBlue-to-teal12);
+  }
+
+
+  nav.main,
+  .btn-ghost,
+  #btt,
+  footer,
+  .risk-note {
+    display: none;
+  }
+/* #errorMessage{
+  display: none;
+} */
+ .hidden {
+    display: none !important;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<%- include('../partials/header') %>
+
+
+<div
+  class="auth-container"
+  id="verifyEmailPage"
+
+  data-resend-seconds="<%= typeof resendRemainingSeconds !== 'undefined'
+    ? resendRemainingSeconds
+    : 0
+  %>"
+
+  data-remaining-resends="<%= typeof remainingResends !== 'undefined'
+    ? remainingResends
+    : 3
+  %>"
+>
+
+
+  <div class="auth-card">
+
+
+    <div class="auth-title">
+      Verify Your Email
+    </div>
+
+
+    <div class="auth-sub">
+
+      We sent a 6-digit verification code to
+
+      <strong>
+        <%= email %>
+      </strong>
+
+    </div>
+
+
+  <!-- SERVER ERROR --> 
+<div id="errorMessage" class="error-message <%= locals.error ? '' : 'hidden' %>"> 
+    <%= locals.error || '' %> 
+</div> 
+
+<!-- SERVER SUCCESS --> 
+<div id="successMessage" class="success-message <%= locals.success ? '' : 'hidden' %>"> 
+    <%= locals.success || '' %> 
+</div>
+
+
+
+    <!-- VERIFY OTP -->
+
+    <form
+      action="/verify-email"
+      method="POST"
+    >
+
+      <div class="form-group">
+
+        <label class="form-label">
+          Verification Code
+        </label>
+
+
+        <input
+          type="text"
+          name="otp"
+          class="form-input otp-input"
+          placeholder="000000"
+          maxlength="6"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          pattern="[0-9]{6}"
+          required
+        >
+
+      </div>
+
+
+      <button
+        type="submit"
+        class="btn-primary w-full"
+      >
+
+        Verify Email →
+
+      </button>
+
+    </form>
+
+
+    <!-- RESEND OTP -->
+
+    <form
+      id="resendForm"
+      action="/resend-otp"
+      method="POST"
+      class="resend-form"
+    >
+
+      <button
+        type="submit"
+        id="resendBtn"
+        class="resend-btn"
+      >
+
+        Resend verification code
+
+      </button>
+
+
+      <div
+        id="countdown"
+        class="resend-countdown"
+      ></div>
+
+      <div
+        id="resendLimit"
+        class="resend-limit"
+      >
+
+        Remaining resends:
+        <strong>
+          <%= typeof remainingResends !== 'undefined'
+            ? remainingResends
+            : 3
+          %>
+        </strong>
+
+      </div>
+
+    </form>
+
+
+  </div>
+
+
+  <p class="privacy-text">
+
+    Protected by 256-bit SSL encryption.
+
+    <a
+      class="privacy-link"
+      href="/privacy"
+    >
+
+      Privacy Policy
+
+    </a>
+
+  </p>
+
+
+</div>
+
+  <%- include('../partials/footer') %>
+
+<script src="/js/theme.js"></script>
+<script src="/js/script.js"></script>
+<script src="/js/verify-email.js"></script>
+
+
+</body>
+
+</html>

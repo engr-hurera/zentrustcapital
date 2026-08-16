@@ -1,0 +1,307 @@
+<%- include('partials/head') %>
+
+<link rel="stylesheet" href="/css/styles-pages.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+
+<style>
+  /* ============================================
+     Live Signals page — uses only existing theme
+     CSS variables, matching the pattern already
+     used on markets.ejs (market-card, price-main,
+     text-green/text-red).
+     ============================================ */
+
+  .signals-header {
+    margin: 110px auto 10px;
+    max-width: 1200px;
+    padding: 0 5%;
+  }
+
+  .signals-header h1 {
+    font-family: var(--pages-font-display);
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    margin-bottom: 8px;
+  }
+
+  .signals-header p {
+    color: var(--pages-text2);
+    max-width: 560px;
+  }
+
+  .live-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--pages-green);
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+
+  .live-dot::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--pages-green);
+    animation: blink 1.4s ease infinite;
+  }
+
+  .signals-grid {
+    max-width: 1200px;
+    margin: 28px auto 90px;
+    padding: 0 5%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  @media (max-width: 1024px) {
+    .signals-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .signals-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .signal-card {
+    position: relative;
+    background: var(--pages-card-bg);
+    border: 1px solid var(--border-card);
+    border-radius: var(--r14);
+    padding: 22px;
+    overflow: hidden;
+    transition: all var(--pages-transition);
+  }
+
+  .signal-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-perf);
+  }
+
+  .signal-card.buy::before,
+  .signal-card.sell::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+  }
+
+  .signal-card.buy::before {
+    background: var(--pages-green);
+  }
+
+  .signal-card.sell::before {
+    background: var(--pages-red);
+  }
+
+  .signal-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .signal-pair {
+    font-family: var(--pages-font-display);
+    font-size: 1.15rem;
+    font-weight: 800;
+  }
+
+  .signal-pair-full {
+    font-size: 0.78rem;
+    color: var(--pages-text3);
+  }
+
+  .signal-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  .signal-action.buy {
+    color: var(--pages-green);
+    background: rgba(34, 197, 94, 0.14);
+  }
+
+  .signal-action.sell {
+    color: var(--pages-red);
+    background: rgba(239, 68, 68, 0.12);
+  }
+
+  .signal-levels {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .signal-level {
+    background: var(--pages-bg2);
+    border: 1px solid var(--pages-border);
+    border-radius: var(--r10);
+    padding: 10px 8px;
+    text-align: center;
+  }
+
+  .signal-level-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--pages-text3);
+    margin-bottom: 4px;
+  }
+
+  .signal-level-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  .signal-level.entry .signal-level-value { color: var(--pages-text); }
+  .signal-level.sl .signal-level-value { color: var(--pages-red); }
+  .signal-level.tp .signal-level-value { color: var(--pages-green); }
+
+  .confidence-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: var(--pages-text2);
+    margin-bottom: 6px;
+  }
+
+  .confidence-track {
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--pages-bg2);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .confidence-fill {
+    height: 100%;
+    border-radius: 999px;
+  }
+
+  .signal-card.buy .confidence-fill { background: var(--pages-green); }
+  .signal-card.sell .confidence-fill { background: var(--pages-red); }
+
+  .signal-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.76rem;
+    color: var(--pages-text3);
+    padding-top: 12px;
+    border-top: 1px solid var(--pages-border);
+  }
+
+  .signal-status {
+    font-weight: 700;
+  }
+
+  .risk-disclaimer {
+    max-width: 1200px;
+    margin: 0 auto 60px;
+    padding: 0 5%;
+  }
+
+  .risk-disclaimer p {
+    font-size: 0.8rem;
+    color: var(--pages-text3);
+    background: var(--pages-bg2);
+    border: 1px solid var(--pages-border);
+    border-radius: var(--r10);
+    padding: 14px 18px;
+    line-height: 1.6;
+  }
+
+  nav.main, .btn-ghost { }
+</style>
+
+<%- include('partials/header') %>
+
+<div class="signals-header">
+  <span class="live-dot">Live</span>
+  <h1>Live Trading <span class="text-gold">Signals</span></h1>
+  <p>Real-time buy/sell signals across forex, metals, and majors. Updated automatically as market conditions change.</p>
+</div>
+
+<div class="signals-grid">
+  <% signals.forEach(s => { %>
+    <div class="signal-card <%= s.action === 'BUY' ? 'buy' : 'sell' %>">
+      <div class="signal-card-head">
+        <div>
+          <div class="signal-pair"><%= s.pair %></div>
+          <div class="signal-pair-full"><%= s.full %></div>
+        </div>
+        <span class="signal-action <%= s.action === 'BUY' ? 'buy' : 'sell' %>">
+          <%= s.action === 'BUY' ? '▲ BUY' : '▼ SELL' %>
+        </span>
+      </div>
+
+      <div class="signal-levels">
+        <div class="signal-level entry">
+          <div class="signal-level-label">Entry</div>
+          <div class="signal-level-value"><%= s.entry %></div>
+        </div>
+        <div class="signal-level sl">
+          <div class="signal-level-label">Stop Loss</div>
+          <div class="signal-level-value"><%= s.sl %></div>
+        </div>
+        <div class="signal-level tp">
+          <div class="signal-level-label">Take Profit</div>
+          <div class="signal-level-value"><%= s.tp %></div>
+        </div>
+      </div>
+
+      <div class="confidence-row">
+        <span>Signal Strength</span>
+        <span><strong><%= s.confidence %>%</strong></span>
+      </div>
+      <div class="confidence-track">
+        <div class="confidence-fill" style="width: <%= s.confidence %>%"></div>
+      </div>
+
+      <div class="signal-meta">
+        <span><%= s.timeframe %> · <%= s.posted %></span>
+        <span class="signal-status"><%= s.status %></span>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<div class="risk-disclaimer">
+  <p>
+    ⚠️ Signals are generated for informational and educational purposes only and do not constitute financial advice.
+    Past performance is not indicative of future results. Trading forex and CFDs carries a high level of risk and may
+    not be suitable for all investors — only trade with capital you can afford to lose.
+  </p>
+</div>
+
+<%- include('partials/footer') %>
+
+<script src="/js/theme.js"></script>
+<script src="/js/script.js"></script>
+</body>
+
+</html>

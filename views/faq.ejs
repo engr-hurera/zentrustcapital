@@ -1,0 +1,165 @@
+<%- include('partials/head') %>
+
+  <link rel="stylesheet" href="/css/styles-pages.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/header.css">
+<style>
+    .faq-page-item { border-bottom:1px solid var(--pages-border); }
+    .faq-question {
+      width:100%; display:flex; justify-content:space-between; align-items:center;
+      padding:22px 0; background:none; color:var(--pages-text); text-align:left;
+      font-family:var(--pages-font-display); font-size:1rem; font-weight:600; cursor:pointer;
+      transition:color var(--pages-transition);
+    }
+    .faq-question:hover { color:var(--blue-to-teal12); }
+    .faq-icon { width:28px; height:28px; border-radius:50%; color: var(--ink); background:var(--blue-to-teal12); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; transition:all var(--pages-transition); }
+    .faq-page-item.open .faq-icon { color: var(--ink); border-color:var(--pages-gold); transform:rotate(45deg); }
+    .faq-answer { display:none; padding-bottom:20px; color:var(--pages-text2); font-size:0.92rem; line-height:1.8; }
+    .faq-page-item.open .faq-answer { display:block; }
+    .faq-cats { display:flex; gap:8px; margin-bottom:28px; flex-wrap:wrap; }
+    .faq-cat {
+      padding:8px 22px; border-radius:50px; font-size:0.85rem; font-weight:600;
+      background:var(--pages-bg3); border:1px solid var(--pages-border); color:var(--pages-text2); cursor:pointer;
+      transition:all var(--pages-transition);
+    }
+    .faq-cat.active { background: linear-gradient(135deg, var(--blue-to-teal12), var(--darkBlue-to-sage2));
+      color: var(--btn-text);
+      box-shadow: var(--shadow-btn-main); 
+      border-color: var(--darkBlue-to-sage2);
+    }
+    .faq-cat:hover{
+      color: var(--pages-font-display);
+      border-color: var(--darkBlue-to-sage2);
+    }
+    .faq-cat.active:hover{
+      color: var(--btn-text);
+    }
+.faqs-grid-card {
+      display:flex; justify-content:space-between; flex-direction: column;
+      
+    }
+    /* New classes for inline styles moved to head */
+    .faq-intro {
+      color: var(--pages-text2);
+      margin-top: 12px;
+    }
+    .faq-contact-card {
+      margin-top: 48px;
+      text-align: center;
+          background: var(--pages-card-bg);
+    border: 1px solid var(--bk-border);
+    border-radius: var(--r20);
+    transition: all .32s;
+    cursor: default;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    }
+    .faq-contact-title {
+      font-family: var(--pages-font-display);
+      margin-bottom: 8px;
+    }
+    .faq-contact-text {
+      margin-bottom: 20px;
+    }
+
+    
+  </style>
+</head>
+<body>
+<%- include('partials/header') %>
+
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="container">
+      <div class="breadcrumb"><a href="/">Home</a><span>/</span><span>FAQ</span></div>
+      <span class="section-label"><div class="ld">✦</div>
+        Help Center</span>
+      <h1>Frequently Asked <span class="text-gold">Questions</span></h1>
+      <p class="faq-intro">Everything you need to know. Can't find your answer? <a class="text-gold" href="/contact">Contact us →</a></p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="faq-cats">
+        <button class="faq-cat active" onclick="filterFaqs(this,'all')">All</button>
+        <button class="faq-cat" onclick="filterFaqs(this,'gettingstarted')">Getting Started</button>
+        <button class="faq-cat" onclick="filterFaqs(this,'depositswithdrawals')">Deposits &amp; Withdrawals</button>
+        <button class="faq-cat" onclick="filterFaqs(this,'brokers')">Brokers</button>
+        <button class="faq-cat" onclick="filterFaqs(this,'ibprogram')">IB Program</button>
+        <button class="faq-cat" onclick="filterFaqs(this,'trading')">Trading</button>
+      </div>
+
+      <div id="faq-list">
+        <div class="open faq-page-item faqs-grid-card" data-cat = "brokers">
+          <button class="faq-question" onclick="toggleFaq(this)">Is ZEN TRUST CAPITAL a broker?<div class="faq-icon">+</div></button>
+          <div class="faq-answer">No, ZEN TRUST CAPITAL is not a broker. We are an independent comparison and education platform. We review and compare regulated forex brokers to help traders make informed decisions. We earn commissions from brokers when traders open accounts through our links — this is clearly disclosed and never influences our ratings.</div>
+        </div>
+        <div class="faq-page-item faqs-grid-card" data-cat = "brokers">
+          <button class="faq-question" onclick="toggleFaq(this)">Which broker is best for Pakistani traders?<div class="faq-icon">+</div></button>
+          <div class="faq-answer">Based on our extensive testing, Exness is our top recommendation for Pakistani traders. Key reasons: $1 minimum deposit, instant withdrawals to JazzCash and Easypaisa, Urdu customer support, swap-free Islamic accounts, and up to 1:2000 leverage. XM is our second choice for beginners due to its $30 no-deposit bonus.</div>
+        </div>
+        <div class="faq-page-item faqs-grid-card" data-cat = "gettingstarted">
+          <button class="faq-question" onclick="toggleFaq(this)">Is forex trading legal in Pakistan?<div class="faq-icon">+</div></button>
+          <div class="faq-answer">Trading forex with internationally regulated brokers is widely practiced in Pakistan. We recommend only brokers regulated by FCA (UK), CySEC (Cyprus), or ASIC (Australia) as these jurisdictions offer strong client protection. Always ensure your broker is properly regulated before depositing funds.</div>
+        </div>
+        <div class="faq-page-item faqs-grid-card" data-cat = "depositswithdrawals">
+          <button class="faq-question" onclick="toggleFaq(this)">How do I deposit money as a Pakistani trader?<div class="faq-icon">+</div></button>
+          <div class="faq-answer">Most brokers we recommend support deposits via: JazzCash, Easypaisa, bank transfer, Skrill, Neteller, and cryptocurrency. Exness specifically supports JazzCash and Easypaisa with zero deposit fees and instant processing. Minimum deposits range from $1 (Exness) to $200 (IC Markets).</div>
+        </div>
+        <div class="faq-page-item faqs-grid-card" data-cat = "depositswithdrawals">
+          <button class="faq-question" onclick="toggleFaq(this)">How long do withdrawals take?<div class="faq-icon">+</div></button>
+          <div class="faq-answer">Withdrawal times vary by broker and method: Exness offers instant withdrawals 24/7 to e-wallets. XM processes within 1 business day. Bank transfers typically take 2–5 business days. Crypto withdrawals are usually processed within 1 hour. We always test withdrawal speeds as part of our broker reviews.</div>
+        </div>
+        <div class="faq-page-item faqs-grid-card" data-cat = "ibprogram">
+          <button class="faq-question" onclick="toggleFaq(this)">What is an IB (Introducing Broker) and how does it work?<div class="faq-icon">+</div></button>
+          <div class="faq-answer">An Introducing Broker (IB) is someone who refers traders to a broker in exchange for a commission on their trading activity. As a ZEN TRUST CAPITAL IB, you earn $5–$15 per lot traded by your referred clients — for as long as they keep trading. There's no upfront cost, and you can start earning immediately after registration.</div>
+        </div>
+        <div class="faq-page-item faqs-grid-card" data-cat = "ibprogram">
+          <button class="faq-question" onclick="toggleFaq(this)">Do I need experience to become an IB?<div class="faq-icon">+</div></button>
+          <div class="faq-answer">No experience in trading is required to become an IB. You simply need a network of people interested in forex — friends, family, WhatsApp groups, social media followers, or a YouTube channel. We provide all the marketing materials, training, and support you need to succeed as an IB partner.</div>
+        </div>
+        <div class="faq-page-item faqs-grid-card" data-cat = "trading">
+          <button class="faq-question" onclick="toggleFaq(this)">Is trading forex halal (permissible in Islam)?<div class="faq-icon">+</div></button>
+          <div class="faq-answer">Forex trading with swap-free (Islamic) accounts is considered permissible by many Islamic scholars, as these accounts eliminate the element of riba (interest). All major brokers we recommend offer Islamic accounts at no extra cost. We always recommend consulting with a qualified Islamic scholar for personal religious guidance.</div>
+        </div>
+        <div class="faq-page-item faqs-grid-card" data-cat = "gettingstarted">
+          <button class="faq-question" onclick="toggleFaq(this)">What is leverage and is 1:2000 safe?<div class="faq-icon">+</div></button>
+          <div class="faq-answer">Leverage allows you to control a larger position with a smaller deposit. 1:2000 means $1 controls $2,000 in the market. While high leverage magnifies profits, it equally magnifies losses. We strongly recommend beginners start with low leverage (1:10 to 1:50) and only increase as experience grows. Always use stop losses.</div>
+        </div>
+        <div class="faq-page-item faqs-grid-card" data-cat = "brokers">
+          <button class="faq-question" onclick="toggleFaq(this)">How do your broker ratings work?<div class="faq-icon">+</div></button>
+          <div class="faq-answer">Our ratings are based on: regulation quality (30%), spreads and fees (25%), deposit/withdrawal process (20%), platform quality (15%), and customer support (10%). Our team personally opens accounts with every broker we review, tests their systems, and verifies withdrawals before publishing. Ratings are updated quarterly.</div>
+        </div>
+      </div>
+
+      <div class="card faq-contact-card">
+        <h3 class="faq-contact-title">Still have questions?</h3>
+        <p class="text-muted faq-contact-text">Our team is available 24/7 via WhatsApp, email, and live chat.</p>
+        <a class="btn-primary" href="/contact">📞 Contact Us →</a>
+      </div>
+    </div>
+  </section>
+</div>
+<%- include('partials/footer') %>
+<script src="/js/theme.js"></script>
+<script src="/js/script.js"></script>
+<script>
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-page-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+function filterFaqs(btn, cat) {
+  document.querySelectorAll('.faq-cat').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.faqs-grid-card').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'flex' : 'none';
+  });
+}
+
+</script>
+
+</body></html>

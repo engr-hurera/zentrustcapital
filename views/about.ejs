@@ -1,0 +1,208 @@
+<%- include('partials/head') %>
+
+<link rel="stylesheet" href="/css/styles-pages.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+
+<style>
+    .team-card { text-align:center; }
+    .team-avatar { width:80px; height:80px; border-radius:50%; background:var(--surface-hover); border:3px solid var(--text3); display:flex; align-items:center; justify-content:center; font-family:var(--pages-font-display); font-weight:800; font-size:1.4rem; color:var(--text3); margin:0 auto 16px; }
+    .team-name { font-family:var(--pages-font-display); font-weight:700; font-size:1rem; margin-bottom:4px; }
+    .team-role { font-size:0.82rem; color:var(--pages-text3); }
+    .value-card .feature-icon { margin-bottom:12px; }
+
+    .timeline { display:flex; flex-direction:column; gap:0; }
+    .timeline-item { display:flex; gap:20px; padding-bottom:32px; position:relative; }
+    .timeline-item::before { content:''; position:absolute; left:19px; top:40px; width:2px; height:calc(100% - 8px); background:var(--pages-border); }
+    .timeline-item:last-child::before { display:none; }
+    .timeline-dot { width:40px; height:40px; border-radius:50%; background:var(--text3); color:var(--white); display:flex; align-items:center; justify-content:center; font-family:var(--pages-font-display); font-weight:800; font-size:0.8rem; flex-shrink:0; }
+    .timeline-content h4 { font-family:var(--pages-font-display); margin-bottom:4px; }
+
+    /* ✅ newly added utility classes */
+    .text-muted-block { color: var(--pages-text2); margin-top: 12px; max-width: 600px; }
+    .grid-center-48-80 { align-items: center; gap: 48px; margin-bottom: 80px; }
+    .grid-start-48 { gap: 48px; align-items: start; }
+    .card-center-pad { text-align: center; padding: 40px; }
+    .font-display { font-family: var(--pages-font-display); }
+    .mt-10-small { margin-top: 10px; font-size: 0.92rem; line-height: 1.8; }
+    .section-gap-36 { margin-bottom: 36px; }
+    .grid3-bottom-80 { margin-bottom: 80px; }
+    .mt-28 { margin-top: 28px; }
+    .gap-16 { gap: 16px; }
+    .timeline-wrap { margin-top: 28px; }
+    .muted-marg-16 { margin: 16px 0; }
+</style>
+</head>
+
+<body>
+  <%- include('partials/header') %>
+
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="container">
+      <div class="breadcrumb"><a href="/">Home</a><span>/</span><span>About Us</span></div>
+      <span class="section-label">
+          <div class="ld">✦</div> Our Story
+        </span>
+      <h1>About <span class="text-gold">ZEN TRUST CAPITAL</span></h1>
+
+      <p class="text-muted-block">
+        We started as traders. We became the platform we wished had existed when we started.
+      </p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+
+      <div class="grid-2 grid-center-48-80">
+        <div>
+          <span class="section-label">
+          <div class="ld">✦</div> Our Mission
+        </span>
+          <h2>Empowering Traders <span class="text-gold">Across Pakistan</span></h2>
+
+          <p class="text-muted muted-marg-16">
+            ZEN TRUST CAPITAL was founded in 2019 by a group of Pakistani forex traders who were tired of misleading broker promotions and paid reviews. We set out to create the most honest, transparent broker comparison platform in Asia.
+          </p>
+
+          <p class="text-muted">
+            Today, we serve 50,000+ traders monthly with independent broker reviews, free education, live market data, and one of Pakistan's most active trading communities.
+          </p>
+        </div>
+
+        <div class="card card-center-pad">
+          <div style="font-size:4rem;margin-bottom:16px;">🎯</div>
+          <h3 class="font-display">Our Core Promise</h3>
+          <p class="text-muted mt-10-small">
+            "We only recommend brokers we would trade with ourselves. Every rating is earned, never bought."
+          </p>
+        </div>
+      </div>
+
+      <!-- Values -->
+      <div class="text-center section-gap-36">
+        <span class="section-label">
+          <div class="ld">✦</div> Our Values
+        </span>
+        <h2>What We <span class="text-gold">Stand For</span></h2>
+      </div>
+
+      <div class="grid-3 grid3-bottom-80">
+        <div class="card value-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Total Transparency</h3>
+          <p class="text-muted" style="font-size:0.88rem;margin-top:8px;">
+            We disclose all affiliate relationships. Our ratings are never influenced by commercial arrangements.
+          </p>
+        </div>
+
+        <div class="card value-card">
+          <div class="feature-icon">🤝</div>
+          <h3>Community First</h3>
+          <p class="text-muted" style="font-size:0.88rem;margin-top:8px;">
+            Every decision we make puts Pakistani traders first. Your success is our success.
+          </p>
+        </div>
+
+        <div class="card value-card">
+          <div class="feature-icon">📚</div>
+          <h3>Free Education</h3>
+          <p class="text-muted" style="font-size:0.88rem;margin-top:8px;">
+            Knowledge should be free. Our entire education library is and always will be 100% free.
+          </p>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="grid-2 grid-start-48">
+
+        <div>
+          <span class="section-label">
+          <div class="ld">✦</div> Our Journey
+        </span>
+          <h2>How We <span class="text-gold">Got Here</span></h2>
+
+          <div class="timeline timeline-wrap">
+            <div class="timeline-item">
+              <div class="timeline-dot">2019</div>
+              <div class="timeline-content">
+                <h4>Founded in Lahore</h4>
+                <p class="text-muted" style="font-size:0.88rem;">Three friends started a WhatsApp group sharing broker reviews. It grew to 500 members in 3 months.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot">2020</div>
+              <div class="timeline-content">
+                <h4>First Website Launch</h4>
+                <p class="text-muted" style="font-size:0.88rem;">Launched zencapital.pk with 5 broker reviews. Hit 10,000 monthly visitors in 6 months.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot">2022</div>
+              <div class="timeline-content">
+                <h4>Education Platform</h4>
+                <p class="text-muted" style="font-size:0.88rem;">Launched free trading courses. 5,000 students enrolled in the first week.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot">2024</div>
+              <div class="timeline-content">
+                <h4>50,000 Traders</h4>
+                <p class="text-muted" style="font-size:0.88rem;">Reached the milestone of 50,000 registered users. Expanded IB program to 1,200+ partners.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team -->
+        <div>
+          <span class="section-label">
+          <div class="ld">✦</div> Our Team
+        </span>
+
+          <h2>Meet the <span class="text-gold">Team</span></h2>
+
+          <div class="grid-2 mt-28 gap-16">
+            <div class="card team-card">
+              <div class="team-avatar">ZA</div>
+              <div class="team-name">Zain Ahmed</div>
+              <div class="team-role">Co-Founder & Head Analyst</div>
+            </div>
+
+            <div class="card team-card">
+              <div class="team-avatar">SR</div>
+              <div class="team-name">Sara Raza</div>
+              <div class="team-role">Education Director</div>
+            </div>
+
+            <div class="card team-card">
+              <div class="team-avatar">MK</div>
+              <div class="team-name">Muhammad Khan</div>
+              <div class="team-role">IB Program Manager</div>
+            </div>
+
+            <div class="card team-card">
+              <div class="team-avatar">AF</div>
+              <div class="team-name">Ayesha Farooq</div>
+              <div class="team-role">Broker Relations</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<%- include('partials/footer') %>
+
+<script src="/js/theme.js"></script>
+<script src="/js/script.js"></script>
+<script src="/js/emailWhatsAppRedirect.js"></script>
+</body>
+</html>

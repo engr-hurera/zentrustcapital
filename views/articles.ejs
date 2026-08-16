@@ -1,0 +1,373 @@
+<%- include('partials/head') %>
+
+  <link rel="stylesheet" href="/css/styles-pages.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/header.css">
+
+
+  
+<style>
+  .category-pills { display:flex; gap:8px; margin-bottom:28px; flex-wrap:wrap; }
+    .cat-pill {
+      padding:8px 22px; border-radius:50px; font-size:0.85rem; font-weight:600;
+      background:var(--pages-bg3); border:1px solid var(--pages-border); color:var(--pages-text2); cursor:pointer;
+      transition:all var(--pages-transition);
+    }
+  .cat-pill.active { background: linear-gradient(135deg, var(--blue-to-teal12), var(--darkBlue-to-sage2));
+    color: var(--btn-text);
+    box-shadow: var(--shadow-btn-main); 
+    border-color: var(--darkBlue-to-sage2);
+
+  }
+    .cat-pill:hover{
+      color: var(--pages-font-display);
+    border-color: var(--darkBlue-to-sage2);
+    }
+    .cat-pill.active:hover{
+    color: var(--btn-text);
+  }
+  .featured-article {
+    display:grid; grid-template-columns:1fr 1fr; gap:0;
+    background:var(--pages-card-bg); border:1px solid var(--pages-border); border-radius:var(--pages-radius-lg);
+    overflow:hidden; margin-bottom:48px; transition:all var(--pages-transition);
+  }
+  .featured-article:hover { border-color:rgba(201,168,76,0.3); }
+
+  .featured-img {
+    background:linear-gradient(135deg, var(--pages-bg4), var(--pages-bg3));
+    display:flex; align-items:center; justify-content:center; font-size:5rem;
+    min-height:280px;
+  }
+
+  .featured-content { padding:40px; display:flex; flex-direction:column; }
+
+  .article-cat {
+    font-size:0.75rem;
+    font-weight:700;
+    letter-spacing:0.08em;
+    color:var(--blue-to-teal12);
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+
+  .article-title-lg {
+    font-family:var(--pages-font-display);
+    font-size:1.5rem;
+    font-weight:800;
+    margin-bottom:12px;
+    line-height:1.3;
+  }
+
+  .article-excerpt {
+    color:var(--pages-text2);
+    font-size:0.92rem;
+    line-height:1.7;
+    margin-bottom:20px;
+  }
+
+  .article-footer {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:auto;
+  }
+
+  .author-mini {
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .avatar-sm {
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    background:var(--pages-gold-dim);
+    border:2px solid var(--pages-gold);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:0.72rem;
+    font-weight:700;
+    color:var(--pages-gold);
+  }
+
+.article-grid-card {
+      background: var(--pages-card-bg);
+    border: 1px solid var(--bk-border);
+    border-radius: var(--r20);
+    transition: all .32s;
+    cursor: default;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+      padding:18px 20px; display:flex; justify-content:space-between; flex-direction: column;
+      
+    }
+    .article-grid-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--sage), var(--sage2-to-teal2));
+  opacity: 0;
+  transition: opacity .3s;
+}
+.article-grid-card:hover {
+  border-color: var(--bk-border-hover);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-bk-hover);
+}
+
+.article-grid-card:hover::after {
+  opacity: 1;
+}
+
+
+
+
+ 
+    /* .article-grid-card:hover { border-color:var(--blue-to-teal12); transform: translateY(-2px);} */
+
+  .article-emoji {
+    height:150px;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--pages-bg4),var(--pages-bg3));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:3rem;
+    margin-bottom:16px;
+  }
+
+
+  .page-header-description {
+    color: var(--pages-text2);
+    margin-top: 12px;
+  }
+
+  .author-name {
+    font-size: 0.84rem;
+    font-weight: 600;
+  }
+
+  .author-meta {
+    font-size: 0.75rem;
+    color: var(--pages-text3);
+  }
+
+  .featured-read-btn {
+    padding: 9px 18px;
+    font-size: 0.84rem;
+  }
+
+  .article-excerpt-sm {
+    font-size: 0.84rem;
+  }
+
+  .article-card-footer {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:16px;
+  }
+
+  .article-date {
+    font-size:0.75rem;
+    color:var(--pages-text3);
+  }
+
+  .article-read-link {
+    font-size:0.84rem;
+  }
+
+  .load-more-wrapper {
+    text-align:center;
+    margin-top:40px;
+  }
+
+  @media(max-width:768px){
+    .featured-article{
+      grid-template-columns:1fr;
+    }
+  }
+</style>
+
+<body>
+<%- include('partials/header') %>
+
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="container">
+      <div class="breadcrumb"><a href="/">Home</a><span>/</span><span>Insights</span></div>
+      
+      <span class="section-label"><div class="ld">✦</div>
+        Market Intelligence</span>
+      <h1>Latest Articles <span class="text-gold">&amp; Guides</span></h1>
+      <p class="page-header-description">
+        Expert market analysis, trading strategies, and broker updates — published daily by our team.
+      </p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+
+      <div class="featured-article">
+        <div class="featured-img">📊</div>
+
+        <div class="featured-content">
+          <div class="article-cat">📌 Featured Analysis</div>
+
+          <div class="article-title-lg">
+            EUR/USD Outlook 2025: Key Levels Every Trader Must Watch
+          </div>
+
+          <p class="article-excerpt">
+            The Euro faces its most important technical juncture in 18 months. Our head analyst breaks down the major support zones, upcoming catalysts, and high-probability setups for both bulls and bears.
+          </p>
+
+          <div class="article-footer">
+            <div class="author-mini">
+              <div class="avatar-sm">ZA</div>
+
+              <div>
+                <div class="author-name">Zain Ahmed</div>
+                <div class="author-meta">Jan 18, 2025 · 8 min read</div>
+              </div>
+            </div>
+
+            <a href="#" class="btn-primary featured-read-btn">Read →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-pills">
+        
+        <button class="cat-pill active" onclick="filterArticles(this,'all')">All</button>
+        <button class="cat-pill" onclick="filterArticles(this,'marketanalysis')">Market Analysis</button>
+        <button class="cat-pill" onclick="filterArticles(this,'tradingstrategies')">Trading Strategies</button>
+        <button class="cat-pill" onclick="filterArticles(this,'brokernews')">Broker News</button>
+        <button class="cat-pill" onclick="filterArticles(this,'education')">Education</button>
+        <button class="cat-pill" onclick="filterArticles(this,'crypto')">Crypto</button>
+      </div>
+
+      <div class="grid-3">
+
+        <div class="article-grid-card" data-cat="marketanalysis">
+          <div class="article-emoji">🪙</div>
+          <div class="article-cat">Market Analysis</div>
+          <div class="article-title">Gold Surges Past $2,000 — Is This the New Floor?</div>
+
+          <p class="article-excerpt article-excerpt-sm">
+            Institutional buying and safe-haven demand have pushed XAU/USD into new territory...
+          </p>
+
+          <div class="article-card-footer">
+            <span class="article-date">Jan 15 · 5 min</span>
+            <a href="#" class="text-gold article-read-link">Read →</a>
+          </div>
+        </div>
+
+        <div class="article-grid-card" data-cat="tradingstrategies">
+          <div class="article-emoji">⚡</div>
+          <div class="article-cat">Trading Strategy</div>
+          <div class="article-title">The 3-Step Breakout System That Works in Any Market</div>
+
+          <p class="article-excerpt article-excerpt-sm">
+            A simple, rules-based approach to catching high-momentum breakout moves...
+          </p>
+
+          <div class="article-card-footer">
+            <span class="article-date">Jan 12 · 6 min</span>
+            <a href="#" class="text-gold article-read-link">Read →</a>
+          </div>
+        </div>
+
+        <div class="article-grid-card" data-cat="brokernews">
+          <div class="article-emoji">🏦</div>
+          <div class="article-cat">Broker News</div>
+          <div class="article-title">Exness Adds JazzCash Withdrawals — What You Need to Know</div>
+
+          <p class="article-excerpt article-excerpt-sm">
+            Pakistani traders can now withdraw directly to JazzCash wallets with zero fees...
+          </p>
+
+          <div class="article-card-footer">
+            <span class="article-date">Jan 10 · 3 min</span>
+            <a href="#" class="text-gold article-read-link">Read →</a>
+          </div>
+        </div>
+
+        <div class="article-grid-card" data-cat="education">
+          <div class="article-emoji">🧠</div>
+          <div class="article-cat">Education</div>
+          <div class="article-title">Why 90% of Traders Lose — And How to Be in the Other 10%</div>
+
+          <p class="article-excerpt article-excerpt-sm">
+            The uncomfortable truth about trading psychology and what separates winners...
+          </p>
+
+          <div class="article-card-footer">
+            <span class="article-date">Jan 8 · 9 min</span>
+            <a href="#" class="text-gold article-read-link">Read →</a>
+          </div>
+        </div>
+
+        <div class="article-grid-card" data-cat="crypto">
+          <div class="article-emoji">₿</div>
+          <div class="article-cat">Crypto</div>
+          <div class="article-title">Bitcoin ETF Approval Impact on Forex Markets</div>
+
+          <p class="article-excerpt article-excerpt-sm">
+            How the Bitcoin ETF approval is shifting institutional capital flows across asset classes...
+          </p>
+
+          <div class="article-card-footer">
+            <span class="article-date">Jan 5 · 7 min</span>
+            <a href="#" class="text-gold article-read-link">Read →</a>
+          </div>
+        </div>
+
+        <div class="article-grid-card" data-cat="marketanalysis">
+          <div class="article-emoji">📉</div>
+          <div class="article-cat">Market Analysis</div>
+          <div class="article-title">GBP/USD Weekly Forecast — Major Risk Events Ahead</div>
+
+          <p class="article-excerpt article-excerpt-sm">
+            UK CPI, BOE minutes, and US NFP — here's how to position your trades this week...
+          </p>
+
+          <div class="article-card-footer">
+            <span class="article-date">Jan 3 · 5 min</span>
+            <a href="#" class="text-gold article-read-link">Read →</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="load-more-wrapper">
+        <button class="btn-secondary">Load More Articles</button>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<%- include('partials/footer') %>
+<script>
+function filterArticles(btn, cat) {
+  document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.article-grid-card').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'flex' : 'none';
+  });
+}
+
+</script>
+<script src="/js/theme.js"></script>
+<script src="/js/script.js"></script>
+
+</body>
+

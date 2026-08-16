@@ -1,0 +1,162 @@
+<%- include('partials/head') %>
+
+<link rel="stylesheet" href="/css/styles-pages.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+
+<style>
+    .cookie-type>div{
+display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;
+    }
+    .legal-body { max-width:760px; margin:0 auto; }
+    .legal-body h3 { font-family:var(--pages-font-display); margin:36px 0 12px; color:var(--pages-blue-to-yellow); font-size:1.1rem; }
+    .legal-body p { color:var(--pages-white); margin-bottom:14px; font-size:0.93rem; line-height:1.8; }
+    .legal-body ul { margin:0 0 16px 20px; color:var(--pages-white); font-size:0.93rem; line-height:1.9; }
+    .last-updated { display:inline-flex; align-items:center; gap:8px; background:var(--pages-bg3); border:1px solid var(--pages-border); border-radius:50px; padding:5px 14px; font-size:0.8rem; color:var(--pages-text3); margin-bottom:32px; }
+    .cookie-type { background:var(--pages-card-bg); border:1px solid var(--pages-border); border-radius:var(--pages-radius-lg); padding:20px 24px; margin-bottom:12px; }
+    .cookie-type h4 { font-family:var(--pages-font-display); margin-bottom:6px; }
+    .cookie-type p { margin:0; font-size:0.88rem; color:var(--pages-white); }
+    .cookie-toggle { float:right; }
+    .toggle-switch { position:relative; width:44px; height:24px; }
+    .toggle-switch input { opacity:0; width:0; height:0; }
+    .toggle-slider { position:absolute; inset:0; background: red; border-radius:12px; cursor:pointer; transition:var(--pages-transition); }
+    .toggle-slider::before { content:''; position:absolute; width:18px; height:18px; border-radius:50%; background: white; left:3px; top:3px; transition:var(--pages-transition); }
+    input:checked + .toggle-slider { background:var(--text3); }
+    input:checked + .toggle-slider::before { transform:translateX(20px); }
+    .save-pref{
+      margin-top:28px;
+    }
+    .cookie-banner {
+      position:fixed; bottom:20px; left:20px; right:20px; z-index:9999;
+      background:var(--pages-bg2); border:1px solid var(--pages-border); border-radius:var(--pages-radius-lg);
+      padding:20px 28px; display:flex; align-items:center; justify-content:space-between;
+      gap:16px; flex-wrap:wrap; box-shadow:var(--pages-shadow-lg);
+      max-width:900px; margin:0 auto;
+    }
+    .cookie-banner>p{
+    font-size:0.88rem;color:var(--pages-text2);margin:0;flex:1;
+    }
+    .cookie-banner>div{
+    display:flex;gap:10px;
+    }
+     .cookie-banner>div>button{
+        padding:8px 18px;font-size:0.84rem;
+    }
+    .text-gold{
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/header') %>
+
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="container">
+      <div class="breadcrumb"><a href="/">Home</a><span>/</span><span>Cookie Policy</span></div>
+      <h1>Cookie <span class="text-gold">Policy</span></h1>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+      <div class="legal-body">
+        <div class="last-updated">📅 Last Updated: January 1, 2026</div>
+
+        <p>This Cookie Policy explains how ZEN TRUST CAPITAL uses cookies and similar tracking technologies on our website. By using our Site, you consent to our use of cookies as described below.</p>
+
+        <h3>What Are Cookies?</h3>
+        <p>Cookies are small text files stored on your device when you visit a website. They allow the website to remember your preferences, analyze traffic, and provide a personalized experience.</p>
+
+        <h3>Types of Cookies We Use</h3>
+
+        <div class="cookie-type">
+          <div>
+            <h4>✅ Strictly Necessary Cookies</h4>
+            <span class="badge badge-green">Always Active</span>
+          </div>
+          <p>Essential for the website to function. Cannot be disabled. These include session management, security tokens (CSRF protection), and your cookie consent preferences.</p>
+        </div>
+
+        <div class="cookie-type">
+          <div>
+            <h4>📊 Analytics Cookies</h4>
+            <label class="toggle-switch"><input class="checkboxes" type="checkbox" checked id="analytics-toggle"><span class="toggle-slider"></span></label>
+          </div>
+          <p>Help us understand how visitors interact with our Site. We use Google Analytics to track page views, session duration, and traffic sources. All data is anonymized.</p>
+        </div>
+
+        <div class="cookie-type">
+          <div>
+            <h4>🎯 Marketing Cookies</h4>
+            <label class="toggle-switch"><input class="checkboxes" type="checkbox" id="marketing-toggle"><span class="toggle-slider"></span></label>
+          </div>
+          <p>Used to deliver relevant advertisements and track the effectiveness of our marketing campaigns. May be set by our advertising partners including Google Ads and Facebook Pixel.</p>
+        </div>
+
+        <div class="cookie-type">
+          <div>
+            <h4>⚙️ Functional Cookies</h4>
+            <label class="toggle-switch"><input class="checkboxes" type="checkbox" checked id="functional-toggle"><span class="toggle-slider"></span></label>
+          </div>
+          <p>Remember your preferences such as dark/light theme, language settings, and recently viewed brokers to provide a better experience on return visits.</p>
+        </div>
+
+        <div class="save-pref">
+          <button class="btn-primary" onclick="savePrefs()">Save Cookie Preferences</button>
+        </div>
+
+        <h3>Managing Cookies</h3>
+        <p>You can control and/or delete cookies at any time through your browser settings. Here are links to instructions for popular browsers:</p>
+        <ul>
+          <li>Google Chrome: Settings → Privacy → Cookies</li>
+          <li>Firefox: Options → Privacy & Security → Cookies</li>
+          <li>Safari: Preferences → Privacy → Cookies</li>
+          <li>Edge: Settings → Privacy → Cookies</li>
+        </ul>
+        <p>Note that disabling certain cookies may affect the functionality of our website.</p>
+
+        <h3>Third-Party Cookies</h3>
+        <p>Some cookies on our site are set by third parties including Google Analytics, Google Ads, Facebook, and our broker partners. These third parties have their own privacy policies governing their use of cookies.</p>
+
+        <h3>Contact</h3>
+        <p>For cookie-related questions, contact us at <span id="email-id" class="emailRedirect text-gold"><%- include('partials/email') %></span></p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Cookie Banner (demo) -->
+<div class="cookie-banner" id="cookie-banner">
+  <p>🍪 We use cookies to improve your experience. <a href="/cookies" style="color:var(--pages-gold);">Cookie Policy</a></p>
+  <div>
+    <button class="btn-secondary" onclick="closeBanner()">Manage</button>
+    <button class="btn-primary" onclick="closeBanner()">Accept All ✓</button>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/script.js"></script>
+  <script src="/js/emailWhatsAppRedirect.js"></script>
+
+<script>
+ 
+function closeBanner() { document.getElementById('cookie-banner').style.display='none'; 
+  let cookiesAll = document.getElementsByClassName("checkboxes");
+
+  // cookiesAll.forEach(element => {
+  //   console.log(element)
+  // });
+ for (let index = 0; index < cookiesAll.length; index++) {
+    cookiesAll[index].checked = true;
+  }
+}
+function savePrefs() { alert('Cookie preferences saved!'); }
+
+
+
+
+</script>
+</body>
+</html>

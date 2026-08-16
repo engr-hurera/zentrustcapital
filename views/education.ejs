@@ -1,0 +1,210 @@
+<%- include('partials/head') %>
+
+  <link rel="stylesheet" href="/css/styles-pages.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/header.css">
+<style>
+    .courses-grid-card {
+      background: var(--pages-card-bg);
+    border: 1px solid var(--bk-border);
+    border-radius: var(--r20);
+    transition: all .32s;
+    cursor: default;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+      padding:18px 20px; display:flex; justify-content:space-between; flex-direction: column;
+      
+    }
+    .courses-grid-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--sage), var(--sage2-to-teal2));
+  opacity: 0;
+  transition: opacity .3s;
+}
+.courses-grid-card:hover {
+  border-color: var(--bk-border-hover);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-bk-hover);
+}
+
+.courses-grid-card:hover::after {
+  opacity: 1;
+}
+
+    .course-card { cursor:pointer; }
+    .course-thumb {
+      height:140px; border-radius:10px; margin-bottom:16px;
+      display:flex; align-items:center; justify-content:center; font-size:3rem;
+      background:linear-gradient(135deg, var(--pages-bg4), var(--pages-bg3));
+    }
+    .page-header .container >p{
+color:var(--pages-text2);
+margin-top:12px;
+max-width:560px;
+    }
+    .page-header .container>div{
+display:flex;
+gap:24px;
+margin-top:24px;
+flex-wrap:wrap;
+    }
+   .page-header .container > strong{
+      font-size:1.4rem;
+      font-family:var(--pages-font-display);
+      color:var(--pages-gold);
+    }
+  .page-header .container > strong>span{
+      color:var(--pages-text2);
+      font-size:0.85rem;
+      display:block;
+    }
+    .course-meta { display:flex; justify-content:space-between; font-size:0.78rem; color:var(--pages-text3); margin-bottom:8px; }
+    .course-title { font-family:var(--pages-font-display); font-size:1rem; font-weight:700; margin-bottom:6px; }
+    .progress-bar { height:4px; background:var(--pages-bg4); border-radius:2px; margin-top:12px; }
+    .progress-fill { height:100%; border-radius:2px; background:var(--pages-gold); }
+    .level-badge { padding:3px 10px; border-radius:50px; font-size:0.72rem; font-weight:700; }
+    .level-beginner { background:rgba(34,197,94,0.15); color:var(--pages-green); }
+    .level-intermediate { background:rgba(201,168,76,0.15); color:var(--pages-gold); }
+    .level-advanced { background:rgba(239,68,68,0.15); color:var(--pages-red); }
+    .path-step {
+      display:flex; gap:20px; align-items:flex-start;
+      padding:20px; background:var(--pages-card-bg); border:1px solid var(--pages-border);
+      border-radius:var(--pages-radius-lg); margin-bottom:12px;
+      transition:all var(--pages-transition);
+    }
+    .path-step:hover { border-color:rgba(201,168,76,0.3); }
+    .path-num {
+      width:40px; height:40px; border-radius:50%; flex-shrink:0;
+      background:var(--pages-gold-dim); border:2px solid var(--pages-gold);
+      display:flex; align-items:center; justify-content:center;
+      font-family:var(--pages-font-display); font-weight:800; color:var(--pages-gold);
+    }
+    .path-step h4 { font-family:var(--pages-font-display); margin-bottom:4px; }
+
+    /* New classes for previously inline styles */
+    .learning-path-section { margin-bottom:48px; }
+    .path-description { font-size:0.88rem; }
+    .path-meta { margin-top:8px; }
+    .lesson-info { font-size:0.78rem; color:var(--pages-text3); margin-left:8px; }
+    .courses-header { margin-bottom:32px; }
+    .course-desc { font-size:0.84rem; color:var(--pages-text2); }
+    .btn-primary-centered { margin-top:16px; justify-content:center; }
+
+    
+  </style>
+</head>
+<body>
+<%- include('partials/header') %>
+
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="container">
+<div class="breadcrumb"><a href="/">Home</a><span>/</span><span>Education</span></div>
+      
+      <span class="section-label"><div class="ld">✦</div>
+        Free Education</span>
+      <h1>Learn to Trade <span class="text-gold">Like a Pro</span></h1>
+      <p>From complete beginner to professional trader — everything you need, completely free. 40+ lessons, video courses, and live webinars.</p>
+      <div>
+        <div><strong>40+</strong><span>Free Lessons</span></div>
+        <div><strong>12</strong><span>Video Courses</span></div>
+        <div><strong>8K+</strong><span>Students</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <!-- Learning Path -->
+      <div class="mb-48 learning-path-section">
+        <span class="section-label">
+      <div class="ld">✦</div>
+        Recommended Path</span>
+        
+        <h2 class="section-title">Your <span class="text-gold">Learning Journey</span></h2>
+        <div style="margin-top:28px;">
+          <div class="path-step">
+            <div class="path-num">1</div>
+            <div><h4>Forex Basics</h4><p class="text-muted path-description">Understand currencies, pips, lots, and how the market works. Perfect for absolute beginners.</p><div class="path-meta"><span class="level-badge level-beginner">Beginner</span> <span class="lesson-info">8 lessons · 2 hours</span></div></div>
+          </div>
+          <div class="path-step">
+            <div class="path-num">2</div>
+            <div><h4>Technical Analysis</h4><p class="text-muted path-description">Master charts, candlestick patterns, support/resistance, and key indicators like RSI and MACD.</p><div class="path-meta"><span class="level-badge level-intermediate">Intermediate</span> <span class="lesson-info">12 lessons · 4 hours</span></div></div>
+          </div>
+          <div class="path-step">
+            <div class="path-num">3</div>
+            <div><h4>Risk Management</h4><p class="text-muted path-description">The most important skill in trading. Learn position sizing, stop losses, and protecting your capital.</p><div class="path-meta"><span class="level-badge level-intermediate">Intermediate</span> <span class="lesson-info">6 lessons · 1.5 hours</span></div></div>
+          </div>
+          <div class="path-step">
+            <div class="path-num">4</div>
+            <div><h4>Trading Psychology</h4><p class="text-muted path-description">Control emotions, build discipline, and develop the mindset of consistently profitable traders.</p><div class="path-meta"><span class="level-badge level-advanced">Advanced</span> <span class="lesson-info">8 lessons · 2.5 hours</span></div></div>
+          </div>
+          <div class="path-step">
+            <div class="path-num">5</div>
+            <div><h4>Advanced Strategies</h4><p class="text-muted path-description">Scalping, swing trading, and institutional order flow — the strategies used by pro traders.</p><div class="path-meta"><span class="level-badge level-advanced">Advanced</span> <span class="lesson-info">14 lessons · 5 hours</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Courses Grid -->
+      <div class="section-label">✦ All Courses</div>
+      <h2 class="section-title mb-48 courses-header">Browse <span class="text-gold">All Topics</span></h2>
+      <div class="grid-3">
+        <div class="card course-card courses-grid-card">
+          <div class="course-thumb">📈</div>
+          <div class="course-meta"><span>8 Lessons</span><span class="level-badge level-beginner">Beginner</span></div>
+          <div class="course-title">Forex Basics — Complete Introduction</div>
+          <p class="course-desc">Everything you need to start: what forex is, how brokers work, and your first trade.</p>
+          <a href="#" class="btn-primary btn-primary-centered">Start Course →</a>
+        </div>
+        <div class="card course-card courses-grid-card">
+          <div class="course-thumb">🕯️</div>
+          <div class="course-meta"><span>12 Lessons</span><span class="level-badge level-intermediate">Intermediate</span></div>
+          <div class="course-title">Technical Analysis Masterclass</div>
+          <p class="course-desc">Charts, patterns, RSI, MACD, Fibonacci, and professional charting techniques.</p>
+          <a href="#" class="btn-primary btn-primary-centered">Start Course →</a>
+        </div>
+        <div class="card course-card courses-grid-card">
+          <div class="course-thumb">🛡️</div>
+          <div class="course-meta"><span>6 Lessons</span><span class="level-badge level-intermediate">Intermediate</span></div>
+          <div class="course-title">Risk Management Fundamentals</div>
+          <p class="course-desc">Position sizing, risk/reward ratios, drawdown control, and capital preservation.</p>
+          <a href="#" class="btn-primary btn-primary-centered">Start Course →</a>
+        </div>
+        <div class="card course-card courses-grid-card">
+          <div class="course-thumb">🧠</div>
+          <div class="course-meta"><span>8 Lessons</span><span class="level-badge level-advanced">Advanced</span></div>
+          <div class="course-title">Trading Psychology & Discipline</div>
+          <p class="course-desc">Fear, greed, revenge trading — master your mind to master the markets.</p>
+          <a href="#" class="btn-primary btn-primary-centered">Start Course →</a>
+        </div>
+        <div class="card course-card courses-grid-card">
+          <div class="course-thumb">⚡</div>
+          <div class="course-meta"><span>10 Lessons</span><span class="level-badge level-advanced">Advanced</span></div>
+          <div class="course-title">Scalping Strategies</div>
+          <p class="course-desc">Fast in, fast out. Learn the most popular high-frequency trading strategies.</p>
+          <a href="#" class="btn-primary btn-primary-centered">Start Course →</a>
+        </div>
+        <div class="card course-card courses-grid-card">
+          <div class="course-thumb">🎥</div>
+          <div class="course-meta"><span>Video Series</span><span class="level-badge level-beginner">All Levels</span></div>
+          <div class="course-title">Live Trading Webinars Archive</div>
+          <p class="course-desc">Watch our expert traders analyze live markets and share trade setups.</p>
+          <a href="#" class="btn-primary btn-primary-centered">Watch Now →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<%- include('partials/footer') %>
+<script src="/js/theme.js"></script>
+<script src="/js/script.js"></script>
+
+
+</body>
+</html>
