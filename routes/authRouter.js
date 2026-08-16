@@ -154,14 +154,12 @@ authRouter.post(
 
 authRouter.get(
   "/reset-password/:token",
-  // authMiddleware.isGuest,
   authController.getResetPasswordController
 );
 
 
 authRouter.post(
   "/reset-password/:token",
-  // authMiddleware.isGuest,
   authController.postResetPasswordController
 );
 
