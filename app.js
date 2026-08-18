@@ -151,6 +151,29 @@ app.use(addEditBroker);
 
 app.use(pageNotFoundRouter.pageNotFoundController);
 
+// ============================================================
+// GLOBAL ERROR HANDLING MIDDLEWARE (Hides stack traces in production)
+// ============================================================
+app.use((err, req, res, next) => {
+  // 1. Log the full error to your private server terminal (onRender logs) so you can fix it
+  console.error("=== PRODUCTION SERVER ERROR LOG ===");
+  console.error(err.stack); 
+  console.error("===================================");
+
+  // 2. Hide everything from the user. Send a clean, generic message.
+  const statusCode = err.status || 500;
+  
+  // If you use standard JSON APIs:
+  return res.status(statusCode).json({
+    success: false,
+    message: "Something went wrong on our servers. Please try again later."
+  });
+
+  // OR if you render an HTML error view template:
+  // return res.status(statusCode).render("errors/500", { title: "Server Error" });
+});
+
+
 /* ============================================================
    START SERVER
 ============================================================ */

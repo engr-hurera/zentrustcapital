@@ -2,6 +2,7 @@ const { check, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
+const { normalizeEmail } = require("../helpers/emailNormalizer");
 const countryList = require("../helpers/countries");
 const User = require("../models/user.js");
 const EmailVerification = require("../models/emailVerification.js");
@@ -34,31 +35,7 @@ const validCountryCodes = countryList.map(
 );
 
 
-// ------------------------------------------------------------
-// Normalize email
-// ------------------------------------------------------------
 
-function normalizeEmail(email) {
-  if (!email) {
-    return email;
-  }
-
-  email = email.trim().toLowerCase();
-
-  if (
-    email.endsWith("@gmail.com") ||
-    email.endsWith("@googlemail.com")
-  ) {
-    const [local, domain] = email.split("@");
-
-    email =
-      local.replace(/\./g, "") +
-      "@" +
-      domain;
-  }
-
-  return email;
-}
 
 
 // ------------------------------------------------------------
