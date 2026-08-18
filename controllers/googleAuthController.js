@@ -7,7 +7,7 @@ const { google } = require("googleapis");
 
 const googleOAuth2Client = require("../config/googleAuth");
 const User = require("../models/user.js");
-const { normalizeEmail } = require("./authController.js);");
+const { normalizeEmail } = require("./authController.js");
 
 const countryList =
   require("../helpers/countries");
