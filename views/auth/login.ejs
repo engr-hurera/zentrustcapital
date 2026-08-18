@@ -67,23 +67,24 @@
     background: var(--pages-border);
   }
 
-  .social-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: var(--pages-radius);
-    background: var(--pages-bg3);
-    border: 1px solid var(--pages-border);
-    color: var(--pages-text);
-    font-size: 0.9rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    cursor: pointer;
-    transition: all var(--pages-transition);
-    margin-bottom: 10px;
-  }
+ .social-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--pages-radius);
+  background: var(--pages-bg3);
+  border: 1px solid var(--pages-border);
+  color: var(--pages-text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all var(--pages-transition);
+  margin-bottom: 10px;
+  text-decoration: none;
+}
 
   .checkbox-div {
     display: flex;
@@ -205,8 +206,9 @@
     <button type="submit" class="btn-primary w-full">Sign In →</button>
 
     <div class="divider-text"><span>or continue with</span></div>
-    <button type="button" class="social-btn">🌐 Continue with Google</button>
-
+<a href="/auth/google" class="social-btn">
+  🌐 Continue with Google
+</a>
     <div class="auth-footer">
       Don't have an account? <a href="/sign-up">Open Free Account →</a>
     </div>

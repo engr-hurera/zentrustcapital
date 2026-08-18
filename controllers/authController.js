@@ -10,7 +10,10 @@ const {
   sendVerificationEmail,
   sendPasswordResetEmail
 } = require("../utils/mailer.js");
-
+const {
+  phoneValidation,
+  countryValidation,
+} = require("../middleware/validators");
 
 // ============================================================
 // CONSTANTS
@@ -525,43 +528,14 @@ exports.postSignUpPageController = [
   // PHONE
   // ----------------------------------------------------------
 
-  check("phone")
-
-    .trim()
-
-    .notEmpty()
-    .withMessage(
-      "Phone/WhatsApp number is required."
-    )
-
-    .matches(
-      /^\+?[1-9]\d{1,14}$/
-    )
-
-    .withMessage(
-      "Enter a valid international phone number (e.g. +923001234567)."
-    ),
+ phoneValidation,
 
 
   // ----------------------------------------------------------
   // COUNTRY
   // ----------------------------------------------------------
 
-  check("country")
-
-    .trim()
-
-    .notEmpty()
-    .withMessage(
-      "Country selection is required."
-    )
-
-    .isIn(validCountryCodes)
-
-    .withMessage(
-      "Invalid country selected."
-    ),
-
+  countryValidation,
 
   // ----------------------------------------------------------
   // TERMS
@@ -1603,37 +1577,45 @@ exports.postForgotPasswordController = async (
     // Google accounts
     // --------------------------------------------------------
 
-    if (
-      user.authProvider === "google"
-    ) {
+   // --------------------------------------------------------
+// Google accounts
+// --------------------------------------------------------
+//
+// Do not reveal that this email belongs to a Google account.
+// The visitor should receive the same generic response as
+// an unknown email address.
+//
+// We also do NOT create a password-reset token for Google
+// accounts because they authenticate through Google.
+// --------------------------------------------------------
 
-      return res.render(
-        "auth/forgot-password",
-        {
+if (
+  user.authProvider === "google"
+) {
 
-          currentPage:
-            "forgot-password",
+  return res.render(
+    "auth/forgot-password",
+    {
+      currentPage:
+        "forgot-password",
 
-          title:
-            "Forgot Password",
+      title:
+        "Forgot Password",
 
-          isLoggedIn:
-            false,
+      isLoggedIn:
+        false,
 
-          error:
-            null,
+      error:
+        null,
 
-          success:
-            "If this account uses Google Sign-In, please continue using Google to access your account.",
+      success:
+        "If an account exists for this email address, a password reset link has been sent.",
 
-          oldInput:
-            null,
-
-        }
-      );
-
+      oldInput:
+        null,
     }
-
+  );
+}
 
     // --------------------------------------------------------
     // Delete previous reset tokens

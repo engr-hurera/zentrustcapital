@@ -20,6 +20,7 @@
     "express-rate-limit": "^8.6.2",
     "express-session": "^1.19.0",
     "express-validator": "^7.3.2",
+    "googleapis": "^174.0.1",
     "helmet": "^8.3.0",
     "mongoose": "^8.24.2",
     "nodemailer": "^9.0.5",

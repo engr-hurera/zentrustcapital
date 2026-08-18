@@ -1,0 +1,383 @@
+<%- include('../partials/head') %>
+
+<link rel="stylesheet" href="/css/styles-pages.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+
+<style>
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-container {
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 24px;
+    margin: 75px 0 auto;
+  }
+
+  .auth-card {
+    background: var(--pages-card-bg);
+    border: 1px solid var(--pages-border);
+    border-radius: var(--pages-radius-lg);
+    padding: 40px;
+  }
+
+  .auth-title {
+    font-family: var(--pages-font-display);
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .auth-sub {
+    color: var(--pages-text2);
+    font-size: 0.88rem;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .google-info {
+    background: var(--pages-bg3);
+    border: 1px solid var(--pages-border);
+    border-radius: var(--pages-radius);
+    padding: 14px;
+    margin-bottom: 24px;
+  }
+
+  .google-info-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--pages-text3);
+    margin-bottom: 4px;
+  }
+
+  .google-info-value {
+    font-size: 0.9rem;
+    color: var(--pages-text);
+    word-break: break-word;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 7px;
+  }
+
+  .form-input,
+  .form-select {
+    width: 100%;
+  }
+.form-select {
+  width: 100%;
+  padding: 12px 42px 12px 14px;
+
+  border-radius: var(--pages-radius);
+  border: 1px solid var(--pages-border);
+
+  background-color: var(--pages-bg3);
+  color: var(--pages-text);
+
+  font-size: 0.9rem;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50%;
+
+  background-size:
+    6px 6px,
+    6px 6px;
+
+  background-repeat: no-repeat;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--pages-gold);
+}
+  .checkbox-div {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .checkbox-div input {
+    margin-top: 4px;
+  }
+
+  .privacy-link {
+    color: var(--darkBlue-to-teal12);
+  }
+
+  .error-text {
+    display: block;
+    margin-top: 5px;
+  }
+
+  .auth-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.82rem;
+    color: var(--pages-text2);
+  }
+
+  nav.main,
+  .btn-ghost {
+    display: none;
+  }
+
+  #btt,
+  footer,
+  .risk-note {
+    display: none;
+  }
+
+  .privacy-text {
+    text-align: center;
+    font-size: 0.76rem;
+    color: var(--pages-text3);
+    margin-top: 20px;
+  }
+</style>
+
+</head>
+
+<body>
+
+<%- include('../partials/header') %>
+
+<form
+  action="/google-signup"
+  method="post"
+  class="auth-container"
+>
+
+  <div class="auth-card">
+
+    <div class="auth-title">
+      Complete Your Account
+    </div>
+
+    <div class="auth-sub">
+      Your Google account has been verified.
+      Just complete the information below.
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- GOOGLE ACCOUNT INFORMATION -->
+    <!-- ================================================== -->
+
+    <div class="google-info">
+
+      <span class="google-info-label">
+        Name
+      </span>
+
+      <div class="google-info-value">
+        <%= googleSignup.fullName %>
+      </div>
+
+      <span
+        class="google-info-label"
+        style="margin-top: 12px;"
+      >
+        Email
+      </span>
+
+      <div class="google-info-value">
+        <%= googleSignup.email %>
+      </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- PHONE -->
+    <!-- ================================================== -->
+
+    <div class="form-group">
+
+      <label
+        class="form-label"
+        for="phone"
+      >
+        Phone / WhatsApp Number
+      </label>
+
+      <input
+        type="tel"
+        id="phone"
+        name="phone"
+        class="form-input <%= errors && errors.phone ? 'input-error' : '' %>"
+        placeholder="+92 300 1234567"
+        value="<%= oldInput ? oldInput.phone : '' %>"
+        required
+      />
+
+      <% if (errors && errors.phone) { %>
+
+        <span class="error-text">
+          <%= errors.phone.msg %>
+        </span>
+
+      <% } %>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- COUNTRY -->
+    <!-- ================================================== -->
+
+    <div class="form-group">
+
+      <label
+        class="form-label"
+        for="country"
+      >
+        Country
+      </label>
+
+      <select
+        id="country"
+        name="country"
+        class="form-select <%= errors && errors.country ? 'input-error' : '' %>"
+        required
+      >
+
+        <option value="">
+          Select your country
+        </option>
+
+        <% countryList.forEach(country => { %>
+
+  <option
+    value="<%= country.code %>"
+    <%= oldInput && oldInput.country === country.code ? 'selected' : '' %>
+  >
+    <%= country.name %>
+  </option>
+
+<% }) %>
+
+      </select>
+
+      <% if (errors && errors.country) { %>
+
+        <span class="error-text">
+          <%= errors.country.msg %>
+        </span>
+
+      <% } %>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- TERMS -->
+    <!-- ================================================== -->
+
+    <div class="checkbox-div">
+
+      <input
+        type="checkbox"
+        id="terms"
+        name="terms"
+        value="true"
+        <%= oldInput && oldInput.terms ? 'checked' : '' %>
+      />
+
+      <label for="terms">
+
+        I agree to the
+        <a
+          href="/terms"
+          class="privacy-link"
+          target="_blank"
+        >
+          Terms & Conditions
+        </a>
+
+        and
+
+        <a
+          href="/privacy"
+          class="privacy-link"
+          target="_blank"
+        >
+          Privacy Policy
+        </a>.
+
+      </label>
+
+    </div>
+
+
+    <% if (errors && errors.terms) { %>
+
+      <span class="error-text">
+        <%= errors.terms.msg %>
+      </span>
+
+    <% } %>
+
+
+    <!-- ================================================== -->
+    <!-- SUBMIT -->
+    <!-- ================================================== -->
+
+    <button
+      type="submit"
+      class="btn-primary w-full"
+    >
+      Create ZTC Account →
+    </button>
+
+
+    <div class="auth-footer">
+
+      Already have a ZTC account?
+
+      <a href="/login">
+        Sign in
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <p class="privacy-text">
+    Protected by 256-bit SSL encryption.
+  </p>
+
+</form>
+
+
+<%- include('../partials/footer') %>
+
+<script src="/js/theme.js"></script>
+<script src="/js/script.js"></script>
+
+</body>
+
+</html>

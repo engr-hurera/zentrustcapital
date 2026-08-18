@@ -42,6 +42,16 @@ const {
   path.join(rootdir, "middleware", "rateLimiters"),
 );
 
+const googleAuthController = require(
+  path.join(rootdir, "controllers", "googleAuthController")
+);
+const {
+  phoneValidation,
+  countryValidation,
+  googleSignupValidationResult,
+} = require(
+  path.join(rootdir, "middleware", "validators")
+);
 
 // ============================================================
 // ROUTER
@@ -173,6 +183,35 @@ authRouter.post(
   authController.postLogOutPageController
 );
 
+
+// ============================================================
+// GOOGLE AUTHENTICATION
+// ============================================================
+
+authRouter.get(
+  "/auth/google",
+  googleAuthController.startGoogleAuth
+);
+
+authRouter.get(
+  "/auth/google/callback",
+  googleAuthController.googleAuthCallback
+);
+
+authRouter.get(
+  "/google-signup",
+  authMiddleware.isGuest,
+  googleAuthController.getGoogleSignupController
+);
+
+authRouter.post(
+  "/google-signup",
+  authMiddleware.isGuest,
+  phoneValidation,
+  countryValidation,
+  googleSignupValidationResult,
+  googleAuthController.postGoogleSignupController
+);
 
 // ============================================================
 // EXPORT
