@@ -11,10 +11,10 @@ const {
   sendVerificationEmail,
   sendPasswordResetEmail
 } = require("../utils/mailer.js");
-const {
-  phoneValidation,
-  countryValidation,
-} = require("../middleware/validators");
+// const {
+//   phoneValidation,
+//   countryValidation,
+// } = require("../middleware/validators.js");
 
 // ============================================================
 // CONSTANTS
@@ -504,15 +504,15 @@ exports.postSignUpPageController = [
   // ----------------------------------------------------------
   // PHONE
   // ----------------------------------------------------------
-
- phoneValidation,
+// these are happenig in middleware/validators.js now, so we don't need them here anymore
+//  phoneValidation,
 
 
   // ----------------------------------------------------------
   // COUNTRY
   // ----------------------------------------------------------
 
-  countryValidation,
+  // countryValidation,
 
   // ----------------------------------------------------------
   // TERMS

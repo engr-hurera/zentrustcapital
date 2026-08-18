@@ -97,6 +97,8 @@ authRouter.post(
 authRouter.post(
   "/sign-up",
   authMiddleware.isGuest,
+  phoneValidation,
+  countryValidation,
   authController.postSignUpPageController
 );
 
