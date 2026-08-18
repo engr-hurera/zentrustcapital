@@ -11,17 +11,26 @@
 
 const { google } = require("googleapis");
 
-// TEMPORARY DEBUG LOGS (Remove after fixing)
-console.log("--- GOOGLE AUTH ENVIRONMENT CHECK ---");
-console.log("Callback URL being used:", process.env.GOOGLE_CALLBACK_URL);
-console.log("Client ID Length:", process.env.GOOGLE_CLIENT_ID ? process.env.GOOGLE_CLIENT_ID.length : "UNDEFINED");
-console.log("First 5 chars of Client ID:", process.env.GOOGLE_CLIENT_ID ? process.env.GOOGLE_CLIENT_ID.substring(0, 5) : "NONE");
-console.log("-------------------------------------");
+// 🔍 TRACE THE EXACT STRING STRUCTURE
+if (process.env.GOOGLE_CLIENT_ID) {
+  const rawId = process.env.GOOGLE_CLIENT_ID;
+  console.log("=== GOOGLE ID DIAGNOSTICS ===");
+  console.log("Exact Character Length:", rawId.length);
+  console.log("Starts with quote?:", rawId.startsWith('"') || rawId.startsWith("'"));
+  console.log("Ends with quote?:", rawId.endsWith('"') || rawId.endsWith("'"));
+  console.log("Has trailing spaces?:", rawId !== rawId.trim());
+  console.log("First 15 characters:", JSON.stringify(rawId.substring(0, 15)));
+  console.log("Last 15 characters:", JSON.stringify(rawId.substring(rawId.length - 15)));
+  console.log("=============================");
+} else {
+  console.log("!!! GOOGLE_CLIENT_ID IS COMPLETELY MISSING !!!");
+}
 
 const googleOAuth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_CALLBACK_URL
+  process.env.GOOGLE_CLIENT_ID ? process.env.GOOGLE_CLIENT_ID.trim() : undefined,
+  process.env.GOOGLE_CLIENT_SECRET ? process.env.GOOGLE_CLIENT_SECRET.trim() : undefined,
+  process.env.GOOGLE_CALLBACK_URL ? process.env.GOOGLE_CALLBACK_URL.trim() : undefined
 );
 
 module.exports = googleOAuth2Client;
+
