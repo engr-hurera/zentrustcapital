@@ -7,6 +7,7 @@ const { google } = require("googleapis");
 
 const googleOAuth2Client = require("../config/googleAuth");
 const User = require("../models/user.js");
+const { normalizeEmail } = require("./authController.js);");
 
 const countryList =
   require("../helpers/countries");
@@ -184,9 +185,7 @@ exports.googleAuthCallback = async (
     // --------------------------------------------------------
 
     const googleEmail =
-      payload.email
-        .trim()
-        .toLowerCase();
+      normalizeEmail(payload.email);
 
     const googleName =
       payload.name || "Google User";
@@ -206,38 +205,61 @@ exports.googleAuthCallback = async (
     // EXISTING ACCOUNT
     // ========================================================
 
-    if (user) {
+    // ========================================================
+// EXISTING ACCOUNT ARCHITECTURE
+// ========================================================
+// This block triggers if the email fetched from the verified Google 
+// token already exists in our MongoDB database. 
+// Instead of rejecting the login or throwing errors, we process them
+// based on their original account registration method.
+// ========================================================
 
-      // ------------------------------------------------------
-      // Existing LOCAL account
-      // ------------------------------------------------------
+if (user) {
 
-      if (
-        user.authProvider === "local"
-      ) {
+  // ------------------------------------------------------
+  // CASE A: EXISTING LOCAL ACCOUNT (EMAIL & PASSWORD SIGNUP)
+  // ------------------------------------------------------
+  // The user originally registered on our site using the standard signup 
+  // form (with a password). Now they are using 'Sign in with Google'.
+  //
+  // SECURITY NOTE: Since Google has already verified that this user 100% 
+  // owns this inbox (payload.email_verified === true), we can trust this 
+  // request completely. 
+  //
+  // HACKER PROTECTION: We do NOT throw a 409 conflict error here anymore. 
+  // Showing an error would tell hackers that this email has a local password, 
+  // making it a target for brute-force attacks. We log them in silently instead.
+  // ------------------------------------------------------
+  if (user.authProvider === "local") {
+    
+    // Smoothly authorize the session. The user's original local password 
+    // remains completely unchanged and safe in the database for future use.
+    return loginWithGoogleSession(
+      req,
+      res,
+      next,
+      user
+    );
+  }
 
-        return res.status(409).send(
-          "An account already exists with this email. Please sign in using your email and password."
-        );
-      }
+  // ------------------------------------------------------
+  // CASE B: EXISTING NATIVE GOOGLE ACCOUNT
+  // ------------------------------------------------------
+  // The user originally created this account using Google Auth in the past.
+  // This is a standard, expected returning social login handshake.
+  // ------------------------------------------------------
+  if (user.authProvider === "google") {
+    
+    // Log the user into their existing dashboard session directly.
+    return loginWithGoogleSession(
+      req,
+      res,
+      next,
+      user
+    );
+  }
+}
 
-
-      // ------------------------------------------------------
-      // Existing GOOGLE account
-      // ------------------------------------------------------
-
-      if (
-        user.authProvider === "google"
-      ) {
-
-        return loginWithGoogleSession(
-          req,
-          res,
-          next,
-          user
-        );
-      }
-    }
 
 
     // ========================================================
